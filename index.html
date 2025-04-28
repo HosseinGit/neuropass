@@ -5,17 +5,18 @@
 <title>Psychological Test</title>
 <style>
   body {
-    background: linear-gradient(to right, #e0f7fa, #e1bee7);
-    font-family: 'Segoe UI', sans-serif;
-    text-align: center;
-    padding: 40px;
     margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(to right, #e0f7fa, #e1bee7);
     display: flex;
     flex-direction: column;
     align-items: center;
     min-height: 100vh;
     overflow-x: hidden;
+    padding: 40px;
+    text-align: center;
   }
+
   #progress-bar {
     width: 80%;
     height: 10px;
@@ -30,6 +31,7 @@
     background: #4db6ac;
     transition: width 0.5s ease;
   }
+
   .container {
     position: relative;
     perspective: 1000px;
@@ -37,6 +39,7 @@
     max-width: 600px;
     margin: 30px 0;
   }
+
   .card {
     width: 100%;
     height: 250px;
@@ -48,9 +51,11 @@
     transition: transform 0.8s;
     cursor: pointer;
   }
+
   .card.flip {
     transform: rotateY(180deg);
   }
+
   .card-front, .card-back {
     position: absolute;
     width: 100%;
@@ -58,25 +63,28 @@
     backface-visibility: hidden;
     padding: 30px;
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
     font-size: 20px;
     border-radius: 10px;
   }
+
   .card-front {
     background: #ffffff;
   }
+
   .card-back {
     background: #c5cae9;
     transform: rotateY(180deg);
   }
+
   .options {
     margin-top: 30px;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
   }
+
   .options button {
     background: #ffffffaa;
     border: none;
@@ -87,13 +95,16 @@
     cursor: pointer;
     transition: background 0.3s;
   }
+
   .options button:hover {
     background: #4db6ac;
     color: white;
   }
+
   #navigation {
     margin-top: 20px;
   }
+
   #navigation button {
     background: #4db6ac;
     border: none;
@@ -105,6 +116,7 @@
     cursor: pointer;
     transition: background 0.3s;
   }
+
   #navigation button:hover {
     background: #00796b;
   }
@@ -125,18 +137,17 @@
 
 <div id="navigation">
   <button onclick="prevQuestion()" id="prevBtn" style="display:none;">Previous</button>
-  <button onclick="nextQuestion()" id="nextBtn" style="display:none;">Next</button>
+  <button onclick="nextQuestion()" id="nextBtn">Next</button>
   <button onclick="submitAnswers()" id="submitBtn" style="display:none;">Submit</button>
 </div>
 
 <script>
 let currentIndex = 0;
 let email = "";
-let answers = {};
-
+let realQuestionsStartIndex = 2; // index 0: Welcome, 1: Email
 let questions = [
-  "Welcome!",
-  "Please enter your email:",
+  "Welcome", // card 0
+  "Please enter your email:", // card 1
   "The anticipation of future rewards motivates me more than receiving immediate rewards",
   "I can maintain motivation by visualizing longterm benefits of my actions",
   "I find myself seeking immediate rewards, even if I know a better reward will come later",
@@ -180,6 +191,8 @@ let explanations = [
   "Autopilot behavior can be either beneficial or harmful depending on the habit."
 ];
 
+let answers = {};
+
 function loadQuestion() {
   const card = document.getElementById('card');
   card.classList.remove('flip');
@@ -190,29 +203,33 @@ function loadQuestion() {
   const optionsDiv = document.getElementById('options');
   optionsDiv.innerHTML = '';
 
-  if (currentIndex === 0) { // Welcome card
-    document.getElementById('nextBtn').style.display = "inline-block";
-    document.getElementById('prevBtn').style.display = "none";
-    document.getElementById('submitBtn').style.display = "none";
-  } else if (currentIndex === 1) { // Email card
-    document.getElementById('prevBtn').style.display = "inline-block";
+  document.getElementById('prevBtn').style.display = (currentIndex > 0) ? "inline-block" : "none";
+
+  if (currentIndex === 0) { // Welcome Card
     document.getElementById('nextBtn').style.display = "inline-block";
     document.getElementById('submitBtn').style.display = "none";
+  } 
+  else if (currentIndex === 1) { // Email Card
     optionsDiv.innerHTML = `<input type="email" id="emailInput" placeholder="Enter your email" style="padding:10px; font-size:16px; width:80%;">`;
-  } else if (currentIndex > 1 && currentIndex < questions.length) { // Question cards
-    document.getElementById('prevBtn').style.display = "inline-block";
-    document.getElementById('nextBtn').style.display = "none";
+    document.getElementById('nextBtn').style.display = "inline-block";
     document.getElementById('submitBtn').style.display = "none";
-    ["Strongly Agree", "Agree", "Neutral", "Disagree", "Strongly Disagree"].forEach(opt => {
+  } 
+  else if (currentIndex > 1 && currentIndex < questions.length - 1) { // Real questions
+    let options = ["Strongly Agree", "Agree", "Neutral", "Disagree", "Strongly Disagree"];
+    options.forEach(opt => {
       const btn = document.createElement('button');
       btn.innerText = opt;
       btn.onclick = () => selectAnswer(opt);
       optionsDiv.appendChild(btn);
     });
-  }
-  if (currentIndex === questions.length - 1) {
+    document.getElementById('nextBtn').style.display = "none";
+    document.getElementById('submitBtn').style.display = "none";
+  } 
+  else { // Last card
+    document.getElementById('nextBtn').style.display = "none";
     document.getElementById('submitBtn').style.display = "inline-block";
   }
+
   updateProgress();
 }
 
@@ -221,22 +238,22 @@ function flipCard() {
 }
 
 function selectAnswer(option) {
-  answers[`q${currentIndex - 1}`] = option; // Store answers correctly (adjusted for new first cards)
+  if (currentIndex >= realQuestionsStartIndex) {
+    answers[`q${currentIndex - realQuestionsStartIndex + 1}`] = option;
+  }
   nextQuestion();
 }
 
 function nextQuestion() {
-  if (currentIndex === 1) {
-    email = document.getElementById('emailInput').value;
-    if (!email) {
+  if (currentIndex === 1) { // Email card
+    email = document.getElementById('emailInput').value.trim();
+    if (!email || !email.includes("@")) {
       alert("Please enter a valid email.");
       return;
     }
   }
-  if (currentIndex < questions.length - 1) {
-    currentIndex++;
-    loadQuestion();
-  }
+  currentIndex++;
+  loadQuestion();
 }
 
 function prevQuestion() {
@@ -247,7 +264,7 @@ function prevQuestion() {
 }
 
 function updateProgress() {
-  let progress = Math.floor((currentIndex / (questions.length - 1)) * 100);
+  let progress = Math.floor((currentIndex / (questions.length-1)) * 100);
   document.getElementById('progress').style.width = `${progress}%`;
 }
 
@@ -265,9 +282,8 @@ function submitAnswers() {
       "Content-Type": "application/json"
     },
     body: JSON.stringify(payload)
-  }).then(() => {
+  }).then(res => {
     alert("Submitted successfully!");
-    location.reload(); // Reload to reset
   }).catch(err => {
     console.error(err);
   });
