@@ -42,7 +42,7 @@
 
   .card {
     width: 100%;
-    height: 250px;
+    min-height: 200px; /* Adjusted min-height for better content fit */
     background: white;
     border-radius: 10px;
     box-shadow: 0 8px 20px rgba(0,0,0,0.1);
@@ -50,6 +50,9 @@
     transform-style: preserve-3d;
     transition: transform 0.8s;
     cursor: pointer;
+    display: flex; /* Added for centering content */
+    align-items: center; /* Added for centering content */
+    justify-content: center; /* Added for centering content */
   }
 
   .card.flip {
@@ -62,11 +65,13 @@
     height: 100%;
     backface-visibility: hidden;
     padding: 30px;
-    display: flex;
+    display: flex; /* Keep flex for alignment */
+    flex-direction: column; /* Align text vertically if needed */
     align-items: center;
     justify-content: center;
-    font-size: 20px;
+    font-size: 18px; /* Slightly smaller font size */
     border-radius: 10px;
+    box-sizing: border-box; /* Include padding in width/height */
   }
 
   .card-front {
@@ -120,6 +125,17 @@
   #navigation button:hover {
     background: #00796b;
   }
+
+  #emailInput { /* Style for email input */
+      padding: 10px;
+      font-size: 16px;
+      width: 80%;
+      max-width: 300px;
+      margin-top: 15px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+  }
+
 </style>
 </head>
 <body>
@@ -144,33 +160,35 @@
 <script>
 let currentIndex = 0;
 let email = "";
-let realQuestionsStartIndex = 2; // index 0: Welcome, 1: Email
+// Note: realQuestionsStartIndex should align with the *index* in the array
+// Index 0 = Welcome, Index 1 = Email. Questions start at Index 2.
+let realQuestionsStartIndex = 2;
 let questions = [
-  "Welcome", // card 0
-  "Please enter your email:", // card 1
-  "The anticipation of future rewards motivates me more than receiving immediate rewards",
-  "I can maintain motivation by visualizing longterm benefits of my actions",
-  "I find myself seeking immediate rewards, even if I know a better reward will come later",
-  "I often need external incentives (praise, rewards) to stay motivated",
-  "I get energized by planning steps toward a distant goal",
-  "I tend to abandon tasks when the rewards aren't immediately visible",
-  "Once I've established a routine, I can maintain it without much conscious effort",
-  "I can stick to new habits even when facing obstacles or stress",
-  "I struggle to maintain consistency in my daily routines",
-  "I often start strong with new habits but rarely maintain them longterm",
-  "My positive habits feel natural and automatic rather than forced",
-  "I tend to forget or abandon habits if I don't see immediate results",
-  "I consciously align my daily habits with my longterm goals",
-  "When I recognize a habit isn't serving me, I can successfully modify it",
-  "I sometimes find myself repeating behaviors that conflict with my goals",
-  "I find it difficult to break habits even when I know they're counterproductive",
-  "I regularly evaluate and adjust my habits based on their effectiveness",
-  "I often act on autopilot without considering the longterm impact of my habits"
+  "Welcome to the Psychological Habit & Motivation Assessment!", // card 0
+  "Please enter your email address:", // card 1
+  "The anticipation of future rewards motivates me more than receiving immediate rewards", // card 2 (q1)
+  "I can maintain motivation by visualizing longterm benefits of my actions", // card 3 (q2)
+  "I find myself seeking immediate rewards, even if I know a better reward will come later", // card 4 (q3)
+  "I often need external incentives (praise, rewards) to stay motivated", // card 5 (q4)
+  "I get energized by planning steps toward a distant goal", // card 6 (q5)
+  "I tend to abandon tasks when the rewards aren't immediately visible", // card 7 (q6)
+  "Once I've established a routine, I can maintain it without much conscious effort", // card 8 (q7)
+  "I can stick to new habits even when facing obstacles or stress", // card 9 (q8)
+  "I struggle to maintain consistency in my daily routines", // card 10 (q9)
+  "I often start strong with new habits but rarely maintain them longterm", // card 11 (q10)
+  "My positive habits feel natural and automatic rather than forced", // card 12 (q11)
+  "I tend to forget or abandon habits if I don't see immediate results", // card 13 (q12)
+  "I consciously align my daily habits with my longterm goals", // card 14 (q13)
+  "When I recognize a habit isn't serving me, I can successfully modify it", // card 15 (q14)
+  "I sometimes find myself repeating behaviors that conflict with my goals", // card 16 (q15)
+  "I find it difficult to break habits even when I know they're counterproductive", // card 17 (q16)
+  "I regularly evaluate and adjust my habits based on their effectiveness", // card 18 (q17)
+  "I often act on autopilot without considering the longterm impact of my habits" // card 19 (q18)
 ];
 
 let explanations = [
-  "This is the back side of the first card.",
-  "Please type your email address so we can save your answers.",
+  "Click Next to begin. You can click the card to see an explanation related to the statement.",
+  "Your email will be stored alongside your answers. Please ensure it's correct before proceeding.",
   "Motivation can be increased by imagining the benefits of future success.",
   "Thinking about longterm goals helps in maintaining daily motivation.",
   "Seeking quick rewards can interfere with achieving bigger future goals.",
@@ -191,44 +209,63 @@ let explanations = [
   "Autopilot behavior can be either beneficial or harmful depending on the habit."
 ];
 
-let answers = {};
+// Store answers keyed by question index for simplicity
+// We will transform this before sending
+let userAnswers = {}; // Use a different name to avoid confusion with the 'answers' variable in submit function
 
 function loadQuestion() {
   const card = document.getElementById('card');
-  card.classList.remove('flip');
+  card.classList.remove('flip'); // Ensure card starts on front face
 
-  document.getElementById('question').innerText = questions[currentIndex];
-  document.getElementById('explanation').innerText = explanations[currentIndex];
+  // Delay updating content slightly to allow flip animation to reset if needed
+  setTimeout(() => {
+      document.getElementById('question').innerText = questions[currentIndex];
+      document.getElementById('explanation').innerText = explanations[currentIndex];
+  }, card.classList.contains('flip') ? 400 : 0); // Short delay if it was flipped
 
   const optionsDiv = document.getElementById('options');
-  optionsDiv.innerHTML = '';
+  optionsDiv.innerHTML = ''; // Clear previous options/input
 
   document.getElementById('prevBtn').style.display = (currentIndex > 0) ? "inline-block" : "none";
+  document.getElementById('nextBtn').style.display = "none"; // Hide by default
+  document.getElementById('submitBtn').style.display = "none"; // Hide by default
 
   if (currentIndex === 0) { // Welcome Card
     document.getElementById('nextBtn').style.display = "inline-block";
-    document.getElementById('submitBtn').style.display = "none";
-  } 
+  }
   else if (currentIndex === 1) { // Email Card
-    optionsDiv.innerHTML = `<input type="email" id="emailInput" placeholder="Enter your email" style="padding:10px; font-size:16px; width:80%;">`;
+    // Create email input dynamically
+    optionsDiv.innerHTML = `<input type="email" id="emailInput" placeholder="Enter your email">`;
+    // Restore previous email if navigating back
+    if (email) {
+      document.getElementById('emailInput').value = email;
+    }
     document.getElementById('nextBtn').style.display = "inline-block";
-    document.getElementById('submitBtn').style.display = "none";
-  } 
-  else if (currentIndex > 1 && currentIndex < questions.length - 1) { // Real questions
+  }
+  else if (currentIndex >= realQuestionsStartIndex && currentIndex < questions.length) { // Real questions
     let options = ["Strongly Agree", "Agree", "Neutral", "Disagree", "Strongly Disagree"];
     options.forEach(opt => {
       const btn = document.createElement('button');
       btn.innerText = opt;
-      btn.onclick = () => selectAnswer(opt);
+      // Highlight selected answer if navigating back/forth
+      if (userAnswers[currentIndex] === opt) {
+          btn.style.backgroundColor = '#4db6ac'; // Or some other highlight style
+          btn.style.color = 'white';
+      }
+      btn.onclick = () => selectAnswer(currentIndex, opt); // Pass index and option
       optionsDiv.appendChild(btn);
     });
-    document.getElementById('nextBtn').style.display = "none";
-    document.getElementById('submitBtn').style.display = "none";
-  } 
-  else { // Last card
-    document.getElementById('nextBtn').style.display = "none";
-    document.getElementById('submitBtn').style.display = "inline-block";
+    // Show next button only if an answer has been selected for the current question
+    // Or always show it and let selectAnswer handle moving next
+    // Let's always show Next after the first question card is displayed
+    if (currentIndex < questions.length - 1) {
+        document.getElementById('nextBtn').style.display = "inline-block";
+    } else {
+        // If it's the last question card, show Submit instead of Next
+        document.getElementById('submitBtn').style.display = "inline-block";
+    }
   }
+  // No 'else' needed as the last question case is handled above
 
   updateProgress();
 }
@@ -237,58 +274,141 @@ function flipCard() {
   document.getElementById('card').classList.toggle('flip');
 }
 
-function selectAnswer(option) {
-  if (currentIndex >= realQuestionsStartIndex) {
-    answers[`q${currentIndex - realQuestionsStartIndex + 1}`] = option;
-  }
-  nextQuestion();
+function selectAnswer(questionIndex, option) {
+  userAnswers[questionIndex] = option; // Store answer using the question's index
+
+  // Optionally, visually indicate the selected button immediately
+  const optionsDiv = document.getElementById('options');
+  Array.from(optionsDiv.children).forEach(button => {
+      if (button.innerText === option) {
+          button.style.backgroundColor = '#4db6ac';
+          button.style.color = 'white';
+      } else {
+          button.style.backgroundColor = '#ffffffaa'; // Reset others
+          button.style.color = 'black'; // Reset others
+      }
+  });
+
+  // Automatically move to the next question after a selection
+  // Or require user to click Next (current implementation does this via loadQuestion logic)
+  // Let's make it auto-advance for question cards
+   if (currentIndex < questions.length - 1) {
+       // Small delay to see the selection before moving
+       setTimeout(nextQuestion, 200);
+   } else {
+       // If last question, make sure submit button is visible
+       document.getElementById('submitBtn').style.display = 'inline-block';
+       document.getElementById('nextBtn').style.display = 'none';
+   }
 }
 
 function nextQuestion() {
-  if (currentIndex === 1) { // Email card
-    email = document.getElementById('emailInput').value.trim();
-    if (!email || !email.includes("@")) {
-      alert("Please enter a valid email.");
-      return;
+  // Validate email only when moving away from the email card
+  if (currentIndex === 1) {
+    const emailInput = document.getElementById('emailInput');
+    if (emailInput) { // Check if input exists
+        email = emailInput.value.trim();
+        if (!email || !email.includes("@") || !email.includes(".")) { // Simple validation
+          alert("Please enter a valid email address.");
+          return; // Stop navigation
+        }
+    } else {
+        // This case shouldn't happen if logic is correct, but good for safety
+        console.error("Email input not found on index 1");
+        return;
     }
   }
-  currentIndex++;
-  loadQuestion();
+
+  if (currentIndex < questions.length - 1) {
+    currentIndex++;
+    loadQuestion();
+  }
 }
 
 function prevQuestion() {
   if (currentIndex > 0) {
+    // If currently on email step, store potentially changed email before going back
+    if (currentIndex === 1) {
+        const emailInput = document.getElementById('emailInput');
+        if (emailInput) {
+            email = emailInput.value.trim(); // Store without validation
+        }
+    }
     currentIndex--;
     loadQuestion();
   }
 }
 
 function updateProgress() {
-  let progress = Math.floor((currentIndex / (questions.length-1)) * 100);
+  // Base progress on steps completed (including email)
+  let progress = Math.floor((currentIndex / (questions.length -1)) * 100);
   document.getElementById('progress').style.width = `${progress}%`;
 }
 
 function submitAnswers() {
+  // Disable submit button to prevent multiple submissions
+  document.getElementById('submitBtn').disabled = true;
+  document.getElementById('submitBtn').innerText = 'Submitting...';
+
+  // Transform answers into the desired {q1: ans, q2: ans, ...} format
+  const formattedAnswers = {};
+  for (let i = realQuestionsStartIndex; i < questions.length; i++) {
+      const questionNumber = i - realQuestionsStartIndex + 1; // Calculate Q number (1-18)
+      formattedAnswers[`q${questionNumber}`] = userAnswers[i] || "Not Answered"; // Use index 'i' to get answer
+  }
+
   const payload = {
     email: email,
-    answers: answers
+    answers: formattedAnswers // Send the formatted answers
   };
-  const url = "https://script.google.com/macros/s/AKfycbyr1tYZ2gW29jkogPD1PgfY2J7tC044ext2lehs9TFuPWgeiWXxlpITSrC0icIQvYogSA/exec";
+  const url = "https://script.google.com/macros/s/AKfycbyr1tYZ2gW29jkogPD1PgfY2J7tC044ext2lehs9TFuPWgeiWXxlpITSrC0icIQvYogSA/exec"; // Replace with YOUR script URL
+
+  console.log("Submitting payload:", JSON.stringify(payload)); // Log before sending
 
   fetch(url, {
     method: "POST",
-    mode: "no-cors",
+    // mode: "no-cors", // REMOVE THIS LINE
     headers: {
-      "Content-Type": "application/json"
+      // Content-Type is often set automatically by fetch for JSON,
+      // but explicitly setting it is good practice.
+      "Content-Type": "application/json",
     },
+    // Redirect needs to be 'follow' (default) or 'manual' for Apps Script web apps
+    // redirect: 'follow', // Usually the default, fine to omit
     body: JSON.stringify(payload)
-  }).then(res => {
-    alert("Submitted successfully!");
-  }).catch(err => {
-    console.error(err);
+  })
+  .then(response => {
+      // Check if response is ok (status in the range 200-299)
+      // Note: Apps Script redirects, so a direct .json() might fail here.
+      // We mainly care if the request succeeded without network errors.
+      console.log("Fetch response received:", response);
+      if (response.ok || response.type === 'opaque' || response.status === 0) { // Opaque or status 0 might occur with redirects/cors issues sometimes even without no-cors, treat as potential success
+         // Provide feedback to the user
+         document.getElementById('card').innerHTML = `
+            <div class="card-front" style="text-align: center;">
+                <h2>Thank You!</h2>
+                <p>Your answers have been submitted successfully.</p>
+            </div>`;
+         document.getElementById('options').innerHTML = '';
+         document.getElementById('navigation').innerHTML = ''; // Remove buttons
+         document.getElementById('progress-bar').style.display = 'none'; // Hide progress bar
+      } else {
+          // Try to get more info if possible, though often limited
+          return response.text().then(text => {
+              throw new Error(`Submission failed: ${response.status} ${response.statusText}. Response: ${text}`);
+          });
+      }
+  })
+  .catch(err => {
+    console.error("Fetch Error:", err);
+    alert("Submission failed. Please check the console for errors and try again.");
+    // Re-enable submit button on error
+    document.getElementById('submitBtn').disabled = false;
+    document.getElementById('submitBtn').innerText = 'Submit';
   });
 }
 
+// Initial load
 loadQuestion();
 </script>
 
