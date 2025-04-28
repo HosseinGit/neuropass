@@ -3,54 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Card Test - Flippable</title>
-
-        <style>
+    <title>Simple Card Test - Flippable Responsive</title>
+    <style>
         /* Basic Reset & Body Styling */
         * {
             box-sizing: border-box;
         }
+        html {
+             height: 100%; /* Ensure html takes full height */
+        }
         body {
             font-family: sans-serif;
             margin: 0;
-            padding: 20px;
+            padding: 20px; /* Default padding */
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start; /* Align top on mobile */
-            min-height: 100vh;
+            justify-content: center; /* Revert to centering content overall */
+            min-height: 100%; /* Use min-height on body */
             background: linear-gradient(to right, #e0f7fa, #e1bee7);
-            overflow-x: hidden;
+            overflow-x: hidden; /* Prevent horizontal scroll */
         }
 
         /* Card Container & Perspective */
         .card-container {
             width: 90%;
             max-width: 600px;
-            /* Default height suitable for larger screens */
-            height: 60vh;
-            min-height: 350px;
-            margin-top: 30px;
+            /* REMOVED explicit height/vh units */
+            margin-top: 20px; /* Adjusted margin */
             perspective: 1000px;
-            margin-bottom: 20px; /* Add space below card before nav */
+            margin-bottom: 20px; /* Space below card */
         }
 
         /* Card Structure for Flipping */
         .card {
             width: 100%;
-            height: 100%;
+            min-height: 300px; /* Start with a reasonable min-height */
             position: relative;
             cursor: pointer;
+            border-radius: 15px; /* Apply radius here */
+            background: white; /* Apply base background here for sizing */
+             box-shadow: 0 8px 20px rgba(0,0,0,0.15); /* Moved shadow here */
         }
 
         .card-inner {
             width: 100%;
             height: 100%;
-            position: relative;
+            position: absolute; /* Position absolutely within .card */
+            top: 0;
+            left: 0;
             transform-style: preserve-3d;
             transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-            border-radius: 15px;
+            border-radius: 15px; /* Keep radius */
+            /* Shadow removed, applied to .card */
         }
 
         /* Flip Class Applied by JS */
@@ -68,16 +73,20 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: center; /* Center content vertically within face */
             padding: 30px; /* Default padding */
             text-align: center;
-            font-size: 1.3em; /* Default font size */
-            overflow-y: auto; /* Allow scrolling within face if needed */
+            font-size: 1.2em; /* Default font size */
+            overflow-wrap: break-word; /* Help long words wrap */
+            word-wrap: break-word; /* Older browsers */
+            hyphens: auto; /* Allow hyphenation */
+             overflow-y: auto; /* Allow internal scrolling IF absolutely needed */
         }
 
         .card-front {
-            background: white;
+            background: white; /* Re-apply backgrounds */
             color: #333;
+            z-index: 2; /* Ensure front is initially on top */
         }
 
         .card-back {
@@ -88,37 +97,39 @@
 
         /* Content Inside Card Faces */
         #card-content {
-            margin-bottom: 25px;
+            margin-bottom: 20px; /* Adjusted margin */
             font-weight: bold;
+            max-width: 100%;
         }
         #backside-content {
              font-style: italic;
+             max-width: 100%;
         }
 
         /* Options Buttons */
         .options {
-            margin-top: 20px;
+            margin-top: 15px; /* Adjusted margin */
             display: flex;
             justify-content: center;
-            gap: 20px; /* Default gap */
-            flex-wrap: wrap; /* Allow buttons to wrap if needed */
+            gap: 15px; /* Adjusted gap */
+            flex-wrap: wrap;
         }
 
         /* Navigation Buttons */
         #navigation {
-            margin-top: 20px; /* Reduced margin */
+            margin-top: 20px;
             display: flex;
             justify-content: center;
-            gap: 15px; /* Default gap */
-            width: 90%; /* Match container width */
+            gap: 15px;
+            width: 90%;
             max-width: 600px;
-            flex-wrap: wrap; /* Allow buttons to wrap */
+            flex-wrap: wrap;
         }
 
         /* Shared Button Styling */
         .options button, #navigation button {
-            padding: 12px 25px;
-            font-size: 1em; /* Default font size */
+            padding: 10px 20px; /* Adjusted padding */
+            font-size: 0.95em; /* Adjusted font size */
             border: none;
             border-radius: 25px;
             background-color: rgba(255, 255, 255, 0.7);
@@ -126,7 +137,7 @@
             cursor: pointer;
             transition: background-color 0.2s, transform 0.1s;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            flex-shrink: 0; /* Prevent buttons from shrinking too much */
+            flex-shrink: 0;
         }
         .options button:hover, #navigation button:hover {
             background-color: rgba(255, 255, 255, 0.9);
@@ -150,71 +161,66 @@
 
         /* Status Message */
         #status {
-            margin-top: 20px; /* Reduced margin */
+            margin-top: 20px;
             font-weight: bold;
             min-height: 1.2em;
             color: #111;
-            text-align: center; /* Center status text */
+            text-align: center;
             width: 90%;
             max-width: 600px;
         }
 
-        /* --- Responsive Adjustments for Smaller Screens --- */
+        /* --- Responsive Adjustments --- */
         @media (max-width: 600px) {
             body {
-                padding: 10px; /* Reduce body padding */
-                justify-content: flex-start; /* Align content towards the top */
+                padding: 15px;
+                 justify-content: flex-start; /* Align top on smaller screens */
+                 min-height: 100vh; /* Ensure takes full screen */
             }
             .card-container {
-                width: 95%;      /* Slightly increase width */
-                height: auto;    /* Let height be determined by content */
-                min-height: 280px; /* Set a smaller minimum height */
-                margin-top: 20px;
-                margin-bottom: 15px; /* Reduce space below card */
+                width: 95%;
+                margin-top: 15px;
+                margin-bottom: 15px;
+            }
+            .card {
+                min-height: 280px; /* Adjust min-height for mobile */
             }
             .card-face {
-                padding: 20px;   /* Reduce padding inside card */
-                font-size: 1.1em; /* Reduce font size inside card */
-            }
-            #card-content {
-                margin-bottom: 15px; /* Reduce space below question */
+                padding: 20px;   /* Reduce padding */
+                font-size: 1.1em; /* Reduce font size */
             }
             .options {
-                margin-top: 15px;
-                gap: 10px;       /* Reduce space between option buttons */
+                gap: 10px;
             }
-            #navigation {
-                margin-top: 15px; /* Reduce space above nav buttons */
-                gap: 10px;       /* Reduce space between nav buttons */
-            }
-            .options button, #navigation button {
-                padding: 10px 18px; /* Make buttons slightly smaller */
-                font-size: 0.95em; /* Slightly smaller button text */
-            }
-            #status {
-                margin-top: 15px; /* Reduce space above status */
-            }
+             .options button, #navigation button {
+                 padding: 10px 18px;
+                 font-size: 0.9em; /* Further reduce button text */
+             }
         }
 
          @media (max-width: 400px) {
-             .card-face {
-                 font-size: 1em; /* Even smaller font on very small screens */
-                 padding: 15px;
+            body {
+                padding: 10px;
+            }
+             .card {
+                 min-height: 250px; /* Further adjust min-height */
              }
-             .options button, #navigation button {
-                padding: 8px 15px;
+             .card-face {
+                 font-size: 1em; /* Smaller font */
+                 padding: 15px; /* Less padding */
+             }
+              .options button, #navigation button {
+                padding: 8px 15px; /* Smaller buttons */
              }
          }
 
     </style>
-    
 </head>
 <body>
 
-    <!-- No main title needed -->
-
+    <!-- Structure remains the same -->
     <div class="card-container">
-        <div class="card" onclick="flipCard()"> <!-- Add onclick to the card itself -->
+        <div class="card" onclick="flipCard()">
             <div class="card-inner" id="card-inner">
                 <div class="card-face card-front">
                     <div id="card-content">Loading...</div>
@@ -225,13 +231,12 @@
                 </div>
             </div>
         </div>
-    </div> <!-- End card-container -->
+    </div>
 
-    <!-- Navigation sits below the card container -->
     <div id="navigation"></div>
-
     <p id="status"></p>
 
+    <!-- JavaScript remains the same as the previous step -->
     <script>
         // --- State Variables ---
         let currentIndex = 0; // 0: Welcome, 1: Q1, 2: Q2, 3: Q3, 4: Finished
@@ -256,7 +261,7 @@
         const statusP = document.getElementById('status');
 
         // !!! PASTE YOUR WORKING WEB APP URL HERE !!!
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbzzEEBrO7ORxw8kzLbVKrEt7x_4_1ZEwU9IuRMY9HMk6p_uTjM9k8V4ZINfcvI-4CBM/exec';
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbzzEEBrO7ORxw8kzLbVKrEt7x_4_1ZEwU9IuRMY9HMk6p_uTjM9k8V4ZINfcvI-4CBM/exec'; // <-- MAKE SURE THIS IS CORRECT
 
         // --- Functions ---
 
@@ -264,35 +269,32 @@
             currentIndex = index;
             cardInner.classList.remove('flip'); // Reset to front face on load
 
-            // Set content after a tiny delay to allow flip animation to reset if needed
             setTimeout(() => {
                 cardContentDiv.textContent = cardContents[index];
-                backsideContentDiv.textContent = backsideText; // Set static back text
-            }, 50); // Small delay
+                backsideContentDiv.textContent = backsideText;
+            }, 50);
 
-            optionsDiv.innerHTML = '';    // Clear previous options
-            navigationDiv.innerHTML = ''; // Clear previous navigation
-            statusP.textContent = '';     // Clear status message
+            optionsDiv.innerHTML = '';
+            navigationDiv.innerHTML = '';
+            statusP.textContent = '';
 
-            // --- Button Logic ---
             if (index > 0) {
                 const prevBtn = document.createElement('button');
                 prevBtn.textContent = 'Previous';
-                prevBtn.onclick = (e) => { e.stopPropagation(); prevCard(); }; // Stop flip on button click
+                prevBtn.onclick = (e) => { e.stopPropagation(); prevCard(); };
                 navigationDiv.appendChild(prevBtn);
             }
 
             if (index === 0) {
                 const nextBtn = document.createElement('button');
                 nextBtn.textContent = 'Next';
-                nextBtn.onclick = (e) => { e.stopPropagation(); nextCard(); }; // Stop flip
+                nextBtn.onclick = (e) => { e.stopPropagation(); nextCard(); };
                 navigationDiv.appendChild(nextBtn);
             } else if (index >= 1 && index <= 3) {
                 const questionKey = 'q' + index;
                 ['Yes', 'No'].forEach(option => {
                     const btn = document.createElement('button');
                     btn.textContent = option;
-                    // Stop propagation on option buttons as well
                     btn.onclick = (e) => { e.stopPropagation(); selectAnswer(index, option); };
                     optionsDiv.appendChild(btn);
                     if (answers[questionKey] === option) {
@@ -303,13 +305,11 @@
                 const submitBtn = document.createElement('button');
                 submitBtn.id = 'submitBtn';
                 submitBtn.textContent = 'Submit Answers';
-                // Stop propagation on submit button
                 submitBtn.onclick = (e) => { e.stopPropagation(); submitData(); };
                 navigationDiv.appendChild(submitBtn);
             }
         }
 
-        // Function to flip the card
         function flipCard() {
             cardInner.classList.toggle('flip');
         }
@@ -328,7 +328,7 @@
                 if (currentIndex < cardContents.length - 1) {
                      nextCard();
                  }
-            }, 250); // Slightly longer delay after selection
+            }, 250);
         }
 
         function nextCard() {
@@ -369,8 +369,8 @@
                 if (data && data.result === 'success') {
                     statusP.textContent = 'Success! Data submitted.';
                     statusP.style.color = 'green';
-                    document.querySelector('.card-container').style.display = 'none'; // Hide card
-                    navigationDiv.style.display = 'none'; // Hide navigation
+                    document.querySelector('.card-container').style.display = 'none';
+                    navigationDiv.style.display = 'none';
                 } else {
                     statusP.textContent = `Submission OK, but script reported: ${data.message || 'Unknown issue'}`;
                     statusP.style.color = 'orange';
@@ -389,7 +389,6 @@
         window.onload = () => {
             loadCard(0);
         };
-
     </script>
 
 </body>
