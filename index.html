@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Relaxing Questionnaire</title>
+<style>
+    body {
+        background: linear-gradient(to right, #e0f7fa, #e1bee7);
+        font-family: 'Segoe UI', sans-serif;
+        text-align: center;
+        padding: 40px;
+        margin: 0;
+    }
+    .slide {
+        display: none;
+    }
+    .slide.active {
+        display: block;
+    }
+    .question {
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+    .options button {
+        background-color: #ffffffaa;
+        border: none;
+        padding: 10px 20px;
+        margin: 10px;
+        border-radius: 8px;
+        font-size: 18px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+    .options button:hover {
+        background-color: #b2ebf2;
+    }
+</style>
+</head>
+<body>
+
+<div id="welcome" class="slide active">
+    <h1>Welcome 🌸</h1>
+    <p>Take a moment for yourself. Let's start the questionnaire!</p>
+    <button onclick="nextSlide()">Start</button>
+</div>
+
+<div id="q1" class="slide">
+    <div class="question">1. How do you feel today?</div>
+    <div class="options">
+        <button onclick="saveAnswer('q1', 'Very Happy'); nextSlide()">Very Happy</button>
+        <button onclick="saveAnswer('q1', 'Happy'); nextSlide()">Happy</button>
+        <button onclick="saveAnswer('q1', 'Neutral'); nextSlide()">Neutral</button>
+        <button onclick="saveAnswer('q1', 'Sad'); nextSlide()">Sad</button>
+        <button onclick="saveAnswer('q1', 'Very Sad'); nextSlide()">Very Sad</button>
+    </div>
+</div>
+
+<div id="q2" class="slide">
+    <div class="question">2. How often do you meditate?</div>
+    <div class="options">
+        <button onclick="saveAnswer('q2', 'Daily'); nextSlide()">Daily</button>
+        <button onclick="saveAnswer('q2', 'Weekly'); nextSlide()">Weekly</button>
+        <button onclick="saveAnswer('q2', 'Monthly'); nextSlide()">Monthly</button>
+        <button onclick="saveAnswer('q2', 'Rarely'); nextSlide()">Rarely</button>
+        <button onclick="saveAnswer('q2', 'Never'); nextSlide()">Never</button>
+    </div>
+</div>
+
+<div id="q3" class="slide">
+    <div class="question">3. How stressed do you feel right now?</div>
+    <div class="options">
+        <button onclick="saveAnswer('q3', 'Not at all'); endQuiz()">Not at all</button>
+        <button onclick="saveAnswer('q3', 'A little'); endQuiz()">A little</button>
+        <button onclick="saveAnswer('q3', 'Moderate'); endQuiz()">Moderate</button>
+        <button onclick="saveAnswer('q3', 'Quite stressed'); endQuiz()">Quite stressed</button>
+        <button onclick="saveAnswer('q3', 'Extremely stressed'); endQuiz()">Extremely stressed</button>
+    </div>
+</div>
+
+<div id="end" class="slide">
+    <h2>Thank you for completing 🌼</h2>
+    <p>Stay relaxed and have a wonderful day!</p>
+</div>
+
+<script>
+let currentSlide = 0;
+const slides = document.querySelectorAll('.slide');
+const answers = {};
+
+function nextSlide() {
+    slides[currentSlide].classList.remove('active');
+    currentSlide++;
+    slides[currentSlide].classList.add('active');
+}
+
+function saveAnswer(question, answer) {
+    answers[question] = answer;
+}
+
+function endQuiz() {
+    slides[currentSlide].classList.remove('active');
+    document.getElementById('end').classList.add('active');
+    sendData();
+}
+
+function sendData() {
+    const url = "PASTE_YOUR_GOOGLE_APPS_SCRIPT_URL_HERE"; // <-- change this
+    fetch(url, {
+        method: "POST",
+        mode: "no-cors",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(answers)
+    }).then(response => {
+        console.log("Data sent");
+    }).catch(error => {
+        console.error("Error!", error.message);
+    });
+}
+</script>
+
+</body>
+</html>
