@@ -3,108 +3,256 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Test Form</title>
+    <title>Simple Card Test</title>
     <style>
-        body { font-family: sans-serif; padding: 20px; }
-        form div { margin-bottom: 15px; }
-        label { display: inline-block; margin-right: 10px; }
-        button { padding: 10px 15px; cursor: pointer; }
-        #status { margin-top: 20px; font-weight: bold; }
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f0f0f0;
+        }
+        .card-container {
+            width: 90%;
+            max-width: 400px;
+            margin-top: 30px;
+        }
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            min-height: 150px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column; /* Ensure content stacks vertically */
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        #card-content {
+            font-size: 1.2em;
+            margin-bottom: 20px; /* Add space below question text */
+        }
+        .options {
+            margin-top: 20px; /* Add space above options */
+            display: flex;
+            justify-content: center;
+            gap: 15px; /* Add space between Yes/No buttons */
+        }
+        .options button, #navigation button {
+            padding: 10px 20px;
+            font-size: 1em;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            background-color: #eee;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .options button:hover, #navigation button:hover {
+            background-color: #ddd;
+        }
+        .options button.selected {
+            background-color: #4CAF50; /* Green background for selected */
+            color: white;
+            border-color: #4CAF50;
+        }
+        #navigation {
+            margin-top: 25px;
+            display: flex;
+            justify-content: center; /* Center buttons */
+            gap: 15px; /* Add space between Prev/Next/Submit */
+        }
+        #status {
+            margin-top: 20px;
+            font-weight: bold;
+            min-height: 1.2em; /* Reserve space */
+        }
     </style>
 </head>
 <body>
 
-    <h1>Super Simple Test Form</h1>
-    <p>This form sends data to a Google Sheet.</p>
+    <h1>Simple Card Test</h1>
 
-    <form id="simpleForm">
-        <div>
-            <label>Question One:</label>
-            <input type="radio" id="q1_yes" name="q1" value="Yes" required>
-            <label for="q1_yes">Yes</label>
-            <input type="radio" id="q1_no" name="q1" value="No" required>
-            <label for="q1_no">No</label>
+    <div class="card-container">
+        <div class="card">
+            <div id="card-content">Loading...</div>
+            <div class="options" id="options"></div>
         </div>
-        <div>
-            <label>Question Two:</label>
-            <input type="radio" id="q2_yes" name="q2" value="Yes" required>
-            <label for="q2_yes">Yes</label>
-            <input type="radio" id="q2_no" name="q2" value="No" required>
-            <label for="q2_no">No</label>
-        </div>
-        <div>
-            <label>Question Three:</label>
-            <input type="radio" id="q3_yes" name="q3" value="Yes" required>
-            <label for="q3_yes">Yes</label>
-            <input type="radio" id="q3_no" name="q3" value="No" required>
-            <label for="q3_no">No</label>
-        </div>
-        <div>
-            <button type="submit" id="submitBtn">Submit Answers</button>
-        </div>
-    </form>
+        <div id="navigation"></div>
+    </div>
 
     <p id="status"></p>
 
     <script>
-        const form = document.getElementById('simpleForm');
-        const statusP = document.getElementById('status');
-        const submitBtn = document.getElementById('submitBtn');
+        // --- State Variables ---
+        let currentIndex = 0; // 0: Welcome, 1: Q1, 2: Q2, 3: Q3, 4: Finished
+        let answers = {}; // Stores { q1: 'Yes', q2: 'No', ... }
 
-        // !!! PASTE YOUR NEW WEB APP URL HERE !!!
+        // --- Content ---
+        const cardContents = [
+            "Welcome to the Simple Test!", // Index 0
+            "Question One: Is the sky blue?",      // Index 1
+            "Question Two: Is water wet?",     // Index 2
+            "Question Three: Does 1+1=2?",    // Index 3
+            "Finished! Ready to submit?"      // Index 4
+        ];
+
+        // --- DOM Elements ---
+        const cardContentDiv = document.getElementById('card-content');
+        const optionsDiv = document.getElementById('options');
+        const navigationDiv = document.getElementById('navigation');
+        const statusP = document.getElementById('status');
+
+        // !!! PASTE YOUR WORKING WEB APP URL HERE !!!
+        // (The one from the simple test that worked)
         const scriptURL = 'https://script.google.com/macros/s/AKfycbzzEEBrO7ORxw8kzLbVKrEt7x_4_1ZEwU9IuRMY9HMk6p_uTjM9k8V4ZINfcvI-4CBM/exec';
 
-        form.addEventListener('submit', event => {
-            event.preventDefault(); // Stop standard form submission
+        // --- Functions ---
+
+        function loadCard(index) {
+            currentIndex = index;
+            cardContentDiv.textContent = cardContents[index];
+            optionsDiv.innerHTML = '';    // Clear previous options
+            navigationDiv.innerHTML = ''; // Clear previous navigation
+            statusP.textContent = '';     // Clear status message
+
+            // --- Button Logic ---
+            // Previous Button (always show except on Welcome)
+            if (index > 0) {
+                const prevBtn = document.createElement('button');
+                prevBtn.textContent = 'Previous';
+                prevBtn.onclick = prevCard;
+                navigationDiv.appendChild(prevBtn);
+            }
+
+            // Content-Specific Elements
+            if (index === 0) { // Welcome Card
+                const nextBtn = document.createElement('button');
+                nextBtn.textContent = 'Next';
+                nextBtn.onclick = nextCard;
+                navigationDiv.appendChild(nextBtn);
+            } else if (index >= 1 && index <= 3) { // Question Cards (1, 2, 3)
+                const questionKey = 'q' + index; // q1, q2, or q3
+                const yesBtn = document.createElement('button');
+                yesBtn.textContent = 'Yes';
+                yesBtn.onclick = () => selectAnswer(index, 'Yes');
+                optionsDiv.appendChild(yesBtn);
+
+                const noBtn = document.createElement('button');
+                noBtn.textContent = 'No';
+                noBtn.onclick = () => selectAnswer(index, 'No');
+                optionsDiv.appendChild(noBtn);
+
+                // Highlight previously selected answer if navigating back
+                if (answers[questionKey] === 'Yes') {
+                    yesBtn.classList.add('selected');
+                } else if (answers[questionKey] === 'No') {
+                    noBtn.classList.add('selected');
+                }
+            } else if (index === 4) { // Finished Card
+                const submitBtn = document.createElement('button');
+                submitBtn.id = 'submitBtn'; // Give it an ID for disabling
+                submitBtn.textContent = 'Submit Answers';
+                submitBtn.onclick = submitData;
+                navigationDiv.appendChild(submitBtn); // Add submit next to previous
+            }
+        }
+
+        function selectAnswer(questionIndex, option) {
+            const questionKey = 'q' + questionIndex;
+            answers[questionKey] = option;
+            console.log('Answers:', answers); // Log current answers
+
+            // Highlight selected button visually
+            const buttons = optionsDiv.querySelectorAll('button');
+            buttons.forEach(btn => {
+                if (btn.textContent === option) {
+                    btn.classList.add('selected');
+                } else {
+                    btn.classList.remove('selected');
+                }
+            });
+
+            // Auto-advance to next card (unless it's the last question)
+            // Add a small delay so the user sees the selection
+            setTimeout(() => {
+                if (currentIndex < cardContents.length - 1) { // Check if not the "Finished" card yet
+                     nextCard();
+                 }
+            }, 200); // 200ms delay
+
+        }
+
+        function nextCard() {
+            if (currentIndex < cardContents.length - 1) {
+                loadCard(currentIndex + 1);
+            }
+        }
+
+        function prevCard() {
+            if (currentIndex > 0) {
+                loadCard(currentIndex - 1);
+            }
+        }
+
+        function submitData() {
+            const submitBtn = document.getElementById('submitBtn');
             statusP.textContent = 'Submitting...';
-            submitBtn.disabled = true;
+            statusP.style.color = 'black';
+            if (submitBtn) submitBtn.disabled = true; // Disable button
 
-            // Collect answers
-            const answers = {
-                q1: document.querySelector('input[name="q1"]:checked')?.value || 'Not Selected',
-                q2: document.querySelector('input[name="q2"]:checked')?.value || 'Not Selected',
-                q3: document.querySelector('input[name="q3"]:checked')?.value || 'Not Selected'
-            };
-
-            console.log('Submitting data:', JSON.stringify(answers));
+            console.log('Submitting final answers:', JSON.stringify(answers));
 
             // Send data using fetch (with text/plain workaround)
             fetch(scriptURL, {
                 redirect: "follow",
                 method: 'POST',
                 headers: {
-                    // Using text/plain to hopefully avoid preflight CORS check
                     'Content-Type': 'text/plain;charset=utf-8',
                 },
-                body: JSON.stringify(answers) // Send the data as a JSON string
+                body: JSON.stringify(answers) // Send the collected answers
             })
             .then(response => {
                 console.log('Fetch Response:', response);
                 if (response.ok) {
-                    // Try parsing the response as JSON (Apps Script should return JSON)
-                    return response.json();
+                    return response.json(); // Expecting JSON response from Apps Script
                 } else {
-                    // If response not ok, try to get text error and throw
                     return response.text().then(text => {
-                        throw new Error(`HTTP error ${response.status}: ${text}`);
-                    });
+                         throw new Error(`HTTP error ${response.status}: ${text || 'Unknown error'}`);
+                     });
                 }
             })
             .then(data => {
                 console.log('Success Response Data:', data);
-                statusP.textContent = 'Success! Data submitted.';
-                statusP.style.color = 'green';
-                form.reset(); // Clear the form
+                 // Check if the Apps Script reported success
+                if (data && data.result === 'success') {
+                    statusP.textContent = 'Success! Data submitted.';
+                    statusP.style.color = 'green';
+                    // Optionally hide card/buttons after success
+                     document.querySelector('.card-container').style.display = 'none';
+                } else {
+                    // Handle cases where Apps Script returns ok status but reports an internal error
+                    statusP.textContent = `Submission OK, but script reported: ${data.message || 'Unknown issue'}`;
+                    statusP.style.color = 'orange';
+                     if (submitBtn) submitBtn.disabled = false; // Re-enable on script error
+                }
             })
             .catch(error => {
                 console.error('Fetch Error:', error);
                 statusP.textContent = `Error: ${error.message}. Check console.`;
                 statusP.style.color = 'red';
-            })
-            .finally(() => {
-                 submitBtn.disabled = false; // Re-enable button
+                 if (submitBtn) submitBtn.disabled = false; // Re-enable button on fetch error
             });
-        });
+            // Note: No .finally() re-enabling button here, only on specific errors.
+            // Button stays disabled on full success.
+        }
+
+        // --- Initial Load ---
+        window.onload = () => {
+            loadCard(0); // Load the Welcome card first
+        };
+
     </script>
 
 </body>
