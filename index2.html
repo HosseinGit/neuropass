@@ -30,7 +30,6 @@
             min-height: 300px; /* Adjust as needed */
             position: relative;
             border-radius: 15px;
-            /* Remove background/shadow from here, apply to faces */
             cursor: pointer; /* Add cursor pointer for flipping */
         }
 
@@ -38,13 +37,13 @@
         .card-inner {
             width: 100%;
             height: 100%;
-            position: absolute; /* Use absolute to stack faces */
+            position: absolute;
             top: 0;
             left: 0;
             transform-style: preserve-3d;
             transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
-            border-radius: 15px; /* Apply radius here */
-            box-shadow: 0 8px 20px rgba(0,0,0,0.15); /* Apply shadow here */
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
         }
         .card-inner.flip {
             transform: rotateY(180deg);
@@ -55,7 +54,7 @@
             position: absolute;
             width: 100%;
             height: 100%;
-            backface-visibility: hidden; /* Hide the back of the face */
+            backface-visibility: hidden;
             border-radius: 15px;
             display: flex;
             flex-direction: column;
@@ -66,27 +65,27 @@
             overflow-wrap: break-word;
             word-wrap: break-word;
             hyphens: auto;
-            overflow-y: auto; /* Allow scrolling if content overflows */
+            overflow-y: auto;
         }
         .card-front {
             background: white;
             color: #333;
-            z-index: 2; /* Front face is initially on top */
+            z-index: 2;
         }
         .card-back {
-            background: #424242; /* Dark background for back */
-            color: white;        /* White text for contrast */
-            transform: rotateY(180deg); /* Pre-rotated */
+            background: #424242;
+            color: white;
+            transform: rotateY(180deg);
         }
 
         /* --- Content Inside Front Face --- */
-        #card-content { /* Target the content div specifically */
+        #card-content {
              margin-bottom: 20px;
              font-weight: bold;
              font-size: 1.2em;
              max-width: 100%;
         }
-        #backside-content { /* Target back content */
+        #backside-content {
             max-width: 100%;
             font-size: 1.1em;
         }
@@ -96,7 +95,7 @@
             margin-bottom: 15px;
             width: 100%;
             max-width: 350px;
-            text-align: left; /* Align label left */
+            text-align: left;
         }
         #email-input-container label {
             display: block;
@@ -209,16 +208,12 @@
 <body>
 
     <div class="card-container">
-        <!-- Added onclick for flipping -->
         <div class="card" onclick="flipCard()">
             <div class="card-inner" id="card-inner">
-                <!-- Front Face Content Area -->
                 <div class="card-face card-front" id="card-front-content">
-                    <!-- Content (email, statement, options) will be dynamically added here -->
                     <div id="card-content">Loading...</div>
                     <div class="options" id="options"></div>
                 </div>
-                <!-- Back Face Content Area -->
                 <div class="card-face card-back">
                     <div id="backside-content">Backside</div>
                 </div>
@@ -231,13 +226,13 @@
 
     <script>
         // --- State Variables ---
-        let currentIndex = 0; // 0: Email, 1-18: Statements, 19: Finished
+        let currentIndex = 0;
         let userEmail = '';
-        let answers = {}; // Stores { s1: 'Agree', s2: 'Disagree', ... }
+        let answers = {};
 
         // --- Content ---
         const statementContents = [
-            // Index 0 placeholder (email prompt)
+            // Index 0: Placeholder handled by email logic
             "The anticipation of future rewards motivates me more than receiving immediate rewards", // Index 1 (s1)
             "I can maintain motivation by visualizing longterm benefits of my actions", // Index 2 (s2)
             "I find myself seeking immediate rewards, even if I know a better reward will come later", // Index 3 (s3)
@@ -260,14 +255,13 @@
         ];
         const TOTAL_CARDS = statementContents.length; // 20
         const NUM_STATEMENTS = TOTAL_CARDS - 2; // 18
-        const backsideText = "Backside"; // Simple text for the back
+        const backsideText = "Backside";
 
         // --- DOM Elements ---
-        const cardInner = document.getElementById('card-inner'); // Target for flip class
-        const cardFrontContent = document.getElementById('card-front-content'); // Container for front content
-        const cardContentDiv = document.getElementById('card-content'); // The text part
-        const backsideContentDiv = document.getElementById('backside-content'); // Back text part
-        const optionsDiv = document.getElementById('options'); // Options buttons container
+        const cardInner = document.getElementById('card-inner');
+        const cardFrontContent = document.getElementById('card-front-content');
+        // We will get cardContentDiv and optionsDiv dynamically inside loadCard now
+        const backsideContentDiv = document.getElementById('backside-content');
         const navigationDiv = document.getElementById('navigation');
         const statusP = document.getElementById('status');
 
@@ -277,31 +271,34 @@
         // --- Functions ---
 
         function loadCard(index) {
+            console.log(`Loading card index: ${index}`); // <-- ADDED CONSOLE LOG
             currentIndex = index;
-            cardInner.classList.remove('flip'); // Ensure card starts on front face
+            cardInner.classList.remove('flip');
 
-            // Use a short delay to allow flip animation reset before changing content
+            // Delay content change slightly
             setTimeout(() => {
                 // Clear previous dynamic content from front face
                 cardFrontContent.innerHTML = '';
 
-                // Add back the core front elements
+                // Create and add core front elements
                 const contentDiv = document.createElement('div');
                 contentDiv.id = 'card-content';
                 cardFrontContent.appendChild(contentDiv);
 
                 const currentOptionsDiv = document.createElement('div');
                 currentOptionsDiv.className = 'options';
-                currentOptionsDiv.id = 'options'; // Keep ID for selectAnswer
+                currentOptionsDiv.id = 'options';
                 cardFrontContent.appendChild(currentOptionsDiv);
 
-                 // Set back face content (static)
+                 // Set back face content
                  backsideContentDiv.textContent = backsideText;
 
-
                 // --- Populate Front Face Content ---
-                if (index === 0) { // Email Screen
-                    contentDiv.textContent = 'Please enter your email address to begin:';
+                let cardText = ""; // To log what text is set
+                if (index === 0) { // Email Screen (Index 0)
+                    cardText = 'Please enter your email address to begin:';
+                    contentDiv.textContent = cardText;
+                    console.log("Displaying: Email Prompt");
 
                     const emailContainer = document.createElement('div');
                     emailContainer.id = 'email-input-container';
@@ -313,23 +310,21 @@
                     emailInput.id = 'email-input';
                     emailInput.placeholder = 'you@example.com';
                     emailInput.required = true;
-                    emailInput.value = userEmail; // Pre-fill
-                    // Stop flip when clicking inside input
+                    emailInput.value = userEmail;
                     emailInput.onclick = (e) => e.stopPropagation();
-
                     emailContainer.appendChild(emailLabel);
                     emailContainer.appendChild(emailInput);
-                    // Insert email input before the options div within the front face
                     cardFrontContent.insertBefore(emailContainer, currentOptionsDiv);
 
-                } else if (index > 0 && index < TOTAL_CARDS - 1) { // Statement cards (1 to 18)
-                    contentDiv.textContent = statementContents[index];
+                } else if (index > 0 && index < TOTAL_CARDS - 1) { // Statement cards (Index 1 to 18)
+                    cardText = statementContents[index];
+                    contentDiv.textContent = cardText;
+                    console.log(`Displaying Statement ${index}: "${cardText}"`); // <-- LOG STATEMENT
                     const statementKey = 's' + index;
 
                     ['Agree', 'Disagree'].forEach(option => {
                         const btn = document.createElement('button');
                         btn.textContent = option;
-                        // Stop card flip when clicking options, handle answer selection
                         btn.onclick = (e) => { e.stopPropagation(); selectAnswer(index, option); };
                         currentOptionsDiv.appendChild(btn);
                         if (answers[statementKey] === option) {
@@ -337,26 +332,27 @@
                         }
                     });
 
-                } else if (index === TOTAL_CARDS - 1) { // Finished screen (index 19)
-                    contentDiv.textContent = statementContents[index];
-                    currentOptionsDiv.innerHTML = ''; // No options on finish screen
+                } else if (index === TOTAL_CARDS - 1) { // Finished screen (Index 19)
+                    cardText = statementContents[index];
+                    contentDiv.textContent = cardText;
+                    console.log("Displaying: Finished Screen");
+                    currentOptionsDiv.innerHTML = '';
                 }
 
-
-                // --- Navigation Buttons (Outside Card) ---
-                navigationDiv.innerHTML = ''; // Clear old navigation
+                // --- Navigation Buttons ---
+                navigationDiv.innerHTML = '';
                 statusP.textContent = '';
 
                 if (index === 0) { // Email screen nav
                     const startBtn = document.createElement('button');
                     startBtn.textContent = 'Start Assessment';
-                    startBtn.onclick = (e) => { // Need stopPropagation here too
+                    startBtn.onclick = (e) => {
                          e.stopPropagation();
                          const emailValue = document.getElementById('email-input').value.trim();
                          if (validateEmail(emailValue)) {
                              userEmail = emailValue;
                              console.log("Email captured:", userEmail);
-                             nextCard();
+                             nextCard(); // <-- This should call loadCard(1)
                          } else {
                              statusP.textContent = 'Please enter a valid email address.';
                              statusP.style.color = 'orange';
@@ -364,71 +360,68 @@
                          }
                     };
                     navigationDiv.appendChild(startBtn);
-                } else { // Navigation for statements & finish screen
-                    // Add Previous button if not on the first statement (index 1)
-                    if (index > 0) {
+                } else { // Nav for statements & finish
+                    if (index > 0) { // Previous button needed for index 1 onwards
                         const prevBtn = document.createElement('button');
                         prevBtn.textContent = 'Previous';
                         prevBtn.onclick = (e) => { e.stopPropagation(); prevCard(); };
                         navigationDiv.appendChild(prevBtn);
                     }
-
-                    // Add Submit button ONLY on the finish screen
-                    if (index === TOTAL_CARDS - 1) {
+                    if (index === TOTAL_CARDS - 1) { // Submit button only on last card
                          const submitBtn = document.createElement('button');
                          submitBtn.id = 'submitBtn';
                          submitBtn.textContent = 'Submit Answers';
                          submitBtn.onclick = (e) => { e.stopPropagation(); submitData(); };
                          navigationDiv.appendChild(submitBtn);
                     }
-                    // Note: Removed the optional 'Next' button for statements as selectAnswer auto-advances
                 }
-             }, 50); // 50ms delay matches original flip reset timing
+             }, 50);
         }
 
-        // Basic email validation helper
         function validateEmail(email) {
             const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             return re.test(String(email).toLowerCase());
         }
 
-        // --- Function to flip the card ---
         function flipCard() {
+            // Allow flip on any card except maybe the first (email) or last (finish)?
+            // Or just allow always for simplicity.
             cardInner.classList.toggle('flip');
         }
 
         function selectAnswer(statementIndex, option) {
-            const statementKey = 's' + statementIndex;
+            const statementKey = 's' + statementIndex; // Creates s1, s2, ... s18
             answers[statementKey] = option;
-            console.log('Answers:', answers);
+            console.log('Answer Selected:', statementKey, '=', option);
+            console.log('Current Answers:', answers);
 
-             // Update button visual state dynamically
              const buttons = document.querySelectorAll('#options button');
              buttons.forEach(btn => {
                  btn.classList.toggle('selected', btn.textContent === option);
              });
 
-            // Automatically move to the next card after a short delay
+            // Auto-advance
             setTimeout(() => {
                 if (currentIndex < TOTAL_CARDS - 1) {
-                     nextCard();
+                     nextCard(); // Moves to next statement or finish screen
                  }
-            }, 250); // 250ms delay
+            }, 250);
         }
 
         function nextCard() {
             if (currentIndex < TOTAL_CARDS - 1) {
-                loadCard(currentIndex + 1);
+                loadCard(currentIndex + 1); // Correctly increments index
             }
         }
 
         function prevCard() {
             if (currentIndex > 0) {
-                loadCard(currentIndex - 1);
+                loadCard(currentIndex - 1); // Correctly decrements index
             }
         }
 
-       function submitData() {
+        // --- submitData function remains the same as previous correct version ---
+        function submitData() {
             const submitBtn = document.getElementById('submitBtn');
             statusP.textContent = 'Submitting...';
             statusP.style.color = 'black';
@@ -444,13 +437,20 @@
                  if (submitBtn) submitBtn.disabled = false;
                  loadCard(0); return;
             }
-            if (Object.keys(answers).length < NUM_STATEMENTS) {
-                 statusP.textContent = `Please answer all ${NUM_STATEMENTS} statements before submitting.`;
+            // Check if all *statement* keys (s1 to s18) exist
+             let answeredCount = 0;
+             for (let i = 1; i <= NUM_STATEMENTS; i++) {
+                 if (answers['s' + i]) {
+                     answeredCount++;
+                 }
+             }
+            if (answeredCount < NUM_STATEMENTS) {
+                 statusP.textContent = `Please answer all ${NUM_STATEMENTS} statements before submitting. (${answeredCount}/${NUM_STATEMENTS} answered)`;
                  statusP.style.color = 'orange';
                  if (submitBtn) submitBtn.disabled = false; return;
             }
 
-            // Fetch (remains the same)
+            // Fetch
             fetch(scriptURL, {
                 redirect: "follow",
                 method: 'POST',
@@ -481,7 +481,6 @@
                 if (data && data.result === 'success') {
                     statusP.textContent = data.message || 'Success! Data submitted.';
                     statusP.style.color = 'green';
-                    // Hide card and navigation
                     const cardContainer = document.querySelector('.card-container');
                     if (cardContainer) cardContainer.style.display = 'none';
                     if (navigationDiv) navigationDiv.style.display = 'none';
@@ -501,7 +500,7 @@
 
         // --- Initial Load ---
         window.onload = () => {
-            loadCard(0); // Start with the email screen
+            loadCard(0); // Start with the email screen (index 0)
         };
     </script>
 
