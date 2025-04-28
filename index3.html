@@ -3,43 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Card Test - Flippable Responsive (Card Only)</title>
+    <title>Neurological Assessment</title>
     <style>
         /* Basic Reset & Body Styling */
         * {
             box-sizing: border-box;
         }
         html {
-             height: 100%; /* Can often be removed if body has no height dependency */
+             height: 100%;
         }
         body {
             font-family: sans-serif;
-            margin: 0; /* Remove default body margin */
-            /* REMOVED: background, display:flex, align-items, justify-content, min-height */
-            padding: 15px; /* Keep some padding so card doesn't touch iframe edge */
-            overflow-x: hidden; /* Prevent horizontal scroll */
+            margin: 0;
+            padding: 15px 15px 10px 15px; /* Adjusted bottom padding */
+            overflow-x: hidden;
+            background-color: #f0f0f0; /* Light grey background */
         }
 
         /* Card Container & Perspective */
         .card-container {
             width: 90%;
             max-width: 600px;
-            margin: 20px auto; /* Center the container horizontally, provide vertical margin */
+            margin: 15px auto;
             perspective: 1000px;
-            /* REMOVED explicit height/vh units */
         }
 
-        /* Card Structure for Flipping */
+        /* Card Structure */
         .card {
             width: 100%;
-            min-height: 300px; /* Start with a reasonable min-height */
+            min-height: 350px; /* Increased min-height for content */
             position: relative;
             cursor: pointer;
             border-radius: 15px;
-            background: white; /* Base background for sizing */
+            background: white;
             box-shadow: 0 8px 20px rgba(0,0,0,0.15);
         }
 
+        /* Card Inner & Flip */
         .card-inner {
             width: 100%;
             height: 100%;
@@ -50,14 +50,12 @@
             transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
             border-radius: 15px;
         }
-
-        /* Flip Class Applied by JS */
         .card-inner.flip {
             transform: rotateY(180deg);
         }
 
-        /* Front and Back Face Styling */
-        .card-face {
+        /* Card Faces */
+         .card-face {
             position: absolute;
             width: 100%;
             height: 100%;
@@ -67,168 +65,190 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 30px;
+            padding: 25px; /* Adjusted padding */
             text-align: center;
-            font-size: 1.2em;
+            font-size: 1.1em; /* Adjusted font size */
             overflow-wrap: break-word;
             word-wrap: break-word;
             hyphens: auto;
-            overflow-y: auto; /* Allow internal scroll if needed */
+            overflow-y: auto; /* Allow scrolling if content overflows */
         }
-
         .card-front {
             background: white;
             color: #333;
             z-index: 2;
         }
-
         .card-back {
-            background: #c5cae9;
-            color: #333;
+            background: #424242; /* Dark grey */
+            color: white;
             transform: rotateY(180deg);
+            font-size: 1em; /* Slightly smaller for explanations */
         }
 
         /* Content Inside Card Faces */
         #card-content {
-            margin-bottom: 20px;
+            margin-bottom: 15px; /* Space below main text/question */
             font-weight: bold;
             max-width: 100%;
         }
-        #backside-content {
-             font-style: italic;
+         #backside-content {
              max-width: 100%;
+             line-height: 1.5;
         }
 
-        /* Options Buttons */
+         /* Email Input Specific */
+         #email-input-area {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+         }
+         #email-input {
+             padding: 10px 15px;
+             font-size: 1em;
+             border: 1px solid #ccc;
+             border-radius: 8px;
+             width: 80%;
+             max-width: 400px;
+             text-align: center;
+         }
+          #email-validation-msg {
+              font-size: 0.85em;
+              color: red;
+              min-height: 1.2em; /* Prevent layout shift */
+              visibility: hidden; /* Hide initially */
+          }
+          #email-validation-msg.visible {
+              visibility: visible;
+          }
+
+
+        /* Options Buttons (Likert Scale) */
         .options {
             margin-top: 15px;
             display: flex;
             justify-content: center;
-            gap: 15px;
+            gap: 8px; /* Reduced gap */
             flex-wrap: wrap;
         }
 
-        /* Navigation Buttons */
+        /* Navigation Buttons Area */
         #navigation {
-            margin-top: 20px; /* Keep margin */
+            margin-top: 15px;
             display: flex;
-            justify-content: center;
+            justify-content: center; /* Center buttons */
             gap: 15px;
-            width: 90%; /* Control width */
-            max-width: 600px; /* Control max width */
-            margin-left: auto; /* Center horizontally */
-            margin-right: auto; /* Center horizontally */
+            width: 90%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
             flex-wrap: wrap;
-            margin-bottom: 20px; /* Add margin below */
+            margin-bottom: 10px; /* Consistent bottom margin */
         }
 
         /* Shared Button Styling */
         .options button, #navigation button {
-            padding: 10px 20px;
-            font-size: 0.95em;
+            padding: 8px 12px; /* Smaller padding */
+            font-size: 0.85em; /* Smaller font */
             border: none;
-            border-radius: 25px;
-            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 20px; /* Rounded */
+            background-color: rgba(230, 230, 230, 0.8); /* Lighter grey */
             color: #333;
             cursor: pointer;
-            transition: background-color 0.2s, transform 0.1s;
+            transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             flex-shrink: 0;
+            min-width: 80px; /* Minimum width for options */
+            text-align: center;
         }
         .options button:hover, #navigation button:hover {
-            background-color: rgba(255, 255, 255, 0.9);
+            background-color: rgba(210, 210, 210, 0.9);
             transform: translateY(-1px);
+             box-shadow: 0 4px 6px rgba(0,0,0,0.15);
         }
         .options button:active, #navigation button:active {
             transform: translateY(0px);
-        }
-         .options button.selected {
-            background-color: #4db6ac;
-            color: white;
             box-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
+         .options button.selected {
+            background-color: #00796b; /* Teal shade */
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.2) inset;
+        }
+
+        /* Navigation Button Specifics */
         #navigation button {
-             background-color: #4db6ac;
+             background-color: #4db6ac; /* Teal */
              color: white;
+             padding: 10px 20px; /* Larger nav buttons */
+             font-size: 0.95em;
+             min-width: 100px;
         }
-        #navigation button:hover {
-            background-color: #26a69a;
-        }
+         #navigation button:hover {
+             background-color: #26a69a; /* Darker teal */
+         }
+         #navigation button:disabled {
+             background-color: #bdbdbd; /* Grey out disabled */
+             cursor: not-allowed;
+             transform: none;
+             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+         }
+
 
         /* Status Message */
         #status {
-            margin-top: 10px; /* Reduced top margin slightly */
+            margin-top: 10px;
             font-weight: bold;
             min-height: 1.2em;
             color: #111;
             text-align: center;
             width: 90%;
             max-width: 600px;
-            margin-left: auto; /* Center horizontally */
-            margin-right: auto; /* Center horizontally */
-            margin-bottom: 20px; /* Add margin below */
+            margin-left: auto;
+            margin-right: auto;
+            margin-bottom: 10px;
+            font-size: 0.9em;
         }
 
-        /* --- Responsive Adjustments --- */
+        /* Responsive Adjustments */
         @media (max-width: 600px) {
-            body {
-                padding: 10px; /* Adjust padding for smaller screens */
-                /* REMOVED justify-content: flex-start - no longer using flex */
-            }
-            .card-container {
-                width: 95%;
-                margin-top: 15px; /* Adjust vertical margins */
-                margin-bottom: 15px;
-            }
-            .card {
-                min-height: 280px; /* Adjust min-height for mobile */
-            }
-            .card-face {
-                padding: 20px;
-                font-size: 1.1em;
-            }
-            .options {
-                gap: 10px;
-            }
-             .options button, #navigation button {
-                 padding: 10px 18px;
-                 font-size: 0.9em;
-             }
-             #navigation, #status {
-                 width: 95%; /* Ensure nav/status also use more width */
-             }
+            body { padding: 10px 10px 5px 10px; }
+            .card-container { width: 95%; margin-top: 10px; margin-bottom: 10px; }
+            .card { min-height: 320px; }
+            .card-face { padding: 15px; font-size: 1em; }
+            .card-back { font-size: 0.9em; }
+            .options { gap: 5px; }
+            .options button { padding: 6px 8px; font-size: 0.75em; min-width: 65px; }
+            #navigation button { padding: 8px 15px; font-size: 0.9em; min-width: 80px; }
+            #navigation, #status { width: 95%; }
+            #email-input { width: 90%; }
         }
-
          @media (max-width: 400px) {
-            body {
-                padding: 5px; /* Even less padding */
-            }
-             .card {
-                 min-height: 250px; /* Further adjust min-height */
-             }
-             .card-face {
-                 font-size: 1em; /* Smaller font */
-                 padding: 15px; /* Less padding */
-             }
-              .options button, #navigation button {
-                padding: 8px 15px; /* Smaller buttons */
-             }
+            body { padding: 5px 5px 2px 5px; }
+            .card { min-height: 300px; }
+            .options button { padding: 5px 6px; font-size: 0.7em; min-width: 55px;}
          }
-
     </style>
 </head>
 <body>
 
-    <!-- Structure remains the same -->
     <div class="card-container">
         <div class="card" onclick="flipCard()">
             <div class="card-inner" id="card-inner">
                 <div class="card-face card-front">
                     <div id="card-content">Loading...</div>
+                    <!-- Email input area (only shown on email card) -->
+                    <div id="email-input-area" style="display: none;">
+                        <input type="email" id="email-input" placeholder="Enter your email address" aria-label="Email Address">
+                        <div id="email-validation-msg">Please enter a valid email.</div>
+                    </div>
+                    <!-- Options area (only shown on question cards) -->
                     <div class="options" id="options"></div>
                 </div>
                 <div class="card-face card-back">
-                    <div id="backside-content">Backside text</div>
+                    <div id="backside-content">Flip card for explanation.</div>
                 </div>
             </div>
         </div>
@@ -237,85 +257,178 @@
     <div id="navigation"></div>
     <p id="status"></p>
 
-    <!-- JavaScript remains the same -->
     <script>
         // --- State Variables ---
-        let currentIndex = 0; // 0: Welcome, 1: Q1, 2: Q2, 3: Q3, 4: Finished
-        let answers = {}; // Stores { q1: 'Yes', q2: 'No', ... }
+        let currentIndex = 0; // 0: Welcome, 1: Email, 2-19: Q1-18, 20: Finished
+        let answers = {}; // Stores { email: '...', q1: 'Agree', q2: 'Strongly Disagree', ... }
 
         // --- Content ---
-        const cardContents = [
-            "Welcome to the Simple Test!", // Index 0
-            "Question One: Is the sky blue?",      // Index 1
-            "Question Two: Is water wet?",     // Index 2
-            "Question Three: Does 1+1=2?",    // Index 3
-            "Finished! Ready to submit?"      // Index 4
+        const welcomeMessage = "Welcome to the Neurological Assessment!";
+        const emailPrompt = "Please enter your email address to proceed.";
+        const finishedMessage = "Assessment complete. Ready to submit your responses?";
+
+        const statements = [
+            "The anticipation of future rewards motivates me more than receiving immediate rewards",
+            "I can maintain motivation by visualizing longterm benefits of my actions",
+            "I find myself seeking immediate rewards, even if I know a better reward will come later",
+            "I often need external incentives (praise, rewards) to stay motivated",
+            "I get energized by planning steps toward a distant goal",
+            "I tend to abandon tasks when the rewards aren't immediately visible",
+            "Once I've established a routine, I can maintain it without much conscious effort",
+            "I can stick to new habits even when facing obstacles or stress",
+            "I struggle to maintain consistency in my daily routines",
+            "I often start strong with new habits but rarely maintain them longterm",
+            "My positive habits feel natural and automatic rather than forced",
+            "I tend to forget or abandon habits if I don't see immediate results",
+            "I consciously align my daily habits with my longterm goals",
+            "When I recognize a habit isn't serving me, I can successfully modify it",
+            "I sometimes find myself repeating behaviors that conflict with my goals",
+            "I find it difficult to break habits even when I know they're counterproductive",
+            "I regularly evaluate and adjust my habits based on their effectiveness",
+            "I often act on autopilot without considering the longterm impact of my habits"
         ];
-        const backsideText = "Backside text"; // Central place for back text
+
+        const explanations = [
+            "Do you get more excited about what's coming eventually than what you can have right now? Like saving up for something big rather than buying small treats.",
+            "Can picturing a great outcome in your mind help you stay on track? Like imagining being fit helps you exercise today.",
+            "Do you grab what feels good now instead of waiting for something better? Like eating candy now instead of saving room for a special dinner.",
+            "Do you need others to cheer you on or give you something to keep going? Like only cleaning your room when promised a treat afterward.",
+            "Does mapping out how to achieve something big give you energy? Like feeling excited when planning a future trip.",
+            "Do you quit when you can't see quick results? Like stopping a diet after a week because the scale hasn't moved.",
+            "Can you keep doing something without thinking about it once it becomes familiar? Like automatically brushing teeth before bed.",
+            "Can you keep up new behaviors when life gets tough? Like still taking walks despite a busy week.",
+            "Is it hard to do the same things reliably each day? Like having bedtimes that change wildly throughout the week.",
+            "Do you begin new things with energy but fade out quickly? Like downloading a meditation app but using it for just two weeks.",
+            "Do good behaviors feel like 'just what you do' rather than a chore? Like drinking water throughout the day without reminders.",
+            "Do you stop doing helpful things if they don't pay off quickly? Like quitting an exercise because you don't feel stronger after a week.",
+            "Do you choose everyday actions that support your bigger dreams? Like practicing guitar daily to eventually play in a band.",
+            "Can you change behaviors that aren't working well? Like switching from late-night scrolling to reading before sleep.",
+            "Do you catch yourself doing things that work against what you want? Like snacking while trying to eat healthier.",
+            "Is it tough to stop doing familiar things even when they cause problems? Like checking your phone despite needing to focus.",
+            "Do you check if your routines are actually helping you and make changes? Like noticing a morning walk improves your mood more than morning TV.",
+            "Do you do things without thinking about future effects? Like grabbing fast food regularly without considering health impacts."
+        ];
+
+        const likertOptions = ["Strongly Agree", "Agree", "Neutral", "Disagree", "Strongly Disagree"];
+
+        const totalCards = 2 + statements.length; // Welcome + Email + Statements + Finish = 1 + 1 + 18 + 1 = 21 cards (indices 0-20)
 
         // --- DOM Elements ---
-        const cardInner = document.getElementById('card-inner'); // Target for flip class
+        const cardInner = document.getElementById('card-inner');
         const cardContentDiv = document.getElementById('card-content');
         const backsideContentDiv = document.getElementById('backside-content');
+        const emailInputArea = document.getElementById('email-input-area');
+        const emailInput = document.getElementById('email-input');
+        const emailValidationMsg = document.getElementById('email-validation-msg');
         const optionsDiv = document.getElementById('options');
         const navigationDiv = document.getElementById('navigation');
         const statusP = document.getElementById('status');
 
-        // !!! PASTE YOUR WORKING WEB APP URL HERE !!!
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbzzEEBrO7ORxw8kzLbVKrEt7x_4_1ZEwU9IuRMY9HMk6p_uTjM9k8V4ZINfcvI-4CBM/exec'; // <-- MAKE SURE THIS IS CORRECT
+        // !!! PASTE YOUR DEPLOYED WEB APP URL HERE !!!
+        const scriptURL = 'YOUR_WEB_APP_URL_HERE'; // <-- IMPORTANT: REPLACE THIS
 
         // --- Functions ---
 
+        function isValidEmail(email) {
+            // Simple regex for basic email format validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
         function loadCard(index) {
             currentIndex = index;
-            cardInner.classList.remove('flip'); // Reset to front face on load
+            cardInner.classList.remove('flip'); // Reset to front face
+            emailInputArea.style.display = 'none'; // Hide email input by default
+            optionsDiv.innerHTML = ''; // Clear options
+            navigationDiv.innerHTML = ''; // Clear navigation
+            statusP.textContent = ''; // Clear status
 
+            // Short delay for flip animation before content change
             setTimeout(() => {
-                cardContentDiv.textContent = cardContents[index];
-                backsideContentDiv.textContent = backsideText;
-            }, 50); // Short delay to allow flip reset before content change
+                let frontContent = "";
+                let backContent = "Flip the card for more information."; // Default back content
 
-            optionsDiv.innerHTML = '';
-            navigationDiv.innerHTML = '';
-            statusP.textContent = '';
+                if (index === 0) { // Welcome Card
+                    frontContent = welcomeMessage;
+                    backContent = "This assessment asks about your motivations and habits. Please answer honestly.";
+                    emailInputArea.style.display = 'none';
+                    optionsDiv.style.display = 'none';
+                } else if (index === 1) { // Email Card
+                    frontContent = emailPrompt;
+                    backContent = "Your email is used solely to associate your responses and will be kept confidential.";
+                    emailInputArea.style.display = 'flex';
+                    optionsDiv.style.display = 'none';
+                    emailInput.value = answers.email || ''; // Pre-fill if returning
+                    validateEmailInput(); // Check validation state on load
+                } else if (index >= 2 && index < totalCards -1) { // Statement Cards (Q1-Q18)
+                     const statementIndex = index - 2; // Adjust index for arrays
+                     frontContent = `Statement ${statementIndex + 1} of ${statements.length}:<br><br>${statements[statementIndex]}`;
+                     backContent = explanations[statementIndex];
+                     emailInputArea.style.display = 'none';
+                     optionsDiv.style.display = 'flex';
 
-            // Only show Previous button if not on the first card (index 0)
-            if (index > 0) {
+                     // Create Likert scale buttons
+                     const questionKey = 'q' + (statementIndex + 1);
+                     likertOptions.forEach(option => {
+                         const btn = document.createElement('button');
+                         btn.textContent = option;
+                         // Pass statementIndex + 1 as questionNumber
+                         btn.onclick = (e) => { e.stopPropagation(); selectAnswer(statementIndex + 1, option); };
+                         optionsDiv.appendChild(btn);
+                         // Highlight selected answer if already chosen
+                         if (answers[questionKey] === option) {
+                             btn.classList.add('selected');
+                         }
+                     });
+
+                } else if (index === totalCards - 1) { // Finished Card
+                     frontContent = finishedMessage;
+                     backContent = "Thank you for completing the assessment.";
+                     emailInputArea.style.display = 'none';
+                     optionsDiv.style.display = 'none';
+                }
+
+                cardContentDiv.innerHTML = frontContent; // Use innerHTML for line breaks
+                backsideContentDiv.textContent = backContent;
+
+            }, 50); // Delay matching animation roughly
+
+            // --- Navigation Buttons ---
+            // Previous Button (Not on Welcome or Email card)
+            if (index > 1) { // Changed from index > 0 to index > 1
                 const prevBtn = document.createElement('button');
+                prevBtn.id = 'prevBtn';
                 prevBtn.textContent = 'Previous';
-                prevBtn.onclick = (e) => { e.stopPropagation(); prevCard(); }; // Stop propagation on nav buttons too
+                prevBtn.onclick = (e) => { e.stopPropagation(); prevCard(); };
                 navigationDiv.appendChild(prevBtn);
             }
 
-            // Show Next, Options, or Submit based on index
-            if (index === 0) { // Welcome screen
+             // Next Button (Only on Welcome and Email card)
+             if (index === 0) { // Welcome card
                 const nextBtn = document.createElement('button');
-                nextBtn.textContent = 'Start'; // Changed from 'Next' for clarity
+                nextBtn.id = 'nextBtn';
+                nextBtn.textContent = 'Start';
                 nextBtn.onclick = (e) => { e.stopPropagation(); nextCard(); };
                 navigationDiv.appendChild(nextBtn);
-            } else if (index >= 1 && index < cardContents.length - 1) { // Question cards
-                const questionKey = 'q' + index;
-                ['Yes', 'No'].forEach(option => {
-                    const btn = document.createElement('button');
-                    btn.textContent = option;
-                    btn.onclick = (e) => { e.stopPropagation(); selectAnswer(index, option); };
-                    optionsDiv.appendChild(btn);
-                    // Highlight selected answer if already chosen
-                    if (answers[questionKey] === option) {
-                        btn.classList.add('selected');
-                    }
-                });
-                 // Add a 'Next' button for questions IF an answer isn't mandatory to proceed
-                 // Or remove this if selectAnswer automatically proceeds
-                 /* Optional Next Button Logic:
-                 if (!answers[questionKey]) { // Only show Next if no answer selected yet? Or always show?
-                    const nextBtn = document.createElement('button');
-                    nextBtn.textContent = 'Next';
-                    nextBtn.onclick = (e) => { e.stopPropagation(); nextCard(); };
-                    navigationDiv.appendChild(nextBtn);
-                 }
-                 */
-            } else if (index === cardContents.length - 1) { // Finished screen
+             } else if (index === 1) { // Email card
+                 const nextBtn = document.createElement('button');
+                 nextBtn.id = 'nextBtn';
+                 nextBtn.textContent = 'Next';
+                 nextBtn.onclick = (e) => {
+                     e.stopPropagation();
+                     if (isValidEmail(emailInput.value)) {
+                         answers.email = emailInput.value; // Save valid email
+                         nextCard();
+                     } else {
+                        validateEmailInput(); // Show error if invalid on click
+                     }
+                 };
+                 navigationDiv.appendChild(nextBtn);
+                 validateEmailInput(); // Set initial disabled state
+             }
+
+            // Submit Button (Only on the last card)
+            if (index === totalCards - 1) {
                 const submitBtn = document.createElement('button');
                 submitBtn.id = 'submitBtn';
                 submitBtn.textContent = 'Submit Answers';
@@ -325,132 +438,178 @@
         }
 
         function flipCard() {
-            // Only allow flipping on question cards maybe? Or always allow?
-            // if (currentIndex > 0 && currentIndex < cardContents.length - 1) {
-                 cardInner.classList.toggle('flip');
-            // }
+            // Allow flipping on any card except maybe the first? Or allow all? Let's allow all.
+             cardInner.classList.toggle('flip');
         }
 
-        function selectAnswer(questionIndex, option) {
-            const questionKey = 'q' + questionIndex;
+        function selectAnswer(questionNumber, option) {
+            const questionKey = 'q' + questionNumber;
             answers[questionKey] = option;
             console.log('Answers:', answers);
 
-            // Update button visual state
+            // Update button visual state immediately
             const buttons = optionsDiv.querySelectorAll('button');
             buttons.forEach(btn => {
                 btn.classList.toggle('selected', btn.textContent === option);
             });
 
             // Automatically move to the next card after a short delay
-            setTimeout(() => {
-                if (currentIndex < cardContents.length - 1) {
-                     nextCard();
-                 }
-            }, 250); // 250ms delay
+             // Make sure not to advance past the 'Finished' card
+            if (currentIndex < totalCards - 1) {
+                 setTimeout(nextCard, 250); // 250ms delay
+             }
         }
 
+         function validateEmailInput() {
+            const email = emailInput.value;
+            const nextButton = document.getElementById('nextBtn'); // Find the next button specifically
+            if (!emailInputArea.style.display || emailInputArea.style.display === 'none') return; // Only validate if visible
+
+             if (isValidEmail(email)) {
+                 emailValidationMsg.classList.remove('visible');
+                 if (nextButton) nextButton.disabled = false;
+             } else {
+                 emailValidationMsg.classList.add('visible');
+                  if (nextButton) nextButton.disabled = true;
+             }
+         }
+
+         // Add event listener for real-time validation
+         emailInput.addEventListener('input', validateEmailInput);
+
+
         function nextCard() {
-            if (currentIndex < cardContents.length - 1) {
+            if (currentIndex < totalCards - 1) {
                 loadCard(currentIndex + 1);
             }
         }
 
         function prevCard() {
-            if (currentIndex > 0) {
+             // Allow going back from Finish card (index totalCards - 1)
+             // Allow going back from Question cards (index >= 2)
+             // Prevent going back from Email card (index 1) to Welcome card (index 0) ??
+             // Current logic: Can go back from Q1 (index 2) to Email (index 1). Seems ok.
+            if (currentIndex > 1) { // Can go back if index is 2 or higher
                 loadCard(currentIndex - 1);
             }
         }
 
        function submitData() {
             const submitBtn = document.getElementById('submitBtn');
-            statusP.textContent = 'Submitting...';
+            statusP.textContent = 'Submitting... Please wait.';
             statusP.style.color = 'black';
-            if (submitBtn) submitBtn.disabled = true; // Disable button
+            if (submitBtn) submitBtn.disabled = true;
 
-            console.log('Submitting final answers:', JSON.stringify(answers));
-
-            // Basic validation: Check if all questions were answered (optional)
-            const expectedAnswers = cardContents.length - 2; // Total cards minus Welcome and Finish
-            if (Object.keys(answers).length < expectedAnswers) {
-                 statusP.textContent = 'Please answer all questions before submitting.';
-                 statusP.style.color = 'orange';
-                 if (submitBtn) submitBtn.disabled = false; // Re-enable button
-                 // Optionally, navigate back to the first unanswered question
-                 // findFirstUnanswered(); // You'd need to implement this
-                 return; // Stop submission
+            // --- Validation ---
+            let missingQuestions = [];
+             // Check email
+             if (!answers.email || !isValidEmail(answers.email)) {
+                statusP.textContent = 'Invalid or missing email. Please go back and enter a valid email.';
+                statusP.style.color = 'orange';
+                if (submitBtn) submitBtn.disabled = false;
+                // Optional: Go back to email card: loadCard(1);
+                return;
+             }
+            // Check all questions q1 to q18 are answered
+            for (let i = 1; i <= statements.length; i++) {
+                if (!answers['q' + i]) {
+                    missingQuestions.push(i);
+                }
             }
 
+            if (missingQuestions.length > 0) {
+                statusP.textContent = `Please answer question(s): ${missingQuestions.join(', ')}. Use the 'Previous' button to go back.`;
+                statusP.style.color = 'orange';
+                if (submitBtn) submitBtn.disabled = false;
+                // Optional: Go back to first unanswered: loadCard(missingQuestions[0] + 1); // +1 for email offset
+                return;
+            }
+
+            // --- Submission ---
+            console.log('Submitting final answers:', JSON.stringify(answers));
+
+            // Check if scriptURL is set
+            if (!scriptURL || scriptURL === 'YOUR_WEB_APP_URL_HERE') {
+                 statusP.textContent = 'Error: Script URL is not configured in the HTML.';
+                 statusP.style.color = 'red';
+                 if (submitBtn) submitBtn.disabled = false;
+                 return;
+            }
 
             fetch(scriptURL, {
-                redirect: "follow", // Important for Apps Script web apps
+                redirect: "follow",
                 method: 'POST',
                 headers: {
-                    // Use text/plain for simple JSON string to avoid CORS preflight
-                    'Content-Type': 'text/plain;charset=utf-8',
+                    'Content-Type': 'text/plain;charset=utf-8', // Keep as text/plain for simple POST
                 },
-                // Send data as a JSON string
-                body: JSON.stringify(answers)
+                body: JSON.stringify(answers) // Send all answers including email
             })
             .then(response => {
                 console.log('Fetch Raw Response:', response);
-                 // Check if the response is ok (status in the range 200-299)
                 if (!response.ok) {
-                     // Try to get more details from the response body if possible
                      return response.text().then(text => {
                          console.error('Error Response Body:', text);
-                         throw new Error(`HTTP error ${response.status}: ${response.statusText} - ${text || 'No details'}`);
+                         throw new Error(`HTTP error ${response.status}: ${response.statusText} - ${text || 'Server did not provide details'}`);
                      });
                  }
-                 // Check content type before parsing as JSON
+                 // Check content type, expect JSON from our Apps Script
                  const contentType = response.headers.get("content-type");
                  if (contentType && contentType.indexOf("application/json") !== -1) {
                     return response.json();
                  } else {
-                    // If not JSON, handle as text (maybe Apps Script returned plain text)
+                    // Handle unexpected non-JSON response (e.g., plain text error from script)
                     return response.text().then(text => {
-                         console.log("Received non-JSON response text:", text);
-                         // Attempt to parse if it looks like JSON, otherwise treat as a message
+                         console.warn("Received non-JSON response:", text);
+                         // Try to parse anyway, or create a generic success/error based on status
                          try {
                              return JSON.parse(text);
                          } catch (e) {
-                            // Assume it's a success message or plain text status from Apps Script
-                            // You might need to adjust your Apps Script to return JSON consistently
-                            // For now, let's assume success if the HTTP status was OK
-                            return { result: 'success', message: 'Submission received (non-JSON response).' };
+                             // Assume success if status was OK, but log the text
+                             if (response.ok) {
+                                 return { result: 'success', message: 'Submission received (non-JSON response received from server).' };
+                             } else {
+                                 throw new Error(`Received non-JSON response: ${text}`);
+                             }
                          }
                     });
                  }
             })
             .then(data => {
                 console.log('Processed Response Data:', data);
-                // Check for a 'result' property in the parsed data (adjust based on your Apps Script response)
                 if (data && data.result === 'success') {
-                    statusP.textContent = data.message || 'Success! Data submitted.'; // Use message from script if provided
+                    statusP.textContent = data.message || 'Success! Your responses have been submitted.';
                     statusP.style.color = 'green';
-                    // Hide the card and navigation after successful submission
+                    // Hide card and navigation on success
                     const cardContainer = document.querySelector('.card-container');
                     if (cardContainer) cardContainer.style.display = 'none';
                     if (navigationDiv) navigationDiv.style.display = 'none';
                 } else {
                     // Handle cases where the script indicates failure or unexpected format
-                    statusP.textContent = `Submission issue: ${data.message || 'Unknown status reported by script.'}`;
+                    statusP.textContent = `Submission issue: ${data.message || 'Unknown status reported by server.'}`;
                     statusP.style.color = 'orange';
                      if (submitBtn) submitBtn.disabled = false; // Re-enable button on failure
                 }
             })
             .catch(error => {
                 console.error('Fetch Error:', error);
-                statusP.textContent = `Error: ${error.message}. Please check console/network logs.`;
+                statusP.textContent = `Error: ${error.message}. Could not submit data. Check console for details.`;
                 statusP.style.color = 'red';
                  if (submitBtn) submitBtn.disabled = false; // Re-enable button on error
             });
         }
 
-
         // --- Initial Load ---
         window.onload = () => {
-            loadCard(0);
+             // Ensure script URL is replaced
+             if (!scriptURL || scriptURL === 'https://script.google.com/macros/s/AKfycbw0RlEFkGnuDVytojvYvH2dbcLO0yWQgYxLMRUPLOgSQb0-9JzcXyMM-din2NdM5FDCxQ/exec') {
+                console.error("CRITICAL: Web App URL is not set in the script!");
+                statusP.textContent = "Configuration Error: Web App URL not set.";
+                statusP.style.color = 'red';
+                // Optionally disable the whole thing
+                // document.body.innerHTML = '<p style="color: red; text-align: center; padding: 20px;">Configuration Error: Please contact the site administrator.</p>';
+             } else {
+                 loadCard(0); // Start at the Welcome card
+             }
         };
     </script>
 
