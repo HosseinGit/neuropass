@@ -5,9 +5,11 @@
 <title>Psychological Test</title>
 <style>
   body {
-    margin: 0;
+    background: linear-gradient(to right, #e0f7fa, #e1bee7);
     font-family: 'Segoe UI', sans-serif;
-    background: linear-gradient(135deg, #e0f2f1, #ede7f6);
+    text-align: center;
+    padding: 40px;
+    margin: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -40,7 +42,7 @@
 
   .card {
     width: 100%;
-    height: 250px;
+    height: 300px;
     background: white;
     border-radius: 10px;
     box-shadow: 0 8px 20px rgba(0,0,0,0.1);
@@ -61,6 +63,7 @@
     backface-visibility: hidden;
     padding: 30px;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     font-size: 20px;
@@ -103,7 +106,7 @@
     margin-top: 20px;
   }
 
-  #navigation button {
+  #navigation button, #submitBtn {
     background: #4db6ac;
     border: none;
     color: white;
@@ -115,7 +118,7 @@
     transition: background 0.3s;
   }
 
-  #navigation button:hover {
+  #navigation button:hover, #submitBtn:hover {
     background: #00796b;
   }
 
@@ -137,14 +140,15 @@
 <div id="navigation">
   <button onclick="prevQuestion()">Previous</button>
   <button onclick="nextQuestion()">Next</button>
-  <button onclick="submitAnswers()" id="submitBtn" style="display:none;">Submit</button>
 </div>
+
+<button onclick="submitAnswers()" id="submitBtn" style="display:none;">Submit</button>
 
 <script>
 let currentIndex = 0;
 let email = "";
 let questions = [
-  "Please enter your email:",
+  "Please enter your email:\n\n(A welcome text and a text saying 'Click me to see further information')",
   "The anticipation of future rewards motivates me more than receiving immediate rewards",
   "I can maintain motivation by visualizing longterm benefits of my actions",
   "I find myself seeking immediate rewards, even if I know a better reward will come later",
@@ -162,7 +166,8 @@ let questions = [
   "I sometimes find myself repeating behaviors that conflict with my goals",
   "I find it difficult to break habits even when I know they're counterproductive",
   "I regularly evaluate and adjust my habits based on their effectiveness",
-  "I often act on autopilot without considering the longterm impact of my habits"
+  "I often act on autopilot without considering the longterm impact of my habits",
+  "Thank you after submission" // <- Added final card
 ];
 
 let explanations = [
@@ -184,7 +189,8 @@ let explanations = [
   "Self-awareness is needed to overcome goal-conflicting behaviors.",
   "Breaking bad habits is hard but possible with effort.",
   "Continuous evaluation ensures your habits remain effective.",
-  "Autopilot behavior can be either beneficial or harmful depending on the habit."
+  "Autopilot behavior can be either beneficial or harmful depending on the habit.",
+  "Test part 2 and 3" // <- Explanation for the final card
 ];
 
 let answers = {};
@@ -201,7 +207,7 @@ function loadQuestion() {
 
   if(currentIndex === 0) {
     optionsDiv.innerHTML = `<input type="email" id="emailInput" placeholder="Enter your email" style="padding:10px; font-size:16px; width:80%;">`;
-  } else {
+  } else if(currentIndex < questions.length - 1) {
     let options = ["Strongly Agree", "Agree", "Neutral", "Disagree", "Strongly Disagree"];
     options.forEach(opt => {
       const btn = document.createElement('button');
@@ -209,6 +215,11 @@ function loadQuestion() {
       btn.onclick = () => selectAnswer(opt);
       optionsDiv.appendChild(btn);
     });
+  } else {
+    // Last card: Thank you message
+    document.getElementById('options').innerHTML = '';
+    document.getElementById('navigation').style.display = "none";
+    document.getElementById('submitBtn').style.display = "inline-block";
   }
 
   updateProgress();
@@ -226,18 +237,13 @@ function selectAnswer(option) {
 function nextQuestion() {
   if(currentIndex === 0){
     email = document.getElementById('emailInput').value;
-    if(!email){
-      alert("Please enter a valid email.");
+    if(!validateEmail(email)){
+      alert("Please enter a valid email address.");
       return;
     }
   }
   currentIndex++;
   if(currentIndex >= questions.length){
-    document.getElementById('submitBtn').style.display = "inline-block";
-    document.getElementById('navigation').style.display = "none";
-    document.getElementById('options').innerHTML = "";
-    document.getElementById('question').innerText = "Thank you! Click submit.";
-    document.getElementById('explanation').innerText = "";
     return;
   }
   loadQuestion();
@@ -255,12 +261,21 @@ function updateProgress(){
   document.getElementById('progress').style.width = `${progress}%`;
 }
 
+function validateEmail(mail) {
+  return /\S+@\S+\.\S+/.test(mail);
+}
+
 function submitAnswers() {
+  if(!validateEmail(email)){
+    alert("Invalid email address. Please correct it before submitting.");
+    return;
+  }
+
   const payload = {
     email: email,
     answers: answers
   };
-  const url = "https://script.google.com/macros/s/AKfycbyr1tYZ2gW29jkogPD1PgfY2J7tC044ext2lehs9TFuPWgeiWXxlpITSrC0icIQvYogSA/exec";
+  const url = "https://script.google.com/macros/s/AKfycbyr1tYZ2gW29jkogPD1PgfY2J7tC044ext2lehs9TFuPWgeiWXxlpITSrC0icIQvYogSA/execL";
 
   fetch(url, {
     method: "POST",
