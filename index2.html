@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Test Form</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        form div { margin-bottom: 15px; }
+        label { display: inline-block; margin-right: 10px; }
+        button { padding: 10px 15px; cursor: pointer; }
+        #status { margin-top: 20px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <h1>Super Simple Test Form</h1>
+    <p>This form sends data to a Google Sheet.</p>
+
+    <form id="simpleForm">
+        <div>
+            <label>Question One:</label>
+            <input type="radio" id="q1_yes" name="q1" value="Yes" required>
+            <label for="q1_yes">Yes</label>
+            <input type="radio" id="q1_no" name="q1" value="No" required>
+            <label for="q1_no">No</label>
+        </div>
+        <div>
+            <label>Question Two:</label>
+            <input type="radio" id="q2_yes" name="q2" value="Yes" required>
+            <label for="q2_yes">Yes</label>
+            <input type="radio" id="q2_no" name="q2" value="No" required>
+            <label for="q2_no">No</label>
+        </div>
+        <div>
+            <label>Question Three:</label>
+            <input type="radio" id="q3_yes" name="q3" value="Yes" required>
+            <label for="q3_yes">Yes</label>
+            <input type="radio" id="q3_no" name="q3" value="No" required>
+            <label for="q3_no">No</label>
+        </div>
+        <div>
+            <button type="submit" id="submitBtn">Submit Answers</button>
+        </div>
+    </form>
+
+    <p id="status"></p>
+
+    <script>
+        const form = document.getElementById('simpleForm');
+        const statusP = document.getElementById('status');
+        const submitBtn = document.getElementById('submitBtn');
+
+        // !!! PASTE YOUR NEW WEB APP URL HERE !!!
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbzzEEBrO7ORxw8kzLbVKrEt7x_4_1ZEwU9IuRMY9HMk6p_uTjM9k8V4ZINfcvI-4CBM/exec';
+
+        form.addEventListener('submit', event => {
+            event.preventDefault(); // Stop standard form submission
+            statusP.textContent = 'Submitting...';
+            submitBtn.disabled = true;
+
+            // Collect answers
+            const answers = {
+                q1: document.querySelector('input[name="q1"]:checked')?.value || 'Not Selected',
+                q2: document.querySelector('input[name="q2"]:checked')?.value || 'Not Selected',
+                q3: document.querySelector('input[name="q3"]:checked')?.value || 'Not Selected'
+            };
+
+            console.log('Submitting data:', JSON.stringify(answers));
+
+            // Send data using fetch (with text/plain workaround)
+            fetch(scriptURL, {
+                redirect: "follow",
+                method: 'POST',
+                headers: {
+                    // Using text/plain to hopefully avoid preflight CORS check
+                    'Content-Type': 'text/plain;charset=utf-8',
+                },
+                body: JSON.stringify(answers) // Send the data as a JSON string
+            })
+            .then(response => {
+                console.log('Fetch Response:', response);
+                if (response.ok) {
+                    // Try parsing the response as JSON (Apps Script should return JSON)
+                    return response.json();
+                } else {
+                    // If response not ok, try to get text error and throw
+                    return response.text().then(text => {
+                        throw new Error(`HTTP error ${response.status}: ${text}`);
+                    });
+                }
+            })
+            .then(data => {
+                console.log('Success Response Data:', data);
+                statusP.textContent = 'Success! Data submitted.';
+                statusP.style.color = 'green';
+                form.reset(); // Clear the form
+            })
+            .catch(error => {
+                console.error('Fetch Error:', error);
+                statusP.textContent = `Error: ${error.message}. Check console.`;
+                statusP.style.color = 'red';
+            })
+            .finally(() => {
+                 submitBtn.disabled = false; // Re-enable button
+            });
+        });
+    </script>
+
+</body>
+</html>
