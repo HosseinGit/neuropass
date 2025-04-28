@@ -33,7 +33,7 @@
             width: 100%;
             min-height: 350px; /* Increased min-height for content */
             position: relative;
-            cursor: pointer;
+            /* cursor: pointer; <- Removed cursor: pointer from main card, as clicking specific elements shouldn't always flip */
             border-radius: 15px;
             background: white;
             box-shadow: 0 8px 20px rgba(0,0,0,0.15);
@@ -49,6 +49,8 @@
             transform-style: preserve-3d;
             transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
             border-radius: 15px;
+            /* Add cursor pointer here if you want flip only on card background */
+            cursor: pointer;
         }
         .card-inner.flip {
             transform: rotateY(180deg);
@@ -72,6 +74,7 @@
             word-wrap: break-word;
             hyphens: auto;
             overflow-y: auto; /* Allow scrolling if content overflows */
+             cursor: default; /* Reset cursor for faces */
         }
         .card-front {
             background: white;
@@ -90,10 +93,12 @@
             margin-bottom: 15px; /* Space below main text/question */
             font-weight: bold;
             max-width: 100%;
+             cursor: pointer; /* Allow flip when clicking text */
         }
          #backside-content {
              max-width: 100%;
              line-height: 1.5;
+             cursor: pointer; /* Allow flip when clicking back text */
         }
 
          /* Email Input Specific */
@@ -103,6 +108,7 @@
             flex-direction: column;
             align-items: center;
             gap: 10px;
+            cursor: default; /* Prevent pointer cursor here */
          }
          #email-input {
              padding: 10px 15px;
@@ -112,6 +118,7 @@
              width: 80%;
              max-width: 400px;
              text-align: center;
+             cursor: text; /* Use text cursor for input */
          }
           #email-validation-msg {
               font-size: 0.85em;
@@ -131,6 +138,7 @@
             justify-content: center;
             gap: 8px; /* Reduced gap */
             flex-wrap: wrap;
+            cursor: default; /* Prevent pointer cursor */
         }
 
         /* Navigation Buttons Area */
@@ -148,6 +156,7 @@
         }
 
         /* Shared Button Styling */
+        /* Make options/nav buttons have pointer cursor */
         .options button, #navigation button {
             padding: 8px 12px; /* Smaller padding */
             font-size: 0.85em; /* Smaller font */
@@ -155,7 +164,7 @@
             border-radius: 20px; /* Rounded */
             background-color: rgba(230, 230, 230, 0.8); /* Lighter grey */
             color: #333;
-            cursor: pointer;
+            cursor: pointer; /* Explicitly set pointer for buttons */
             transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             flex-shrink: 0;
@@ -235,17 +244,21 @@
 <body>
 
     <div class="card-container">
-        <div class="card" onclick="flipCard()">
-            <div class="card-inner" id="card-inner">
+         <!-- Removed onclick="flipCard()" from here -->
+        <div class="card">
+            <!-- Added onclick="flipCard(event)" here -->
+            <div class="card-inner" id="card-inner" onclick="flipCard(event)">
                 <div class="card-face card-front">
                     <div id="card-content">Loading...</div>
                     <!-- Email input area (only shown on email card) -->
-                    <div id="email-input-area" style="display: none;">
+                    <!-- Added onclick="event.stopPropagation()" to stop flip -->
+                    <div id="email-input-area" style="display: none;" onclick="event.stopPropagation()">
                         <input type="email" id="email-input" placeholder="Enter your email address" aria-label="Email Address">
                         <div id="email-validation-msg">Please enter a valid email.</div>
                     </div>
                     <!-- Options area (only shown on question cards) -->
-                    <div class="options" id="options"></div>
+                     <!-- Added onclick="event.stopPropagation()" to stop flip -->
+                    <div class="options" id="options" onclick="event.stopPropagation()"></div>
                 </div>
                 <div class="card-face card-back">
                     <div id="backside-content">Flip card for explanation.</div>
@@ -339,6 +352,7 @@
             currentIndex = index;
             cardInner.classList.remove('flip'); // Reset to front face
             emailInputArea.style.display = 'none'; // Hide email input by default
+            optionsDiv.style.display = 'none'; // Hide options by default
             optionsDiv.innerHTML = ''; // Clear options
             navigationDiv.innerHTML = ''; // Clear navigation
             statusP.textContent = ''; // Clear status
@@ -351,21 +365,17 @@
                 if (index === 0) { // Welcome Card
                     frontContent = welcomeMessage;
                     backContent = "This assessment asks about your motivations and habits. Please answer honestly.";
-                    emailInputArea.style.display = 'none';
-                    optionsDiv.style.display = 'none';
                 } else if (index === 1) { // Email Card
                     frontContent = emailPrompt;
                     backContent = "Your email is used solely to associate your responses and will be kept confidential.";
-                    emailInputArea.style.display = 'flex';
-                    optionsDiv.style.display = 'none';
+                    emailInputArea.style.display = 'flex'; // Show email area
                     emailInput.value = answers.email || ''; // Pre-fill if returning
                     validateEmailInput(); // Check validation state on load
                 } else if (index >= 2 && index < totalCards -1) { // Statement Cards (Q1-Q18)
                      const statementIndex = index - 2; // Adjust index for arrays
                      frontContent = `Statement ${statementIndex + 1} of ${statements.length}:<br><br>${statements[statementIndex]}`;
                      backContent = explanations[statementIndex];
-                     emailInputArea.style.display = 'none';
-                     optionsDiv.style.display = 'flex';
+                     optionsDiv.style.display = 'flex'; // Show options area
 
                      // Create Likert scale buttons
                      const questionKey = 'q' + (statementIndex + 1);
@@ -373,6 +383,7 @@
                          const btn = document.createElement('button');
                          btn.textContent = option;
                          // Pass statementIndex + 1 as questionNumber
+                         // IMPORTANT: e.stopPropagation() here prevents the button click from flipping the card
                          btn.onclick = (e) => { e.stopPropagation(); selectAnswer(statementIndex + 1, option); };
                          optionsDiv.appendChild(btn);
                          // Highlight selected answer if already chosen
@@ -384,8 +395,6 @@
                 } else if (index === totalCards - 1) { // Finished Card
                      frontContent = finishedMessage;
                      backContent = "Thank you for completing the assessment.";
-                     emailInputArea.style.display = 'none';
-                     optionsDiv.style.display = 'none';
                 }
 
                 cardContentDiv.innerHTML = frontContent; // Use innerHTML for line breaks
@@ -395,10 +404,11 @@
 
             // --- Navigation Buttons ---
             // Previous Button (Not on Welcome or Email card)
-            if (index > 1) { // Changed from index > 0 to index > 1
+            if (index > 1) {
                 const prevBtn = document.createElement('button');
                 prevBtn.id = 'prevBtn';
                 prevBtn.textContent = 'Previous';
+                // Stop propagation on nav buttons just in case, though they are outside the card
                 prevBtn.onclick = (e) => { e.stopPropagation(); prevCard(); };
                 navigationDiv.appendChild(prevBtn);
             }
@@ -415,7 +425,7 @@
                  nextBtn.id = 'nextBtn';
                  nextBtn.textContent = 'Next';
                  nextBtn.onclick = (e) => {
-                     e.stopPropagation();
+                     e.stopPropagation(); // Stop this button click propagating
                      if (isValidEmail(emailInput.value)) {
                          answers.email = emailInput.value; // Save valid email
                          nextCard();
@@ -437,12 +447,26 @@
             }
         }
 
-        function flipCard() {
-            // Allow flipping on any card except maybe the first? Or allow all? Let's allow all.
+        function flipCard(event) {
+             // Check if the click target is one of the elements where we *stopped* propagation.
+             // If propagation was stopped, the event target won't be the .card-inner itself
+             // unless the user clicked directly on the inner background.
+             // A simpler approach: The stopPropagation on the child elements should be enough.
+             // Just toggle the class.
              cardInner.classList.toggle('flip');
+
+             // --- Alternative more specific check (optional, likely not needed with stopPropagation) ---
+             // // Only flip if the click wasn't on an interactive element like input or button
+             // const target = event.target;
+             // const isInteractive = target.closest('#email-input-area, .options, .options button');
+             // if (!isInteractive) {
+             //     cardInner.classList.toggle('flip');
+             // }
         }
 
+
         function selectAnswer(questionNumber, option) {
+            // This function is called by button clicks which already have stopPropagation()
             const questionKey = 'q' + questionNumber;
             answers[questionKey] = option;
             console.log('Answers:', answers);
@@ -462,8 +486,8 @@
 
          function validateEmailInput() {
             const email = emailInput.value;
-            const nextButton = document.getElementById('nextBtn'); // Find the next button specifically
-            if (!emailInputArea.style.display || emailInputArea.style.display === 'none') return; // Only validate if visible
+            const nextButton = document.getElementById('nextBtn');
+            if (!emailInputArea.style.display || emailInputArea.style.display === 'none') return;
 
              if (isValidEmail(email)) {
                  emailValidationMsg.classList.remove('visible');
@@ -476,6 +500,8 @@
 
          // Add event listener for real-time validation
          emailInput.addEventListener('input', validateEmailInput);
+         // Prevent clicks *inside* the email input itself from bubbling up (extra safety)
+         emailInput.addEventListener('click', (e) => e.stopPropagation());
 
 
         function nextCard() {
@@ -485,11 +511,7 @@
         }
 
         function prevCard() {
-             // Allow going back from Finish card (index totalCards - 1)
-             // Allow going back from Question cards (index >= 2)
-             // Prevent going back from Email card (index 1) to Welcome card (index 0) ??
-             // Current logic: Can go back from Q1 (index 2) to Email (index 1). Seems ok.
-            if (currentIndex > 1) { // Can go back if index is 2 or higher
+            if (currentIndex > 1) {
                 loadCard(currentIndex - 1);
             }
         }
@@ -507,7 +529,6 @@
                 statusP.textContent = 'Invalid or missing email. Please go back and enter a valid email.';
                 statusP.style.color = 'orange';
                 if (submitBtn) submitBtn.disabled = false;
-                // Optional: Go back to email card: loadCard(1);
                 return;
              }
             // Check all questions q1 to q18 are answered
@@ -521,14 +542,12 @@
                 statusP.textContent = `Please answer question(s): ${missingQuestions.join(', ')}. Use the 'Previous' button to go back.`;
                 statusP.style.color = 'orange';
                 if (submitBtn) submitBtn.disabled = false;
-                // Optional: Go back to first unanswered: loadCard(missingQuestions[0] + 1); // +1 for email offset
                 return;
             }
 
             // --- Submission ---
             console.log('Submitting final answers:', JSON.stringify(answers));
 
-            // Check if scriptURL is set
             if (!scriptURL || scriptURL === 'YOUR_WEB_APP_URL_HERE') {
                  statusP.textContent = 'Error: Script URL is not configured in the HTML.';
                  statusP.style.color = 'red';
@@ -540,9 +559,9 @@
                 redirect: "follow",
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'text/plain;charset=utf-8', // Keep as text/plain for simple POST
+                    'Content-Type': 'text/plain;charset=utf-8',
                 },
-                body: JSON.stringify(answers) // Send all answers including email
+                body: JSON.stringify(answers)
             })
             .then(response => {
                 console.log('Fetch Raw Response:', response);
@@ -552,19 +571,15 @@
                          throw new Error(`HTTP error ${response.status}: ${response.statusText} - ${text || 'Server did not provide details'}`);
                      });
                  }
-                 // Check content type, expect JSON from our Apps Script
                  const contentType = response.headers.get("content-type");
                  if (contentType && contentType.indexOf("application/json") !== -1) {
                     return response.json();
                  } else {
-                    // Handle unexpected non-JSON response (e.g., plain text error from script)
                     return response.text().then(text => {
                          console.warn("Received non-JSON response:", text);
-                         // Try to parse anyway, or create a generic success/error based on status
                          try {
                              return JSON.parse(text);
                          } catch (e) {
-                             // Assume success if status was OK, but log the text
                              if (response.ok) {
                                  return { result: 'success', message: 'Submission received (non-JSON response received from server).' };
                              } else {
@@ -579,36 +594,31 @@
                 if (data && data.result === 'success') {
                     statusP.textContent = data.message || 'Success! Your responses have been submitted.';
                     statusP.style.color = 'green';
-                    // Hide card and navigation on success
                     const cardContainer = document.querySelector('.card-container');
                     if (cardContainer) cardContainer.style.display = 'none';
                     if (navigationDiv) navigationDiv.style.display = 'none';
                 } else {
-                    // Handle cases where the script indicates failure or unexpected format
                     statusP.textContent = `Submission issue: ${data.message || 'Unknown status reported by server.'}`;
                     statusP.style.color = 'orange';
-                     if (submitBtn) submitBtn.disabled = false; // Re-enable button on failure
+                     if (submitBtn) submitBtn.disabled = false;
                 }
             })
             .catch(error => {
                 console.error('Fetch Error:', error);
                 statusP.textContent = `Error: ${error.message}. Could not submit data. Check console for details.`;
                 statusP.style.color = 'red';
-                 if (submitBtn) submitBtn.disabled = false; // Re-enable button on error
+                 if (submitBtn) submitBtn.disabled = false;
             });
         }
 
         // --- Initial Load ---
         window.onload = () => {
-             // Ensure script URL is replaced
              if (!scriptURL || scriptURL === 'https://script.google.com/macros/s/AKfycbw0RlEFkGnuDVytojvYvH2dbcLO0yWQgYxLMRUPLOgSQb0-9JzcXyMM-din2NdM5FDCxQ/exec') {
                 console.error("CRITICAL: Web App URL is not set in the script!");
                 statusP.textContent = "Configuration Error: Web App URL not set.";
                 statusP.style.color = 'red';
-                // Optionally disable the whole thing
-                // document.body.innerHTML = '<p style="color: red; text-align: center; padding: 20px;">Configuration Error: Please contact the site administrator.</p>';
              } else {
-                 loadCard(0); // Start at the Welcome card
+                 loadCard(0);
              }
         };
     </script>
