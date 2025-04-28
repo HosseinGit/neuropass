@@ -4,40 +4,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simple Card Test - Flippable</title>
-    <style>
+
+        <style>
         /* Basic Reset & Body Styling */
         * {
             box-sizing: border-box;
         }
         body {
             font-family: sans-serif;
-            margin: 0; /* Remove default margin */
+            margin: 0;
             padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center; /* Center content vertically */
-            min-height: 100vh; /* Ensure body takes full viewport height */
-            background: linear-gradient(to right, #e0f7fa, #e1bee7); /* Apply gradient */
-            overflow-x: hidden; /* Prevent horizontal scroll */
+            justify-content: flex-start; /* Align top on mobile */
+            min-height: 100vh;
+            background: linear-gradient(to right, #e0f7fa, #e1bee7);
+            overflow-x: hidden;
         }
 
         /* Card Container & Perspective */
         .card-container {
-            width: 90%;          /* Make container wide */
-            max-width: 600px;     /* Limit max width */
-            height: 60vh;         /* Make container tall */
-            min-height: 350px;    /* Ensure minimum height */
+            width: 90%;
+            max-width: 600px;
+            /* Default height suitable for larger screens */
+            height: 60vh;
+            min-height: 350px;
             margin-top: 30px;
-            perspective: 1000px;  /* Needed for 3D flip effect */
+            perspective: 1000px;
+            margin-bottom: 20px; /* Add space below card before nav */
         }
 
         /* Card Structure for Flipping */
         .card {
             width: 100%;
             height: 100%;
-            position: relative; /* Needed for absolute positioning of inner */
-            cursor: pointer;    /* Indicate it's clickable */
+            position: relative;
+            cursor: pointer;
         }
 
         .card-inner {
@@ -45,9 +48,9 @@
             height: 100%;
             position: relative;
             transform-style: preserve-3d;
-            transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1); /* Smooth flip transition */
+            transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-            border-radius: 15px; /* Rounded corners for the flipper */
+            border-radius: 15px;
         }
 
         /* Flip Class Applied by JS */
@@ -60,15 +63,16 @@
             position: absolute;
             width: 100%;
             height: 100%;
-            backface-visibility: hidden; /* Hide the back side of the face */
-            border-radius: 15px; /* Match parent rounded corners */
+            backface-visibility: hidden;
+            border-radius: 15px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 30px;
+            padding: 30px; /* Default padding */
             text-align: center;
-            font-size: 1.3em;
+            font-size: 1.3em; /* Default font size */
+            overflow-y: auto; /* Allow scrolling within face if needed */
         }
 
         .card-front {
@@ -77,9 +81,9 @@
         }
 
         .card-back {
-            background: #c5cae9; /* Light purple background */
+            background: #c5cae9;
             color: #333;
-            transform: rotateY(180deg); /* Initially rotated */
+            transform: rotateY(180deg);
         }
 
         /* Content Inside Card Faces */
@@ -91,49 +95,52 @@
              font-style: italic;
         }
 
-        /* Options Buttons (inside front face) */
+        /* Options Buttons */
         .options {
             margin-top: 20px;
             display: flex;
             justify-content: center;
-            gap: 20px;
+            gap: 20px; /* Default gap */
+            flex-wrap: wrap; /* Allow buttons to wrap if needed */
         }
 
-        /* Navigation Buttons (outside card) */
+        /* Navigation Buttons */
         #navigation {
-            margin-top: 30px; /* Increased space above navigation */
+            margin-top: 20px; /* Reduced margin */
             display: flex;
             justify-content: center;
-            gap: 15px;
-            width: 100%; /* Ensure it takes width for centering */
-            max-width: 600px; /* Match card container width */
+            gap: 15px; /* Default gap */
+            width: 90%; /* Match container width */
+            max-width: 600px;
+            flex-wrap: wrap; /* Allow buttons to wrap */
         }
 
         /* Shared Button Styling */
         .options button, #navigation button {
-            padding: 12px 25px; /* Slightly larger buttons */
-            font-size: 1em;
-            border: none; /* Remove default border */
-            border-radius: 25px; /* More rounded */
-            background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent white */
+            padding: 12px 25px;
+            font-size: 1em; /* Default font size */
+            border: none;
+            border-radius: 25px;
+            background-color: rgba(255, 255, 255, 0.7);
             color: #333;
             cursor: pointer;
             transition: background-color 0.2s, transform 0.1s;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            flex-shrink: 0; /* Prevent buttons from shrinking too much */
         }
         .options button:hover, #navigation button:hover {
             background-color: rgba(255, 255, 255, 0.9);
-            transform: translateY(-1px); /* Slight lift on hover */
+            transform: translateY(-1px);
         }
         .options button:active, #navigation button:active {
-            transform: translateY(0px); /* Press down effect */
+            transform: translateY(0px);
         }
          .options button.selected {
-            background-color: #4db6ac; /* Teal background for selected */
+            background-color: #4db6ac;
             color: white;
             box-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
-        #navigation button { /* Specific style for nav buttons if needed */
+        #navigation button {
              background-color: #4db6ac;
              color: white;
         }
@@ -141,15 +148,66 @@
             background-color: #26a69a;
         }
 
-
         /* Status Message */
         #status {
-            margin-top: 25px;
+            margin-top: 20px; /* Reduced margin */
             font-weight: bold;
             min-height: 1.2em;
-            color: #111; /* Darker text color for status */
+            color: #111;
+            text-align: center; /* Center status text */
+            width: 90%;
+            max-width: 600px;
         }
+
+        /* --- Responsive Adjustments for Smaller Screens --- */
+        @media (max-width: 600px) {
+            body {
+                padding: 10px; /* Reduce body padding */
+                justify-content: flex-start; /* Align content towards the top */
+            }
+            .card-container {
+                width: 95%;      /* Slightly increase width */
+                height: auto;    /* Let height be determined by content */
+                min-height: 280px; /* Set a smaller minimum height */
+                margin-top: 20px;
+                margin-bottom: 15px; /* Reduce space below card */
+            }
+            .card-face {
+                padding: 20px;   /* Reduce padding inside card */
+                font-size: 1.1em; /* Reduce font size inside card */
+            }
+            #card-content {
+                margin-bottom: 15px; /* Reduce space below question */
+            }
+            .options {
+                margin-top: 15px;
+                gap: 10px;       /* Reduce space between option buttons */
+            }
+            #navigation {
+                margin-top: 15px; /* Reduce space above nav buttons */
+                gap: 10px;       /* Reduce space between nav buttons */
+            }
+            .options button, #navigation button {
+                padding: 10px 18px; /* Make buttons slightly smaller */
+                font-size: 0.95em; /* Slightly smaller button text */
+            }
+            #status {
+                margin-top: 15px; /* Reduce space above status */
+            }
+        }
+
+         @media (max-width: 400px) {
+             .card-face {
+                 font-size: 1em; /* Even smaller font on very small screens */
+                 padding: 15px;
+             }
+             .options button, #navigation button {
+                padding: 8px 15px;
+             }
+         }
+
     </style>
+    
 </head>
 <body>
 
