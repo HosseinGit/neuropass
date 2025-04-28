@@ -15,9 +15,9 @@
         body {
             font-family: sans-serif;
             margin: 0;
-            padding: 15px 15px 10px 15px; /* Adjusted bottom padding */
+            padding: 15px 15px 10px 15px;
             overflow-x: hidden;
-            background-color: #f0f0f0; /* Light grey background */
+            background-color: #f0f0f0;
         }
 
         /* Card Container & Perspective */
@@ -31,9 +31,8 @@
         /* Card Structure */
         .card {
             width: 100%;
-            min-height: 350px; /* Increased min-height for content */
+            min-height: 350px;
             position: relative;
-            /* cursor: pointer; <- Removed cursor: pointer from main card, as clicking specific elements shouldn't always flip */
             border-radius: 15px;
             background: white;
             box-shadow: 0 8px 20px rgba(0,0,0,0.15);
@@ -49,8 +48,7 @@
             transform-style: preserve-3d;
             transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
             border-radius: 15px;
-            /* Add cursor pointer here if you want flip only on card background */
-            cursor: pointer;
+            cursor: pointer; /* Click background to flip */
         }
         .card-inner.flip {
             transform: rotateY(180deg);
@@ -67,14 +65,14 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 25px; /* Adjusted padding */
+            padding: 20px; /* Adjusted padding slightly */
             text-align: center;
-            font-size: 1.1em; /* Adjusted font size */
+            font-size: 1.1em;
             overflow-wrap: break-word;
             word-wrap: break-word;
             hyphens: auto;
-            overflow-y: auto; /* Allow scrolling if content overflows */
-             cursor: default; /* Reset cursor for faces */
+            overflow-y: auto;
+             cursor: default; /* Default cursor for face content */
         }
         .card-front {
             background: white;
@@ -82,23 +80,46 @@
             z-index: 2;
         }
         .card-back {
-            background: #424242; /* Dark grey */
+            background: #424242;
             color: white;
             transform: rotateY(180deg);
-            font-size: 1em; /* Slightly smaller for explanations */
+            font-size: 1em;
         }
+
+        /* --- Progress Bar Styling --- */
+        #progress-bar-container {
+            width: 80%;
+            max-width: 400px;
+            height: 10px;
+            background-color: #e0e0e0; /* Light grey background */
+            border-radius: 5px;
+            margin-bottom: 15px; /* Space below progress bar */
+            overflow: hidden;
+            display: none; /* Hidden by default */
+        }
+
+        #progress-bar {
+            height: 100%;
+            width: 0%; /* Start at 0 */
+            background-color: #00796b; /* Teal color */
+            border-radius: 5px;
+            transition: width 0.3s ease-in-out; /* Smooth transition */
+        }
+        /* --- End Progress Bar Styling --- */
+
 
         /* Content Inside Card Faces */
         #card-content {
-            margin-bottom: 15px; /* Space below main text/question */
+            margin-bottom: 15px;
             font-weight: bold;
             max-width: 100%;
              cursor: pointer; /* Allow flip when clicking text */
+             line-height: 1.4; /* Improve readability */
         }
          #backside-content {
              max-width: 100%;
              line-height: 1.5;
-             cursor: pointer; /* Allow flip when clicking back text */
+             cursor: pointer;
         }
 
          /* Email Input Specific */
@@ -108,7 +129,7 @@
             flex-direction: column;
             align-items: center;
             gap: 10px;
-            cursor: default; /* Prevent pointer cursor here */
+            cursor: default;
          }
          #email-input {
              padding: 10px 15px;
@@ -118,13 +139,13 @@
              width: 80%;
              max-width: 400px;
              text-align: center;
-             cursor: text; /* Use text cursor for input */
+             cursor: text;
          }
           #email-validation-msg {
               font-size: 0.85em;
               color: red;
-              min-height: 1.2em; /* Prevent layout shift */
-              visibility: hidden; /* Hide initially */
+              min-height: 1.2em;
+              visibility: hidden;
           }
           #email-validation-msg.visible {
               visibility: visible;
@@ -136,39 +157,38 @@
             margin-top: 15px;
             display: flex;
             justify-content: center;
-            gap: 8px; /* Reduced gap */
+            gap: 8px;
             flex-wrap: wrap;
-            cursor: default; /* Prevent pointer cursor */
+            cursor: default;
         }
 
         /* Navigation Buttons Area */
         #navigation {
             margin-top: 15px;
             display: flex;
-            justify-content: center; /* Center buttons */
+            justify-content: center;
             gap: 15px;
             width: 90%;
             max-width: 600px;
             margin-left: auto;
             margin-right: auto;
             flex-wrap: wrap;
-            margin-bottom: 10px; /* Consistent bottom margin */
+            margin-bottom: 10px;
         }
 
         /* Shared Button Styling */
-        /* Make options/nav buttons have pointer cursor */
         .options button, #navigation button {
-            padding: 8px 12px; /* Smaller padding */
-            font-size: 0.85em; /* Smaller font */
+            padding: 8px 12px;
+            font-size: 0.85em;
             border: none;
-            border-radius: 20px; /* Rounded */
-            background-color: rgba(230, 230, 230, 0.8); /* Lighter grey */
+            border-radius: 20px;
+            background-color: rgba(230, 230, 230, 0.8);
             color: #333;
-            cursor: pointer; /* Explicitly set pointer for buttons */
+            cursor: pointer;
             transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             flex-shrink: 0;
-            min-width: 80px; /* Minimum width for options */
+            min-width: 80px;
             text-align: center;
         }
         .options button:hover, #navigation button:hover {
@@ -181,7 +201,7 @@
             box-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
          .options button.selected {
-            background-color: #00796b; /* Teal shade */
+            background-color: #00796b;
             color: white;
             font-weight: bold;
             box-shadow: 0 1px 2px rgba(0,0,0,0.2) inset;
@@ -189,17 +209,17 @@
 
         /* Navigation Button Specifics */
         #navigation button {
-             background-color: #4db6ac; /* Teal */
+             background-color: #4db6ac;
              color: white;
-             padding: 10px 20px; /* Larger nav buttons */
+             padding: 10px 20px;
              font-size: 0.95em;
              min-width: 100px;
         }
          #navigation button:hover {
-             background-color: #26a69a; /* Darker teal */
+             background-color: #26a69a;
          }
          #navigation button:disabled {
-             background-color: #bdbdbd; /* Grey out disabled */
+             background-color: #bdbdbd;
              cursor: not-allowed;
              transform: none;
              box-shadow: 0 2px 4px rgba(0,0,0,0.1);
@@ -228,6 +248,7 @@
             .card { min-height: 320px; }
             .card-face { padding: 15px; font-size: 1em; }
             .card-back { font-size: 0.9em; }
+            #progress-bar-container { width: 90%; }
             .options { gap: 5px; }
             .options button { padding: 6px 8px; font-size: 0.75em; min-width: 65px; }
             #navigation button { padding: 8px 15px; font-size: 0.9em; min-width: 80px; }
@@ -237,27 +258,31 @@
          @media (max-width: 400px) {
             body { padding: 5px 5px 2px 5px; }
             .card { min-height: 300px; }
-            .options button { padding: 5px 6px; font-size: 0.7em; min-width: 55px;}
+            .options button { padding: 5px 6px; font-size: 0.7em; min-width: 50px;} /* Adjusted min-width */
          }
     </style>
 </head>
 <body>
 
     <div class="card-container">
-         <!-- Removed onclick="flipCard()" from here -->
         <div class="card">
-            <!-- Added onclick="flipCard(event)" here -->
             <div class="card-inner" id="card-inner" onclick="flipCard(event)">
                 <div class="card-face card-front">
+                    <!-- Progress Bar START -->
+                    <div id="progress-bar-container">
+                        <div id="progress-bar"></div>
+                    </div>
+                    <!-- Progress Bar END -->
+
                     <div id="card-content">Loading...</div>
-                    <!-- Email input area (only shown on email card) -->
-                    <!-- Added onclick="event.stopPropagation()" to stop flip -->
+
+                    <!-- Email input area -->
                     <div id="email-input-area" style="display: none;" onclick="event.stopPropagation()">
                         <input type="email" id="email-input" placeholder="Enter your email address" aria-label="Email Address">
                         <div id="email-validation-msg">Please enter a valid email.</div>
                     </div>
-                    <!-- Options area (only shown on question cards) -->
-                     <!-- Added onclick="event.stopPropagation()" to stop flip -->
+
+                    <!-- Options area -->
                     <div class="options" id="options" onclick="event.stopPropagation()"></div>
                 </div>
                 <div class="card-face card-back">
@@ -272,8 +297,8 @@
 
     <script>
         // --- State Variables ---
-        let currentIndex = 0; // 0: Welcome, 1: Email, 2-19: Q1-18, 20: Finished
-        let answers = {}; // Stores { email: '...', q1: 'Agree', q2: 'Strongly Disagree', ... }
+        let currentIndex = 0;
+        let answers = {};
 
         // --- Content ---
         const welcomeMessage = "Welcome to the Neurological Assessment!";
@@ -281,24 +306,24 @@
         const finishedMessage = "Assessment complete. Ready to submit your responses?";
 
         const statements = [
-            "The anticipation of future rewards motivates me more than receiving immediate rewards",
-            "I can maintain motivation by visualizing longterm benefits of my actions",
-            "I find myself seeking immediate rewards, even if I know a better reward will come later",
-            "I often need external incentives (praise, rewards) to stay motivated",
-            "I get energized by planning steps toward a distant goal",
-            "I tend to abandon tasks when the rewards aren't immediately visible",
-            "Once I've established a routine, I can maintain it without much conscious effort",
-            "I can stick to new habits even when facing obstacles or stress",
-            "I struggle to maintain consistency in my daily routines",
-            "I often start strong with new habits but rarely maintain them longterm",
-            "My positive habits feel natural and automatic rather than forced",
-            "I tend to forget or abandon habits if I don't see immediate results",
-            "I consciously align my daily habits with my longterm goals",
-            "When I recognize a habit isn't serving me, I can successfully modify it",
-            "I sometimes find myself repeating behaviors that conflict with my goals",
-            "I find it difficult to break habits even when I know they're counterproductive",
-            "I regularly evaluate and adjust my habits based on their effectiveness",
-            "I often act on autopilot without considering the longterm impact of my habits"
+            "The anticipation of future rewards motivates me more than receiving immediate rewards", // Q1
+            "I can maintain motivation by visualizing longterm benefits of my actions", // Q2
+            "I find myself seeking immediate rewards, even if I know a better reward will come later", // Q3
+            "I often need external incentives (praise, rewards) to stay motivated", // Q4
+            "I get energized by planning steps toward a distant goal", // Q5
+            "I tend to abandon tasks when the rewards aren't immediately visible", // Q6
+            "Once I've established a routine, I can maintain it without much conscious effort", // Q7
+            "I can stick to new habits even when facing obstacles or stress", // Q8
+            "I struggle to maintain consistency in my daily routines", // Q9
+            "I often start strong with new habits but rarely maintain them longterm", // Q10
+            "My positive habits feel natural and automatic rather than forced", // Q11
+            "I tend to forget or abandon habits if I don't see immediate results", // Q12
+            "I consciously align my daily habits with my longterm goals", // Q13
+            "When I recognize a habit isn't serving me, I can successfully modify it", // Q14
+            "I sometimes find myself repeating behaviors that conflict with my goals", // Q15
+            "I find it difficult to break habits even when I know they're counterproductive", // Q16
+            "I regularly evaluate and adjust my habits based on their effectiveness", // Q17
+            "I often act on autopilot without considering the longterm impact of my habits" // Q18
         ];
 
         const explanations = [
@@ -322,9 +347,10 @@
             "Do you do things without thinking about future effects? Like grabbing fast food regularly without considering health impacts."
         ];
 
-        const likertOptions = ["Strongly Agree", "Agree", "Neutral", "Disagree", "Strongly Disagree"];
+        // --- REVERSED Likert Options ---
+        const likertOptions = ["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"];
 
-        const totalCards = 2 + statements.length; // Welcome + Email + Statements + Finish = 1 + 1 + 18 + 1 = 21 cards (indices 0-20)
+        const totalCards = 2 + statements.length; // 1 Welcome + 1 Email + 18 Statements + 1 Finish = 21 cards (indices 0-20)
 
         // --- DOM Elements ---
         const cardInner = document.getElementById('card-inner');
@@ -336,6 +362,8 @@
         const optionsDiv = document.getElementById('options');
         const navigationDiv = document.getElementById('navigation');
         const statusP = document.getElementById('status');
+        const progressBarContainer = document.getElementById('progress-bar-container');
+        const progressBar = document.getElementById('progress-bar');
 
         // !!! PASTE YOUR DEPLOYED WEB APP URL HERE !!!
         const scriptURL = 'YOUR_WEB_APP_URL_HERE'; // <-- IMPORTANT: REPLACE THIS
@@ -343,24 +371,23 @@
         // --- Functions ---
 
         function isValidEmail(email) {
-            // Simple regex for basic email format validation
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             return emailRegex.test(email);
         }
 
         function loadCard(index) {
             currentIndex = index;
-            cardInner.classList.remove('flip'); // Reset to front face
-            emailInputArea.style.display = 'none'; // Hide email input by default
-            optionsDiv.style.display = 'none'; // Hide options by default
-            optionsDiv.innerHTML = ''; // Clear options
-            navigationDiv.innerHTML = ''; // Clear navigation
-            statusP.textContent = ''; // Clear status
+            cardInner.classList.remove('flip');
+            emailInputArea.style.display = 'none';
+            optionsDiv.style.display = 'none';
+            progressBarContainer.style.display = 'none'; // Hide progress bar by default
+            optionsDiv.innerHTML = '';
+            navigationDiv.innerHTML = '';
+            statusP.textContent = '';
 
-            // Short delay for flip animation before content change
             setTimeout(() => {
                 let frontContent = "";
-                let backContent = "Flip the card for more information."; // Default back content
+                let backContent = "Flip the card for more information.";
 
                 if (index === 0) { // Welcome Card
                     frontContent = welcomeMessage;
@@ -368,77 +395,83 @@
                 } else if (index === 1) { // Email Card
                     frontContent = emailPrompt;
                     backContent = "Your email is used solely to associate your responses and will be kept confidential.";
-                    emailInputArea.style.display = 'flex'; // Show email area
-                    emailInput.value = answers.email || ''; // Pre-fill if returning
-                    validateEmailInput(); // Check validation state on load
-                } else if (index >= 2 && index < totalCards -1) { // Statement Cards (Q1-Q18)
-                     const statementIndex = index - 2; // Adjust index for arrays
-                     frontContent = `Statement ${statementIndex + 1} of ${statements.length}:<br><br>${statements[statementIndex]}`;
+                    emailInputArea.style.display = 'flex';
+                    emailInput.value = answers.email || '';
+                    validateEmailInput();
+                } else if (index >= 2 && index < totalCards - 1) { // Statement Cards (Indices 2-19)
+                     const statementIndex = index - 2; // 0-17
+                     // Display statement without "Statement X of Y"
+                     frontContent = statements[statementIndex];
                      backContent = explanations[statementIndex];
-                     optionsDiv.style.display = 'flex'; // Show options area
+                     optionsDiv.style.display = 'flex';
 
-                     // Create Likert scale buttons
+                     // --- Update and Show Progress Bar ---
+                     progressBarContainer.style.display = 'block';
+                     const progressPercent = ((statementIndex + 1) / statements.length) * 100;
+                     progressBar.style.width = progressPercent + '%';
+                     // ---
+
+                     // Create Likert scale buttons (using reversed array)
                      const questionKey = 'q' + (statementIndex + 1);
                      likertOptions.forEach(option => {
                          const btn = document.createElement('button');
                          btn.textContent = option;
-                         // Pass statementIndex + 1 as questionNumber
-                         // IMPORTANT: e.stopPropagation() here prevents the button click from flipping the card
                          btn.onclick = (e) => { e.stopPropagation(); selectAnswer(statementIndex + 1, option); };
                          optionsDiv.appendChild(btn);
-                         // Highlight selected answer if already chosen
                          if (answers[questionKey] === option) {
                              btn.classList.add('selected');
                          }
                      });
 
-                } else if (index === totalCards - 1) { // Finished Card
+                } else if (index === totalCards - 1) { // Finished Card (Index 20)
                      frontContent = finishedMessage;
                      backContent = "Thank you for completing the assessment.";
+                     progressBarContainer.style.display = 'none'; // Hide progress bar
                 }
 
-                cardContentDiv.innerHTML = frontContent; // Use innerHTML for line breaks
+                // Use textContent for statements to avoid potential HTML injection if statements changed
+                if (index >= 2 && index < totalCards - 1) {
+                     cardContentDiv.textContent = frontContent;
+                } else {
+                     cardContentDiv.innerHTML = frontContent; // Allow HTML for Welcome/Email/Finish
+                }
                 backsideContentDiv.textContent = backContent;
 
-            }, 50); // Delay matching animation roughly
+            }, 50);
 
             // --- Navigation Buttons ---
-            // Previous Button (Not on Welcome or Email card)
-            if (index > 1) {
+            if (index > 1) { // Previous available from Q1 (index 2) onwards
                 const prevBtn = document.createElement('button');
                 prevBtn.id = 'prevBtn';
                 prevBtn.textContent = 'Previous';
-                // Stop propagation on nav buttons just in case, though they are outside the card
                 prevBtn.onclick = (e) => { e.stopPropagation(); prevCard(); };
                 navigationDiv.appendChild(prevBtn);
             }
 
-             // Next Button (Only on Welcome and Email card)
-             if (index === 0) { // Welcome card
+             if (index === 0) { // Welcome card -> Start
                 const nextBtn = document.createElement('button');
                 nextBtn.id = 'nextBtn';
                 nextBtn.textContent = 'Start';
                 nextBtn.onclick = (e) => { e.stopPropagation(); nextCard(); };
                 navigationDiv.appendChild(nextBtn);
-             } else if (index === 1) { // Email card
+             } else if (index === 1) { // Email card -> Next
                  const nextBtn = document.createElement('button');
                  nextBtn.id = 'nextBtn';
                  nextBtn.textContent = 'Next';
                  nextBtn.onclick = (e) => {
-                     e.stopPropagation(); // Stop this button click propagating
+                     e.stopPropagation();
                      if (isValidEmail(emailInput.value)) {
-                         answers.email = emailInput.value; // Save valid email
+                         answers.email = emailInput.value.trim(); // Trim whitespace
                          nextCard();
                      } else {
-                        validateEmailInput(); // Show error if invalid on click
+                        validateEmailInput();
                      }
                  };
                  navigationDiv.appendChild(nextBtn);
-                 validateEmailInput(); // Set initial disabled state
+                 validateEmailInput();
              }
 
-            // Submit Button (Only on the last card)
-            if (index === totalCards - 1) {
+            if (index === totalCards - 1) { // Finish card -> Submit
                 const submitBtn = document.createElement('button');
                 submitBtn.id = 'submitBtn';
                 submitBtn.textContent = 'Submit Answers';
@@ -448,39 +481,23 @@
         }
 
         function flipCard(event) {
-             // Check if the click target is one of the elements where we *stopped* propagation.
-             // If propagation was stopped, the event target won't be the .card-inner itself
-             // unless the user clicked directly on the inner background.
-             // A simpler approach: The stopPropagation on the child elements should be enough.
-             // Just toggle the class.
+             // Stop propagation needed on interactive children (email area, options area)
              cardInner.classList.toggle('flip');
-
-             // --- Alternative more specific check (optional, likely not needed with stopPropagation) ---
-             // // Only flip if the click wasn't on an interactive element like input or button
-             // const target = event.target;
-             // const isInteractive = target.closest('#email-input-area, .options, .options button');
-             // if (!isInteractive) {
-             //     cardInner.classList.toggle('flip');
-             // }
         }
 
 
         function selectAnswer(questionNumber, option) {
-            // This function is called by button clicks which already have stopPropagation()
             const questionKey = 'q' + questionNumber;
             answers[questionKey] = option;
             console.log('Answers:', answers);
 
-            // Update button visual state immediately
             const buttons = optionsDiv.querySelectorAll('button');
             buttons.forEach(btn => {
                 btn.classList.toggle('selected', btn.textContent === option);
             });
 
-            // Automatically move to the next card after a short delay
-             // Make sure not to advance past the 'Finished' card
             if (currentIndex < totalCards - 1) {
-                 setTimeout(nextCard, 250); // 250ms delay
+                 setTimeout(nextCard, 250);
              }
         }
 
@@ -498,9 +515,7 @@
              }
          }
 
-         // Add event listener for real-time validation
          emailInput.addEventListener('input', validateEmailInput);
-         // Prevent clicks *inside* the email input itself from bubbling up (extra safety)
          emailInput.addEventListener('click', (e) => e.stopPropagation());
 
 
@@ -511,9 +526,11 @@
         }
 
         function prevCard() {
-            if (currentIndex > 1) {
-                loadCard(currentIndex - 1);
+            // Can go back from Q1 (index 2) up to Finish (index 20)
+            if (currentIndex >= 2) { // Changed from > 1 to >= 2
+                 loadCard(currentIndex - 1);
             }
+            // Note: Cannot go back from Email (index 1) to Welcome (index 0) with this logic
         }
 
        function submitData() {
@@ -524,14 +541,14 @@
 
             // --- Validation ---
             let missingQuestions = [];
-             // Check email
              if (!answers.email || !isValidEmail(answers.email)) {
                 statusP.textContent = 'Invalid or missing email. Please go back and enter a valid email.';
                 statusP.style.color = 'orange';
                 if (submitBtn) submitBtn.disabled = false;
+                // Navigate back to email card
+                loadCard(1);
                 return;
              }
-            // Check all questions q1 to q18 are answered
             for (let i = 1; i <= statements.length; i++) {
                 if (!answers['q' + i]) {
                     missingQuestions.push(i);
@@ -542,6 +559,9 @@
                 statusP.textContent = `Please answer question(s): ${missingQuestions.join(', ')}. Use the 'Previous' button to go back.`;
                 statusP.style.color = 'orange';
                 if (submitBtn) submitBtn.disabled = false;
+                 // Navigate back to the first unanswered question card
+                 // Index = question number + 1 (because email is index 1)
+                 loadCard(missingQuestions[0] + 1);
                 return;
             }
 
@@ -558,9 +578,7 @@
             fetch(scriptURL, {
                 redirect: "follow",
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'text/plain;charset=utf-8',
-                },
+                headers: { 'Content-Type': 'text/plain;charset=utf-8', },
                 body: JSON.stringify(answers)
             })
             .then(response => {
@@ -577,14 +595,10 @@
                  } else {
                     return response.text().then(text => {
                          console.warn("Received non-JSON response:", text);
-                         try {
-                             return JSON.parse(text);
-                         } catch (e) {
-                             if (response.ok) {
-                                 return { result: 'success', message: 'Submission received (non-JSON response received from server).' };
-                             } else {
-                                 throw new Error(`Received non-JSON response: ${text}`);
-                             }
+                         try { return JSON.parse(text); }
+                         catch (e) {
+                             if (response.ok) { return { result: 'success', message: 'Submission received (non-JSON).' }; }
+                             else { throw new Error(`Non-JSON response: ${text}`); }
                          }
                     });
                  }
@@ -598,14 +612,14 @@
                     if (cardContainer) cardContainer.style.display = 'none';
                     if (navigationDiv) navigationDiv.style.display = 'none';
                 } else {
-                    statusP.textContent = `Submission issue: ${data.message || 'Unknown status reported by server.'}`;
+                    statusP.textContent = `Submission issue: ${data.message || 'Unknown status.'}`;
                     statusP.style.color = 'orange';
                      if (submitBtn) submitBtn.disabled = false;
                 }
             })
             .catch(error => {
                 console.error('Fetch Error:', error);
-                statusP.textContent = `Error: ${error.message}. Could not submit data. Check console for details.`;
+                statusP.textContent = `Error: ${error.message}. Could not submit data.`;
                 statusP.style.color = 'red';
                  if (submitBtn) submitBtn.disabled = false;
             });
