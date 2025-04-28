@@ -3,84 +3,174 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Card Test</title>
+    <title>Simple Card Test - Flippable</title>
     <style>
+        /* Basic Reset & Body Styling */
+        * {
+            box-sizing: border-box;
+        }
         body {
             font-family: sans-serif;
+            margin: 0; /* Remove default margin */
             padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            background-color: #f0f0f0;
+            justify-content: center; /* Center content vertically */
+            min-height: 100vh; /* Ensure body takes full viewport height */
+            background: linear-gradient(to right, #e0f7fa, #e1bee7); /* Apply gradient */
+            overflow-x: hidden; /* Prevent horizontal scroll */
         }
+
+        /* Card Container & Perspective */
         .card-container {
-            width: 90%;
-            max-width: 400px;
+            width: 90%;          /* Make container wide */
+            max-width: 600px;     /* Limit max width */
+            height: 60vh;         /* Make container tall */
+            min-height: 350px;    /* Ensure minimum height */
             margin-top: 30px;
+            perspective: 1000px;  /* Needed for 3D flip effect */
         }
+
+        /* Card Structure for Flipping */
         .card {
-            background: white;
-            border-radius: 8px;
-            padding: 30px;
-            min-height: 150px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            width: 100%;
+            height: 100%;
+            position: relative; /* Needed for absolute positioning of inner */
+            cursor: pointer;    /* Indicate it's clickable */
+        }
+
+        .card-inner {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1); /* Smooth flip transition */
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            border-radius: 15px; /* Rounded corners for the flipper */
+        }
+
+        /* Flip Class Applied by JS */
+        .card-inner.flip {
+            transform: rotateY(180deg);
+        }
+
+        /* Front and Back Face Styling */
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden; /* Hide the back side of the face */
+            border-radius: 15px; /* Match parent rounded corners */
             display: flex;
-            flex-direction: column; /* Ensure content stacks vertically */
+            flex-direction: column;
             align-items: center;
             justify-content: center;
+            padding: 30px;
             text-align: center;
+            font-size: 1.3em;
         }
+
+        .card-front {
+            background: white;
+            color: #333;
+        }
+
+        .card-back {
+            background: #c5cae9; /* Light purple background */
+            color: #333;
+            transform: rotateY(180deg); /* Initially rotated */
+        }
+
+        /* Content Inside Card Faces */
         #card-content {
-            font-size: 1.2em;
-            margin-bottom: 20px; /* Add space below question text */
+            margin-bottom: 25px;
+            font-weight: bold;
         }
+        #backside-content {
+             font-style: italic;
+        }
+
+        /* Options Buttons (inside front face) */
         .options {
-            margin-top: 20px; /* Add space above options */
+            margin-top: 20px;
             display: flex;
             justify-content: center;
-            gap: 15px; /* Add space between Yes/No buttons */
+            gap: 20px;
         }
+
+        /* Navigation Buttons (outside card) */
+        #navigation {
+            margin-top: 30px; /* Increased space above navigation */
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            width: 100%; /* Ensure it takes width for centering */
+            max-width: 600px; /* Match card container width */
+        }
+
+        /* Shared Button Styling */
         .options button, #navigation button {
-            padding: 10px 20px;
+            padding: 12px 25px; /* Slightly larger buttons */
             font-size: 1em;
-            border: 1px solid #ccc;
-            border-radius: 20px;
-            background-color: #eee;
+            border: none; /* Remove default border */
+            border-radius: 25px; /* More rounded */
+            background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent white */
+            color: #333;
             cursor: pointer;
-            transition: background-color 0.2s;
+            transition: background-color 0.2s, transform 0.1s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         .options button:hover, #navigation button:hover {
-            background-color: #ddd;
+            background-color: rgba(255, 255, 255, 0.9);
+            transform: translateY(-1px); /* Slight lift on hover */
         }
-        .options button.selected {
-            background-color: #4CAF50; /* Green background for selected */
+        .options button:active, #navigation button:active {
+            transform: translateY(0px); /* Press down effect */
+        }
+         .options button.selected {
+            background-color: #4db6ac; /* Teal background for selected */
             color: white;
-            border-color: #4CAF50;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
-        #navigation {
-            margin-top: 25px;
-            display: flex;
-            justify-content: center; /* Center buttons */
-            gap: 15px; /* Add space between Prev/Next/Submit */
+        #navigation button { /* Specific style for nav buttons if needed */
+             background-color: #4db6ac;
+             color: white;
         }
+        #navigation button:hover {
+            background-color: #26a69a;
+        }
+
+
+        /* Status Message */
         #status {
-            margin-top: 20px;
+            margin-top: 25px;
             font-weight: bold;
-            min-height: 1.2em; /* Reserve space */
+            min-height: 1.2em;
+            color: #111; /* Darker text color for status */
         }
     </style>
 </head>
 <body>
 
-    <h1>Simple Card Test</h1>
+    <!-- No main title needed -->
 
     <div class="card-container">
-        <div class="card">
-            <div id="card-content">Loading...</div>
-            <div class="options" id="options"></div>
+        <div class="card" onclick="flipCard()"> <!-- Add onclick to the card itself -->
+            <div class="card-inner" id="card-inner">
+                <div class="card-face card-front">
+                    <div id="card-content">Loading...</div>
+                    <div class="options" id="options"></div>
+                </div>
+                <div class="card-face card-back">
+                    <div id="backside-content">Backside text</div>
+                </div>
+            </div>
         </div>
-        <div id="navigation"></div>
-    </div>
+    </div> <!-- End card-container -->
+
+    <!-- Navigation sits below the card container -->
+    <div id="navigation"></div>
 
     <p id="status"></p>
 
@@ -97,91 +187,90 @@
             "Question Three: Does 1+1=2?",    // Index 3
             "Finished! Ready to submit?"      // Index 4
         ];
+        const backsideText = "Backside text"; // Central place for back text
 
         // --- DOM Elements ---
+        const cardInner = document.getElementById('card-inner'); // Target for flip class
         const cardContentDiv = document.getElementById('card-content');
+        const backsideContentDiv = document.getElementById('backside-content');
         const optionsDiv = document.getElementById('options');
         const navigationDiv = document.getElementById('navigation');
         const statusP = document.getElementById('status');
 
         // !!! PASTE YOUR WORKING WEB APP URL HERE !!!
-        // (The one from the simple test that worked)
         const scriptURL = 'https://script.google.com/macros/s/AKfycbzzEEBrO7ORxw8kzLbVKrEt7x_4_1ZEwU9IuRMY9HMk6p_uTjM9k8V4ZINfcvI-4CBM/exec';
 
         // --- Functions ---
 
         function loadCard(index) {
             currentIndex = index;
-            cardContentDiv.textContent = cardContents[index];
+            cardInner.classList.remove('flip'); // Reset to front face on load
+
+            // Set content after a tiny delay to allow flip animation to reset if needed
+            setTimeout(() => {
+                cardContentDiv.textContent = cardContents[index];
+                backsideContentDiv.textContent = backsideText; // Set static back text
+            }, 50); // Small delay
+
             optionsDiv.innerHTML = '';    // Clear previous options
             navigationDiv.innerHTML = ''; // Clear previous navigation
             statusP.textContent = '';     // Clear status message
 
             // --- Button Logic ---
-            // Previous Button (always show except on Welcome)
             if (index > 0) {
                 const prevBtn = document.createElement('button');
                 prevBtn.textContent = 'Previous';
-                prevBtn.onclick = prevCard;
+                prevBtn.onclick = (e) => { e.stopPropagation(); prevCard(); }; // Stop flip on button click
                 navigationDiv.appendChild(prevBtn);
             }
 
-            // Content-Specific Elements
-            if (index === 0) { // Welcome Card
+            if (index === 0) {
                 const nextBtn = document.createElement('button');
                 nextBtn.textContent = 'Next';
-                nextBtn.onclick = nextCard;
+                nextBtn.onclick = (e) => { e.stopPropagation(); nextCard(); }; // Stop flip
                 navigationDiv.appendChild(nextBtn);
-            } else if (index >= 1 && index <= 3) { // Question Cards (1, 2, 3)
-                const questionKey = 'q' + index; // q1, q2, or q3
-                const yesBtn = document.createElement('button');
-                yesBtn.textContent = 'Yes';
-                yesBtn.onclick = () => selectAnswer(index, 'Yes');
-                optionsDiv.appendChild(yesBtn);
-
-                const noBtn = document.createElement('button');
-                noBtn.textContent = 'No';
-                noBtn.onclick = () => selectAnswer(index, 'No');
-                optionsDiv.appendChild(noBtn);
-
-                // Highlight previously selected answer if navigating back
-                if (answers[questionKey] === 'Yes') {
-                    yesBtn.classList.add('selected');
-                } else if (answers[questionKey] === 'No') {
-                    noBtn.classList.add('selected');
-                }
-            } else if (index === 4) { // Finished Card
+            } else if (index >= 1 && index <= 3) {
+                const questionKey = 'q' + index;
+                ['Yes', 'No'].forEach(option => {
+                    const btn = document.createElement('button');
+                    btn.textContent = option;
+                    // Stop propagation on option buttons as well
+                    btn.onclick = (e) => { e.stopPropagation(); selectAnswer(index, option); };
+                    optionsDiv.appendChild(btn);
+                    if (answers[questionKey] === option) {
+                        btn.classList.add('selected');
+                    }
+                });
+            } else if (index === 4) {
                 const submitBtn = document.createElement('button');
-                submitBtn.id = 'submitBtn'; // Give it an ID for disabling
+                submitBtn.id = 'submitBtn';
                 submitBtn.textContent = 'Submit Answers';
-                submitBtn.onclick = submitData;
-                navigationDiv.appendChild(submitBtn); // Add submit next to previous
+                // Stop propagation on submit button
+                submitBtn.onclick = (e) => { e.stopPropagation(); submitData(); };
+                navigationDiv.appendChild(submitBtn);
             }
+        }
+
+        // Function to flip the card
+        function flipCard() {
+            cardInner.classList.toggle('flip');
         }
 
         function selectAnswer(questionIndex, option) {
             const questionKey = 'q' + questionIndex;
             answers[questionKey] = option;
-            console.log('Answers:', answers); // Log current answers
+            console.log('Answers:', answers);
 
-            // Highlight selected button visually
             const buttons = optionsDiv.querySelectorAll('button');
             buttons.forEach(btn => {
-                if (btn.textContent === option) {
-                    btn.classList.add('selected');
-                } else {
-                    btn.classList.remove('selected');
-                }
+                btn.classList.toggle('selected', btn.textContent === option);
             });
 
-            // Auto-advance to next card (unless it's the last question)
-            // Add a small delay so the user sees the selection
             setTimeout(() => {
-                if (currentIndex < cardContents.length - 1) { // Check if not the "Finished" card yet
+                if (currentIndex < cardContents.length - 1) {
                      nextCard();
                  }
-            }, 200); // 200ms delay
-
+            }, 250); // Slightly longer delay after selection
         }
 
         function nextCard() {
@@ -200,57 +289,47 @@
             const submitBtn = document.getElementById('submitBtn');
             statusP.textContent = 'Submitting...';
             statusP.style.color = 'black';
-            if (submitBtn) submitBtn.disabled = true; // Disable button
+            if (submitBtn) submitBtn.disabled = true;
 
             console.log('Submitting final answers:', JSON.stringify(answers));
 
-            // Send data using fetch (with text/plain workaround)
             fetch(scriptURL, {
                 redirect: "follow",
                 method: 'POST',
                 headers: {
                     'Content-Type': 'text/plain;charset=utf-8',
                 },
-                body: JSON.stringify(answers) // Send the collected answers
+                body: JSON.stringify(answers)
             })
             .then(response => {
                 console.log('Fetch Response:', response);
-                if (response.ok) {
-                    return response.json(); // Expecting JSON response from Apps Script
-                } else {
-                    return response.text().then(text => {
-                         throw new Error(`HTTP error ${response.status}: ${text || 'Unknown error'}`);
-                     });
-                }
+                if (response.ok) return response.json();
+                return response.text().then(text => { throw new Error(`HTTP error ${response.status}: ${text || 'Unknown error'}`); });
             })
             .then(data => {
                 console.log('Success Response Data:', data);
-                 // Check if the Apps Script reported success
                 if (data && data.result === 'success') {
                     statusP.textContent = 'Success! Data submitted.';
                     statusP.style.color = 'green';
-                    // Optionally hide card/buttons after success
-                     document.querySelector('.card-container').style.display = 'none';
+                    document.querySelector('.card-container').style.display = 'none'; // Hide card
+                    navigationDiv.style.display = 'none'; // Hide navigation
                 } else {
-                    // Handle cases where Apps Script returns ok status but reports an internal error
                     statusP.textContent = `Submission OK, but script reported: ${data.message || 'Unknown issue'}`;
                     statusP.style.color = 'orange';
-                     if (submitBtn) submitBtn.disabled = false; // Re-enable on script error
+                    if (submitBtn) submitBtn.disabled = false;
                 }
             })
             .catch(error => {
                 console.error('Fetch Error:', error);
                 statusP.textContent = `Error: ${error.message}. Check console.`;
                 statusP.style.color = 'red';
-                 if (submitBtn) submitBtn.disabled = false; // Re-enable button on fetch error
+                if (submitBtn) submitBtn.disabled = false;
             });
-            // Note: No .finally() re-enabling button here, only on specific errors.
-            // Button stays disabled on full success.
         }
 
         // --- Initial Load ---
         window.onload = () => {
-            loadCard(0); // Load the Welcome card first
+            loadCard(0);
         };
 
     </script>
