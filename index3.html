@@ -1,309 +1,395 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Responsive Quiz Card</title>
-  <style>
-    * { box-sizing: border-box; }
-    html, body {
-      height: 100%;
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(to right, #e0f7fa, #e1bee7);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      overflow-x: hidden;
-    }
-    body {
-      padding: 20px;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Card Test - Flippable Responsive</title>
+    <style>
+        /* Basic Reset & Body Styling */
+        * {
+            box-sizing: border-box;
+        }
+        html {
+             height: 100%; /* Ensure html takes full height */
+        }
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 20px; /* Default padding */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center; /* Revert to centering content overall */
+            min-height: 100%; /* Use min-height on body */
+            background: linear-gradient(to right, #e0f7fa, #e1bee7);
+            overflow-x: hidden; /* Prevent horizontal scroll */
+        }
 
-    .card-container {
-      width: 100%;
-      max-width: 500px;
-      margin: 20px 0;
-      perspective: 1000px;
-    }
+        /* Card Container & Perspective */
+        .card-container {
+            width: 90%;
+            max-width: 600px;
+            /* REMOVED explicit height/vh units */
+            margin-top: 20px; /* Adjusted margin */
+            perspective: 1000px;
+            margin-bottom: 20px; /* Space below card */
+        }
 
-    .card {
-      width: 100%;
-      min-height: 50vh;
-      background: white;
-      border-radius: 15px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-      cursor: pointer;
-      position: relative;
-      overflow: hidden;
-    }
+        /* Card Structure for Flipping */
+        .card {
+            width: 100%;
+            min-height: 300px; /* Start with a reasonable min-height */
+            position: relative;
+            cursor: pointer;
+            border-radius: 15px; /* Apply radius here */
+            background: white; /* Apply base background here for sizing */
+             box-shadow: 0 8px 20px rgba(0,0,0,0.15); /* Moved shadow here */
+        }
 
-    .card-inner {
-      width: 100%;
-      height: 100%;
-      transition: transform 0.8s;
-      transform-style: preserve-3d;
-      position: absolute;
-      top: 0; left: 0;
-      border-radius: 15px;
-    }
+        .card-inner {
+            width: 100%;
+            height: 100%;
+            position: absolute; /* Position absolutely within .card */
+            top: 0;
+            left: 0;
+            transform-style: preserve-3d;
+            transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 15px; /* Keep radius */
+            /* Shadow removed, applied to .card */
+        }
 
-    .card-inner.flip {
-      transform: rotateY(180deg);
-    }
+        /* Flip Class Applied by JS */
+        .card-inner.flip {
+            transform: rotateY(180deg);
+        }
 
-    .card-face {
-      width: 100%;
-      height: 100%;
-      position: absolute;
-      backface-visibility: hidden;
-      border-radius: 15px;
-      padding: 30px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      font-size: 1.2em;
-      overflow-y: auto;
-    }
+        /* Front and Back Face Styling */
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center; /* Center content vertically within face */
+            padding: 30px; /* Default padding */
+            text-align: center;
+            font-size: 1.2em; /* Default font size */
+            overflow-wrap: break-word; /* Help long words wrap */
+            word-wrap: break-word; /* Older browsers */
+            hyphens: auto; /* Allow hyphenation */
+             overflow-y: auto; /* Allow internal scrolling IF absolutely needed */
+        }
 
-    .card-front {
-      background: white;
-      color: #333;
-      z-index: 2;
-    }
+        .card-front {
+            background: white; /* Re-apply backgrounds */
+            color: #333;
+            z-index: 2; /* Ensure front is initially on top */
+        }
 
-    .card-back {
-      background: #c5cae9;
-      color: #333;
-      transform: rotateY(180deg);
-    }
+        .card-back {
+            background: #c5cae9;
+            color: #333;
+            transform: rotateY(180deg);
+        }
 
-    #card-content, #backside-content {
-      margin-bottom: 20px;
-      font-weight: bold;
-      word-break: break-word;
-    }
+        /* Content Inside Card Faces */
+        #card-content {
+            margin-bottom: 20px; /* Adjusted margin */
+            font-weight: bold;
+            max-width: 100%;
+        }
+        #backside-content {
+             font-style: italic;
+             max-width: 100%;
+        }
 
-    .options, #navigation {
-      margin-top: 20px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      justify-content: center;
-    }
+        /* Options Buttons */
+        .options {
+            margin-top: 15px; /* Adjusted margin */
+            display: flex;
+            justify-content: center;
+            gap: 15px; /* Adjusted gap */
+            flex-wrap: wrap;
+        }
 
-    button {
-      padding: 10px 20px;
-      font-size: 1em;
-      border: none;
-      border-radius: 25px;
-      background-color: #4db6ac;
-      color: white;
-      cursor: pointer;
-      transition: background-color 0.3s, transform 0.2s;
-    }
-    button:hover {
-      background-color: #26a69a;
-      transform: translateY(-2px);
-    }
-    button.selected {
-      background-color: #00796b;
-    }
+        /* Navigation Buttons */
+        #navigation {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            width: 90%;
+            max-width: 600px;
+            flex-wrap: wrap;
+        }
 
-    #status {
-      margin-top: 20px;
-      font-weight: bold;
-      min-height: 1.5em;
-      text-align: center;
-      width: 100%;
-      max-width: 500px;
-      color: #222;
-    }
+        /* Shared Button Styling */
+        .options button, #navigation button {
+            padding: 10px 20px; /* Adjusted padding */
+            font-size: 0.95em; /* Adjusted font size */
+            border: none;
+            border-radius: 25px;
+            background-color: rgba(255, 255, 255, 0.7);
+            color: #333;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            flex-shrink: 0;
+        }
+        .options button:hover, #navigation button:hover {
+            background-color: rgba(255, 255, 255, 0.9);
+            transform: translateY(-1px);
+        }
+        .options button:active, #navigation button:active {
+            transform: translateY(0px);
+        }
+         .options button.selected {
+            background-color: #4db6ac;
+            color: white;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        #navigation button {
+             background-color: #4db6ac;
+             color: white;
+        }
+        #navigation button:hover {
+            background-color: #26a69a;
+        }
 
-    /* Mobile responsiveness */
-    @media (max-width: 600px) {
-      .card {
-        min-height: 60vh;
-      }
-      .card-face {
-        font-size: 1em;
-        padding: 20px;
-      }
-      button {
-        font-size: 0.9em;
-        padding: 8px 16px;
-      }
-    }
+        /* Status Message */
+        #status {
+            margin-top: 20px;
+            font-weight: bold;
+            min-height: 1.2em;
+            color: #111;
+            text-align: center;
+            width: 90%;
+            max-width: 600px;
+        }
 
-    @media (max-width: 400px) {
-      .card {
-        min-height: 65vh;
-      }
-      .card-face {
-        font-size: 0.9em;
-        padding: 15px;
-      }
-    }
+        /* --- Responsive Adjustments --- */
+        @media (max-width: 600px) {
+            body {
+                padding: 15px;
+                 justify-content: flex-start; /* Align top on smaller screens */
+                 min-height: 100vh; /* Ensure takes full screen */
+            }
+            .card-container {
+                width: 95%;
+                margin-top: 15px;
+                margin-bottom: 15px;
+            }
+            .card {
+                min-height: 280px; /* Adjust min-height for mobile */
+            }
+            .card-face {
+                padding: 20px;   /* Reduce padding */
+                font-size: 1.1em; /* Reduce font size */
+            }
+            .options {
+                gap: 10px;
+            }
+             .options button, #navigation button {
+                 padding: 10px 18px;
+                 font-size: 0.9em; /* Further reduce button text */
+             }
+        }
 
-  </style>
+         @media (max-width: 400px) {
+            body {
+                padding: 10px;
+            }
+             .card {
+                 min-height: 250px; /* Further adjust min-height */
+             }
+             .card-face {
+                 font-size: 1em; /* Smaller font */
+                 padding: 15px; /* Less padding */
+             }
+              .options button, #navigation button {
+                padding: 8px 15px; /* Smaller buttons */
+             }
+         }
+
+    </style>
 </head>
 <body>
 
-<div class="card-container">
-  <div class="card" onclick="flipCard()">
-    <div class="card-inner" id="card-inner">
-      <div class="card-face card-front">
-        <div id="card-content">Loading...</div>
-        <div class="options" id="options"></div>
-      </div>
-      <div class="card-face card-back">
-        <div id="backside-content">Backside text</div>
-      </div>
+    <!-- Structure remains the same -->
+    <div class="card-container">
+        <div class="card" onclick="flipCard()">
+            <div class="card-inner" id="card-inner">
+                <div class="card-face card-front">
+                    <div id="card-content">Loading...</div>
+                    <div class="options" id="options"></div>
+                </div>
+                <div class="card-face card-back">
+                    <div id="backside-content">Backside text</div>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
 
-<div id="navigation"></div>
-<p id="status"></p>
+    <div id="navigation"></div>
+    <p id="status"></p>
 
-<script>
-  let currentIndex = 0;
-  let answers = {};
+    <!-- JavaScript remains the same as the previous step -->
+    <script>
+        // --- State Variables ---
+        let currentIndex = 0; // 0: Welcome, 1: Q1, 2: Q2, 3: Q3, 4: Finished
+        let answers = {}; // Stores { q1: 'Yes', q2: 'No', ... }
 
-  const cardContents = [
-    "Welcome to the Simple Test!",
-    "Question One: Is the sky blue?",
-    "Question Two: Is water wet?",
-    "Question Three: Does 1+1=2?",
-    "Finished! Ready to submit?"
-  ];
-  const backsideText = "Flip me to see more!";
+        // --- Content ---
+        const cardContents = [
+            "Welcome to the Simple Test!", // Index 0
+            "Question One: Is the sky blue?",      // Index 1
+            "Question Two: Is water wet?",     // Index 2
+            "Question Three: Does 1+1=2?",    // Index 3
+            "Finished! Ready to submit?"      // Index 4
+        ];
+        const backsideText = "Backside text"; // Central place for back text
 
-  const cardInner = document.getElementById('card-inner');
-  const cardContentDiv = document.getElementById('card-content');
-  const backsideContentDiv = document.getElementById('backside-content');
-  const optionsDiv = document.getElementById('options');
-  const navigationDiv = document.getElementById('navigation');
-  const statusP = document.getElementById('status');
+        // --- DOM Elements ---
+        const cardInner = document.getElementById('card-inner'); // Target for flip class
+        const cardContentDiv = document.getElementById('card-content');
+        const backsideContentDiv = document.getElementById('backside-content');
+        const optionsDiv = document.getElementById('options');
+        const navigationDiv = document.getElementById('navigation');
+        const statusP = document.getElementById('status');
 
-  const scriptURL = 'https://script.google.com/macros/s/AKfycbzzEEBrO7ORxw8kzLbVKrEt7x_4_1ZEwU9IuRMY9HMk6p_uTjM9k8V4ZINfcvI-4CBM/exec';
+        // !!! PASTE YOUR WORKING WEB APP URL HERE !!!
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbzzEEBrO7ORxw8kzLbVKrEt7x_4_1ZEwU9IuRMY9HMk6p_uTjM9k8V4ZINfcvI-4CBM/exec'; // <-- MAKE SURE THIS IS CORRECT
 
-  function loadCard(index) {
-    currentIndex = index;
-    cardInner.classList.remove('flip');
-    setTimeout(() => {
-      cardContentDiv.textContent = cardContents[index];
-      backsideContentDiv.textContent = backsideText;
-    }, 100);
+        // --- Functions ---
 
-    optionsDiv.innerHTML = '';
-    navigationDiv.innerHTML = '';
-    statusP.textContent = '';
+        function loadCard(index) {
+            currentIndex = index;
+            cardInner.classList.remove('flip'); // Reset to front face on load
 
-    if (index > 0) {
-      const prevBtn = document.createElement('button');
-      prevBtn.textContent = 'Previous';
-      prevBtn.onclick = (e) => { e.stopPropagation(); prevCard(); };
-      navigationDiv.appendChild(prevBtn);
-    }
+            setTimeout(() => {
+                cardContentDiv.textContent = cardContents[index];
+                backsideContentDiv.textContent = backsideText;
+            }, 50);
 
-    if (index === 0) {
-      const nextBtn = document.createElement('button');
-      nextBtn.textContent = 'Next';
-      nextBtn.onclick = (e) => { e.stopPropagation(); nextCard(); };
-      navigationDiv.appendChild(nextBtn);
-    } else if (index >= 1 && index <= 3) {
-      const questionKey = 'q' + index;
-      ['Yes', 'No'].forEach(option => {
-        const btn = document.createElement('button');
-        btn.textContent = option;
-        btn.onclick = (e) => { e.stopPropagation(); selectAnswer(index, option); };
-        optionsDiv.appendChild(btn);
-        if (answers[questionKey] === option) {
-          btn.classList.add('selected');
+            optionsDiv.innerHTML = '';
+            navigationDiv.innerHTML = '';
+            statusP.textContent = '';
+
+            if (index > 0) {
+                const prevBtn = document.createElement('button');
+                prevBtn.textContent = 'Previous';
+                prevBtn.onclick = (e) => { e.stopPropagation(); prevCard(); };
+                navigationDiv.appendChild(prevBtn);
+            }
+
+            if (index === 0) {
+                const nextBtn = document.createElement('button');
+                nextBtn.textContent = 'Next';
+                nextBtn.onclick = (e) => { e.stopPropagation(); nextCard(); };
+                navigationDiv.appendChild(nextBtn);
+            } else if (index >= 1 && index <= 3) {
+                const questionKey = 'q' + index;
+                ['Yes', 'No'].forEach(option => {
+                    const btn = document.createElement('button');
+                    btn.textContent = option;
+                    btn.onclick = (e) => { e.stopPropagation(); selectAnswer(index, option); };
+                    optionsDiv.appendChild(btn);
+                    if (answers[questionKey] === option) {
+                        btn.classList.add('selected');
+                    }
+                });
+            } else if (index === 4) {
+                const submitBtn = document.createElement('button');
+                submitBtn.id = 'submitBtn';
+                submitBtn.textContent = 'Submit Answers';
+                submitBtn.onclick = (e) => { e.stopPropagation(); submitData(); };
+                navigationDiv.appendChild(submitBtn);
+            }
         }
-      });
-    } else if (index === 4) {
-      const submitBtn = document.createElement('button');
-      submitBtn.id = 'submitBtn';
-      submitBtn.textContent = 'Submit Answers';
-      submitBtn.onclick = (e) => { e.stopPropagation(); submitData(); };
-      navigationDiv.appendChild(submitBtn);
-    }
-  }
 
-  function flipCard() {
-    cardInner.classList.toggle('flip');
-  }
+        function flipCard() {
+            cardInner.classList.toggle('flip');
+        }
 
-  function selectAnswer(index, option) {
-    answers['q' + index] = option;
-    const buttons = optionsDiv.querySelectorAll('button');
-    buttons.forEach(btn => {
-      btn.classList.toggle('selected', btn.textContent === option);
-    });
-    setTimeout(() => {
-      if (currentIndex < cardContents.length - 1) {
-        nextCard();
-      }
-    }, 250);
-  }
+        function selectAnswer(questionIndex, option) {
+            const questionKey = 'q' + questionIndex;
+            answers[questionKey] = option;
+            console.log('Answers:', answers);
 
-  function nextCard() {
-    if (currentIndex < cardContents.length - 1) {
-      loadCard(currentIndex + 1);
-    }
-  }
+            const buttons = optionsDiv.querySelectorAll('button');
+            buttons.forEach(btn => {
+                btn.classList.toggle('selected', btn.textContent === option);
+            });
 
-  function prevCard() {
-    if (currentIndex > 0) {
-      loadCard(currentIndex - 1);
-    }
-  }
+            setTimeout(() => {
+                if (currentIndex < cardContents.length - 1) {
+                     nextCard();
+                 }
+            }, 250);
+        }
 
-  function submitData() {
-    const submitBtn = document.getElementById('submitBtn');
-    statusP.textContent = 'Submitting...';
-    statusP.style.color = 'black';
-    if (submitBtn) submitBtn.disabled = true;
+        function nextCard() {
+            if (currentIndex < cardContents.length - 1) {
+                loadCard(currentIndex + 1);
+            }
+        }
 
-    fetch(scriptURL, {
-      redirect: "follow",
-      method: 'POST',
-      headers: {
-        'Content-Type': 'text/plain;charset=utf-8',
-      },
-      body: JSON.stringify(answers)
-    })
-    .then(response => response.ok ? response.json() : Promise.reject(response))
-    .then(data => {
-      if (data && data.result === 'success') {
-        statusP.textContent = 'Success! Data submitted.';
-        statusP.style.color = 'green';
-        document.querySelector('.card-container').style.display = 'none';
-        navigationDiv.style.display = 'none';
-      } else {
-        statusP.textContent = 'Error submitting data.';
-        statusP.style.color = 'red';
-        if (submitBtn) submitBtn.disabled = false;
-      }
-    })
-    .catch(error => {
-      console.error('Submission failed:', error);
-      statusP.textContent = 'Error during submission. Check console.';
-      statusP.style.color = 'red';
-      if (submitBtn) submitBtn.disabled = false;
-    });
-  }
+        function prevCard() {
+            if (currentIndex > 0) {
+                loadCard(currentIndex - 1);
+            }
+        }
 
-  window.onload = () => {
-    loadCard(0);
-  };
-</script>
+        function submitData() {
+            const submitBtn = document.getElementById('submitBtn');
+            statusP.textContent = 'Submitting...';
+            statusP.style.color = 'black';
+            if (submitBtn) submitBtn.disabled = true;
+
+            console.log('Submitting final answers:', JSON.stringify(answers));
+
+            fetch(scriptURL, {
+                redirect: "follow",
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'text/plain;charset=utf-8',
+                },
+                body: JSON.stringify(answers)
+            })
+            .then(response => {
+                console.log('Fetch Response:', response);
+                if (response.ok) return response.json();
+                return response.text().then(text => { throw new Error(`HTTP error ${response.status}: ${text || 'Unknown error'}`); });
+            })
+            .then(data => {
+                console.log('Success Response Data:', data);
+                if (data && data.result === 'success') {
+                    statusP.textContent = 'Success! Data submitted.';
+                    statusP.style.color = 'green';
+                    document.querySelector('.card-container').style.display = 'none';
+                    navigationDiv.style.display = 'none';
+                } else {
+                    statusP.textContent = `Submission OK, but script reported: ${data.message || 'Unknown issue'}`;
+                    statusP.style.color = 'orange';
+                    if (submitBtn) submitBtn.disabled = false;
+                }
+            })
+            .catch(error => {
+                console.error('Fetch Error:', error);
+                statusP.textContent = `Error: ${error.message}. Check console.`;
+                statusP.style.color = 'red';
+                if (submitBtn) submitBtn.disabled = false;
+            });
+        }
+
+        // --- Initial Load ---
+        window.onload = () => {
+            loadCard(0);
+        };
+    </script>
 
 </body>
 </html>
