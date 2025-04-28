@@ -10,9 +10,6 @@
     text-align: center;
     padding: 40px;
     margin: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     min-height: 100vh;
     overflow-x: hidden;
   }
@@ -22,9 +19,10 @@
     height: 10px;
     background: #ccc;
     border-radius: 5px;
-    margin-top: 20px;
+    margin: 20px auto;
     overflow: hidden;
   }
+
   #progress {
     height: 100%;
     width: 0%;
@@ -33,23 +31,22 @@
   }
 
   .container {
-    position: relative;
     perspective: 1000px;
     width: 90%;
     max-width: 600px;
-    margin: 30px 0;
+    margin: 30px auto;
   }
 
   .card {
     width: 100%;
-    height: 300px;
+    height: 250px;
     background: white;
     border-radius: 10px;
     box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-    position: relative;
     transform-style: preserve-3d;
     transition: transform 0.8s;
     cursor: pointer;
+    position: relative;
   }
 
   .card.flip {
@@ -106,7 +103,7 @@
     margin-top: 20px;
   }
 
-  #navigation button, #submitBtn {
+  #navigation button {
     background: #4db6ac;
     border: none;
     color: white;
@@ -118,7 +115,7 @@
     transition: background 0.3s;
   }
 
-  #navigation button:hover, #submitBtn:hover {
+  #navigation button:hover {
     background: #00796b;
   }
 
@@ -139,16 +136,16 @@
 
 <div id="navigation">
   <button onclick="prevQuestion()">Previous</button>
-  <button onclick="nextQuestion()">Next</button>
+  <button onclick="nextQuestion()" id="nextBtn" style="display:none;">Next</button>
+  <button onclick="submitAnswers()" id="submitBtn" style="display:none;">Submit</button>
 </div>
-
-<button onclick="submitAnswers()" id="submitBtn" style="display:none;">Submit</button>
 
 <script>
 let currentIndex = 0;
 let email = "";
 let questions = [
-  "Please enter your email:\n\n(A welcome text and a text saying 'Click me to see further information')",
+  "Welcome\n\nThis is first card",
+  "Please enter your email:",
   "The anticipation of future rewards motivates me more than receiving immediate rewards",
   "I can maintain motivation by visualizing longterm benefits of my actions",
   "I find myself seeking immediate rewards, even if I know a better reward will come later",
@@ -166,11 +163,11 @@ let questions = [
   "I sometimes find myself repeating behaviors that conflict with my goals",
   "I find it difficult to break habits even when I know they're counterproductive",
   "I regularly evaluate and adjust my habits based on their effectiveness",
-  "I often act on autopilot without considering the longterm impact of my habits",
-  "Thank you after submission" // <- Added final card
+  "I often act on autopilot without considering the longterm impact of my habits"
 ];
 
 let explanations = [
+  "This is the back side of the first card.",
   "Please type your email address so we can save your answers.",
   "Motivation can be increased by imagining the benefits of future success.",
   "Thinking about longterm goals helps in maintaining daily motivation.",
@@ -189,8 +186,7 @@ let explanations = [
   "Self-awareness is needed to overcome goal-conflicting behaviors.",
   "Breaking bad habits is hard but possible with effort.",
   "Continuous evaluation ensures your habits remain effective.",
-  "Autopilot behavior can be either beneficial or harmful depending on the habit.",
-  "Test part 2 and 3" // <- Explanation for the final card
+  "Autopilot behavior can be either beneficial or harmful depending on the habit."
 ];
 
 let answers = {};
@@ -205,9 +201,13 @@ function loadQuestion() {
   const optionsDiv = document.getElementById('options');
   optionsDiv.innerHTML = '';
 
-  if(currentIndex === 0) {
+  if (currentIndex === 1) {
+    // Email input
     optionsDiv.innerHTML = `<input type="email" id="emailInput" placeholder="Enter your email" style="padding:10px; font-size:16px; width:80%;">`;
-  } else if(currentIndex < questions.length - 1) {
+    document.getElementById('nextBtn').style.display = "inline-block";
+  } else if (currentIndex === 0 || currentIndex >= questions.length) {
+    document.getElementById('nextBtn').style.display = "none";
+  } else {
     let options = ["Strongly Agree", "Agree", "Neutral", "Disagree", "Strongly Disagree"];
     options.forEach(opt => {
       const btn = document.createElement('button');
@@ -215,11 +215,7 @@ function loadQuestion() {
       btn.onclick = () => selectAnswer(opt);
       optionsDiv.appendChild(btn);
     });
-  } else {
-    // Last card: Thank you message
-    document.getElementById('options').innerHTML = '';
-    document.getElementById('navigation').style.display = "none";
-    document.getElementById('submitBtn').style.display = "inline-block";
+    document.getElementById('nextBtn').style.display = "none";
   }
 
   updateProgress();
@@ -235,59 +231,59 @@ function selectAnswer(option) {
 }
 
 function nextQuestion() {
-  if(currentIndex === 0){
+  if (currentIndex === 1) {
     email = document.getElementById('emailInput').value;
-    if(!validateEmail(email)){
+    if (!email || !email.includes('@')) {
       alert("Please enter a valid email address.");
       return;
     }
   }
   currentIndex++;
-  if(currentIndex >= questions.length){
+  if (currentIndex >= questions.length) {
+    document.getElementById('submitBtn').style.display = "inline-block";
+    document.getElementById('navigation').style.display = "block";
+    document.getElementById('options').innerHTML = "";
+    document.getElementById('question').innerText = "Thank you!";
+    document.getElementById('explanation').innerText = "Test part 2 and 3 coming soon!";
     return;
   }
   loadQuestion();
 }
 
 function prevQuestion() {
-  if(currentIndex > 0){
+  if (currentIndex > 0) {
     currentIndex--;
     loadQuestion();
   }
 }
 
-function updateProgress(){
+function updateProgress() {
   let progress = Math.floor((currentIndex / (questions.length-1)) * 100);
   document.getElementById('progress').style.width = `${progress}%`;
 }
 
-function validateEmail(mail) {
-  return /\S+@\S+\.\S+/.test(mail);
-}
-
 function submitAnswers() {
-  if(!validateEmail(email)){
-    alert("Invalid email address. Please correct it before submitting.");
-    return;
-  }
-
   const payload = {
     email: email,
     answers: answers
   };
+
   const url = "https://script.google.com/macros/s/AKfycbyr1tYZ2gW29jkogPD1PgfY2J7tC044ext2lehs9TFuPWgeiWXxlpITSrC0icIQvYogSA/exec";
 
   fetch(url, {
     method: "POST",
-    mode: "no-cors",
     headers: {
       "Content-Type": "application/json"
     },
     body: JSON.stringify(payload)
-  }).then(res => {
+  })
+  .then(response => response.text())
+  .then(data => {
+    console.log('Success:', data);
     alert("Submitted successfully!");
-  }).catch(err => {
-    console.error(err);
+  })
+  .catch((error) => {
+    console.error('Error:', error);
   });
 }
 
