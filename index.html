@@ -350,56 +350,61 @@ function submitAnswers() {
   document.getElementById('submitBtn').disabled = true;
   document.getElementById('submitBtn').innerText = 'Submitting...';
 
-  // Transform answers into the desired {q1: ans, q2: ans, ...} format
+  // Transform answers (Your existing code for this is fine)
   const formattedAnswers = {};
   for (let i = realQuestionsStartIndex; i < questions.length; i++) {
-      const questionNumber = i - realQuestionsStartIndex + 1; // Calculate Q number (1-18)
-      formattedAnswers[`q${questionNumber}`] = userAnswers[i] || "Not Answered"; // Use index 'i' to get answer
+      const questionNumber = i - realQuestionsStartIndex + 1;
+      formattedAnswers[`q${questionNumber}`] = userAnswers[i] || "Not Answered";
   }
 
   const payload = {
     email: email,
-    answers: formattedAnswers // Send the formatted answers
+    answers: formattedAnswers
   };
-  const url = "https://script.google.com/macros/s/AKfycbxnTJGxGOu68VaUwKvWcadrc7JrwdOP9Gc6gZvAquvHCeZ1kwOZnsYGvLCmImlQgz47Rw/exec"; // Replace with YOUR script URL
+
+  // Use the NEWEST deployment URL you got
+  const url = "https://script.google.com/macros/s/AKfycbyCQavzxK1BCEJD-TpRMsMx7GGcQ0ihj3CWNTHcd02MXi4YaHLbMrh7AOD3wc9afEUF8g/exec"; // Make sure this is the latest
 
   console.log("Submitting payload:", JSON.stringify(payload)); // Log before sending
 
   fetch(url, {
+    // --- CHANGES START HERE ---
+    redirect: "follow", // Important for Apps Script redirects
     method: "POST",
-    // mode: "no-cors", // REMOVE THIS LINE
+    // mode: "no-cors", // STILL REMOVED - DO NOT ADD BACK
     headers: {
-      // Content-Type is often set automatically by fetch for JSON,
-      // but explicitly setting it is good practice.
-      "Content-Type": "application/json",
+      // Change Content-Type to text/plain to avoid preflight
+      "Content-Type": "text/plain;charset=utf-8",
     },
-    // Redirect needs to be 'follow' (default) or 'manual' for Apps Script web apps
-    // redirect: 'follow', // Usually the default, fine to omit
-    body: JSON.stringify(payload)
+    body: JSON.stringify(payload) // Body is still the JSON string
+    // --- CHANGES END HERE ---
   })
   .then(response => {
-      // Check if response is ok (status in the range 200-299)
-      // Note: Apps Script redirects, so a direct .json() might fail here.
-      // We mainly care if the request succeeded without network errors.
-      console.log("Fetch response received:", response);
-      if (response.ok || response.type === 'opaque' || response.status === 0) { // Opaque or status 0 might occur with redirects/cors issues sometimes even without no-cors, treat as potential success
-         // Provide feedback to the user
-         document.getElementById('card').innerHTML = `
-            <div class="card-front" style="text-align: center;">
-                <h2>Thank You!</h2>
-                <p>Your answers have been submitted successfully.</p>
-            </div>`;
-         document.getElementById('options').innerHTML = '';
-         document.getElementById('navigation').innerHTML = ''; // Remove buttons
-         document.getElementById('progress-bar').style.display = 'none'; // Hide progress bar
+      console.log("Fetch response status:", response.status); // Log status
+      // With text/plain, Apps Script might return 200 OK directly,
+      // or still redirect (status 302 then 200).
+      // Check for ok status, but also handle potential redirect scenarios if needed.
+      // A simple check for ok might be sufficient if redirect: "follow" works well.
+      if (response.ok) {
+          // It looks like it worked! Provide feedback.
+          document.getElementById('card').innerHTML = `
+             <div class="card-front" style="text-align: center;">
+                 <h2>Thank You!</h2>
+                 <p>Your answers have been submitted successfully.</p>
+             </div>`;
+          document.getElementById('options').innerHTML = '';
+          document.getElementById('navigation').innerHTML = '';
+          document.getElementById('progress-bar').style.display = 'none';
       } else {
-          // Try to get more info if possible, though often limited
+          // Attempt to read response body for more details
           return response.text().then(text => {
-              throw new Error(`Submission failed: ${response.status} ${response.statusText}. Response: ${text}`);
+              console.error("Submission failed response body:", text);
+              throw new Error(`Submission failed: ${response.status} ${response.statusText}`);
           });
       }
   })
   .catch(err => {
+    // The error might now be different if the request goes through but fails later
     console.error("Fetch Error:", err);
     alert("Submission failed. Please check the console for errors and try again.");
     // Re-enable submit button on error
