@@ -3,206 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dopamine & Motivation Assessment - Flippable</title>
+    <title>Dopamine & Motivation Assessment - Flippable (v3 Fix Attempt)</title>
     <style>
-        /* --- Basic Reset & Body Styling --- */
-        * { box-sizing: border-box; }
-        html { height: 100%; }
-        body {
-            font-family: sans-serif;
-            margin: 0;
-            padding: 15px 15px 5px 15px;
-            overflow-x: hidden;
-            background-color: #f0f0f0; /* Light background */
-        }
-
-        /* --- Card Container & Perspective --- */
-        .card-container {
-            width: 90%;
-            max-width: 600px;
-            margin: 15px auto;
-            perspective: 1000px;
-        }
-
-        /* --- Card Structure (Outer Shell) --- */
-        .card {
-            width: 100%;
-            min-height: 300px; /* Adjust as needed */
-            position: relative;
-            border-radius: 15px;
-            cursor: pointer; /* Add cursor pointer for flipping */
-        }
-
-        /* --- Card Inner (Handles the Flip) --- */
-        .card-inner {
-            width: 100%;
-            height: 100%;
-            position: absolute;
-            top: 0;
-            left: 0;
-            transform-style: preserve-3d;
-            transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
-            border-radius: 15px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-        }
-        .card-inner.flip {
-            transform: rotateY(180deg);
-        }
-
-        /* --- Card Faces (Front and Back) --- */
-        .card-face {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
-            border-radius: 15px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 30px;
-            text-align: center;
-            overflow-wrap: break-word;
-            word-wrap: break-word;
-            hyphens: auto;
-            overflow-y: auto;
-        }
-        .card-front {
-            background: white;
-            color: #333;
-            z-index: 2;
-        }
-        .card-back {
-            background: #424242;
-            color: white;
-            transform: rotateY(180deg);
-        }
-
-        /* --- Content Inside Front Face --- */
-        #card-content {
-             margin-bottom: 20px;
-             font-weight: bold;
-             font-size: 1.2em;
-             max-width: 100%;
-        }
-        #backside-content {
-            max-width: 100%;
-            font-size: 1.1em;
-        }
-
-        /* Email Input Styling (within front face) */
-        #email-input-container {
-            margin-bottom: 15px;
-            width: 100%;
-            max-width: 350px;
-            text-align: left;
-        }
-        #email-input-container label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: #555;
-        }
-        #email-input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 1em;
-        }
-
-        /* Options Buttons (within front face) */
-        .options {
-            margin-top: 15px;
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-
-        /* --- Navigation Buttons (Below Card) --- */
-        #navigation {
-            margin-top: 15px;
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            width: 90%;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-            flex-wrap: wrap;
-            margin-bottom: 5px;
-        }
-
-        /* Shared Button Styling */
-        .options button, #navigation button {
-            padding: 10px 20px;
-            font-size: 0.95em;
-            border: none;
-            border-radius: 25px;
-            background-color: #e0e0e0;
-            color: #333;
-            cursor: pointer;
-            transition: background-color 0.2s, transform 0.1s;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            flex-shrink: 0;
-        }
-        .options button:hover, #navigation button:hover {
-            background-color: #bdbdbd;
-            transform: translateY(-1px);
-        }
-        .options button:active, #navigation button:active {
-            transform: translateY(0px);
-        }
-         .options button.selected {
-            background-color: #4db6ac;
-            color: white;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-        }
-        #navigation button {
-             background-color: #4db6ac;
-             color: white;
-        }
-        #navigation button:hover {
-            background-color: #26a69a;
-        }
-         #navigation button:disabled {
-            background-color: #9e9e9e;
-            cursor: not-allowed;
-         }
-
-        /* --- Status Message --- */
-        #status {
-            margin-top: 5px;
-            font-weight: bold;
-            min-height: 1.2em;
-            color: #111;
-            text-align: center;
-            width: 90%;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-            margin-bottom: 5px;
-        }
-
-        /* --- Responsive --- */
-        @media (max-width: 600px) {
-            body { padding: 10px 10px 5px 10px; }
-            .card-container { width: 95%; margin-top: 10px; margin-bottom: 10px; }
-            .card { min-height: 280px; }
-            .card-face { padding: 20px; }
-            #card-content { font-size: 1.1em; }
-            .options { gap: 10px; }
-            .options button, #navigation button { padding: 10px 18px; font-size: 0.9em; }
-             #navigation, #status { width: 95%; }
-        }
-         @media (max-width: 400px) {
-            body { padding: 5px 5px 2px 5px; }
-             .card { min-height: 250px; }
-             #card-content { font-size: 1em; }
-             .card-face { padding: 15px; }
-             .options button, #navigation button { padding: 8px 15px; }
-         }
+        /* Styles remain the same as the previous version */
+        * { box-sizing: border-box; } html { height: 100%; }
+        body { font-family: sans-serif; margin: 0; padding: 15px 15px 5px 15px; overflow-x: hidden; background-color: #f0f0f0; }
+        .card-container { width: 90%; max-width: 600px; margin: 15px auto; perspective: 1000px; }
+        .card { width: 100%; min-height: 300px; position: relative; border-radius: 15px; cursor: pointer; }
+        .card-inner { width: 100%; height: 100%; position: absolute; top: 0; left: 0; transform-style: preserve-3d; transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
+        .card-inner.flip { transform: rotateY(180deg); }
+        .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; text-align: center; overflow-wrap: break-word; word-wrap: break-word; hyphens: auto; overflow-y: auto; }
+        .card-front { background: white; color: #333; z-index: 2; }
+        .card-back { background: #424242; color: white; transform: rotateY(180deg); }
+        #card-content { margin-bottom: 20px; font-weight: bold; font-size: 1.2em; max-width: 100%; }
+        #backside-content { max-width: 100%; font-size: 1.1em; }
+        #email-input-container { margin-bottom: 15px; width: 100%; max-width: 350px; text-align: left; }
+        #email-input-container label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; }
+        #email-input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 1em; }
+        .options { margin-top: 15px; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
+        #navigation { margin-top: 15px; display: flex; justify-content: center; gap: 15px; width: 90%; max-width: 600px; margin-left: auto; margin-right: auto; flex-wrap: wrap; margin-bottom: 5px; }
+        .options button, #navigation button { padding: 10px 20px; font-size: 0.95em; border: none; border-radius: 25px; background-color: #e0e0e0; color: #333; cursor: pointer; transition: background-color 0.2s, transform 0.1s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); flex-shrink: 0; }
+        .options button:hover, #navigation button:hover { background-color: #bdbdbd; transform: translateY(-1px); }
+        .options button:active, #navigation button:active { transform: translateY(0px); }
+        .options button.selected { background-color: #4db6ac; color: white; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+        #navigation button { background-color: #4db6ac; color: white; }
+        #navigation button:hover { background-color: #26a69a; }
+        #navigation button:disabled { background-color: #9e9e9e; cursor: not-allowed; }
+        #status { margin-top: 5px; font-weight: bold; min-height: 1.2em; color: #111; text-align: center; width: 90%; max-width: 600px; margin-left: auto; margin-right: auto; margin-bottom: 5px; }
+        @media (max-width: 600px) { body { padding: 10px 10px 5px 10px; } .card-container { width: 95%; margin-top: 10px; margin-bottom: 10px; } .card { min-height: 280px; } .card-face { padding: 20px; } #card-content { font-size: 1.1em; } .options { gap: 10px; } .options button, #navigation button { padding: 10px 18px; font-size: 0.9em; } #navigation, #status { width: 95%; } }
+        @media (max-width: 400px) { body { padding: 5px 5px 2px 5px; } .card { min-height: 250px; } #card-content { font-size: 1em; } .card-face { padding: 15px; } .options button, #navigation button { padding: 8px 15px; } }
     </style>
 </head>
 <body>
@@ -211,6 +40,7 @@
         <div class="card" onclick="flipCard()">
             <div class="card-inner" id="card-inner">
                 <div class="card-face card-front" id="card-front-content">
+                    <!-- Content dynamically added -->
                     <div id="card-content">Loading...</div>
                     <div class="options" id="options"></div>
                 </div>
@@ -230,37 +60,36 @@
         let userEmail = '';
         let answers = {};
 
-        // --- Content ---
+        // --- Content - PLEASE DOUBLE-CHECK THIS ARRAY IN YOUR CODE ---
         const statementContents = [
-            // Index 0: Placeholder handled by email logic
-            "The anticipation of future rewards motivates me more than receiving immediate rewards", // Index 1 (s1)
-            "I can maintain motivation by visualizing longterm benefits of my actions", // Index 2 (s2)
-            "I find myself seeking immediate rewards, even if I know a better reward will come later", // Index 3 (s3)
-            "I often need external incentives (praise, rewards) to stay motivated", // Index 4 (s4)
-            "I get energized by planning steps toward a distant goal", // Index 5 (s5)
-            "I tend to abandon tasks when the rewards aren't immediately visible", // Index 6 (s6)
-            "Once I've established a routine, I can maintain it without much conscious effort", // Index 7 (s7)
-            "I can stick to new habits even when facing obstacles or stress", // Index 8 (s8)
-            "I struggle to maintain consistency in my daily routines", // Index 9 (s9)
-            "I often start strong with new habits but rarely maintain them longterm", // Index 10 (s10)
-            "My positive habits feel natural and automatic rather than forced", // Index 11 (s11)
-            "I tend to forget or abandon habits if I don't see immediate results", // Index 12 (s12)
-            "I consciously align my daily habits with my longterm goals", // Index 13 (s13)
-            "When I recognize a habit isn't serving me, I can successfully modify it", // Index 14 (s14)
-            "I sometimes find myself repeating behaviors that conflict with my goals", // Index 15 (s15)
-            "I find it difficult to break habits even when I know they're counterproductive", // Index 16 (s16)
-            "I regularly evaluate and adjust my habits based on their effectiveness", // Index 17 (s17)
-            "I often act on autopilot without considering the longterm impact of my habits", // Index 18 (s18)
-            "Finished! Ready to submit?" // Index 19
+            /* Index 0 */ "THIS SHOULD NOT BE DISPLAYED (Email Placeholder)",
+            /* Index 1 */ "The anticipation of future rewards motivates me more than receiving immediate rewards", // s1
+            /* Index 2 */ "I can maintain motivation by visualizing longterm benefits of my actions", // s2
+            /* Index 3 */ "I find myself seeking immediate rewards, even if I know a better reward will come later", // s3
+            /* Index 4 */ "I often need external incentives (praise, rewards) to stay motivated", // s4
+            /* Index 5 */ "I get energized by planning steps toward a distant goal", // s5
+            /* Index 6 */ "I tend to abandon tasks when the rewards aren't immediately visible", // s6
+            /* Index 7 */ "Once I've established a routine, I can maintain it without much conscious effort", // s7
+            /* Index 8 */ "I can stick to new habits even when facing obstacles or stress", // s8
+            /* Index 9 */ "I struggle to maintain consistency in my daily routines", // s9
+            /* Index 10 */ "I often start strong with new habits but rarely maintain them longterm", // s10
+            /* Index 11 */ "My positive habits feel natural and automatic rather than forced", // s11
+            /* Index 12 */ "I tend to forget or abandon habits if I don't see immediate results", // s12
+            /* Index 13 */ "I consciously align my daily habits with my longterm goals", // s13
+            /* Index 14 */ "When I recognize a habit isn't serving me, I can successfully modify it", // s14
+            /* Index 15 */ "I sometimes find myself repeating behaviors that conflict with my goals", // s15
+            /* Index 16 */ "I find it difficult to break habits even when I know they're counterproductive", // s16
+            /* Index 17 */ "I regularly evaluate and adjust my habits based on their effectiveness", // s17
+            /* Index 18 */ "I often act on autopilot without considering the longterm impact of my habits", // s18
+            /* Index 19 */ "Finished! Ready to submit?" // Finish Screen Placeholder
         ];
-        const TOTAL_CARDS = statementContents.length; // 20
-        const NUM_STATEMENTS = TOTAL_CARDS - 2; // 18
+        const TOTAL_CARDS = statementContents.length; // Should be 20
+        const NUM_STATEMENTS = 18; // Explicitly 18 statements
         const backsideText = "Backside";
 
         // --- DOM Elements ---
         const cardInner = document.getElementById('card-inner');
         const cardFrontContent = document.getElementById('card-front-content');
-        // We will get cardContentDiv and optionsDiv dynamically inside loadCard now
         const backsideContentDiv = document.getElementById('backside-content');
         const navigationDiv = document.getElementById('navigation');
         const statusP = document.getElementById('status');
@@ -268,38 +97,42 @@
         // !!! PASTE YOUR WORKING WEB APP URL HERE !!!
         const scriptURL = 'https://script.google.com/macros/s/AKfycbz46-qpx_qP6xPOLNydCHZY79k-QUMOwKerozwaxOjLrXrMIwNl4HOTlDUyWu4UXS3PVA/exec'; // <-- MAKE SURE THIS IS CORRECT
 
+
         // --- Functions ---
 
         function loadCard(index) {
-            console.log(`Loading card index: ${index}`); // <-- ADDED CONSOLE LOG
-            currentIndex = index;
-            cardInner.classList.remove('flip');
+            console.log(`--- Loading card for index: ${index} ---`);
+            currentIndex = index; // Set current index state
+            cardInner.classList.remove('flip'); // Reset flip state
 
-            // Delay content change slightly
+            // Delay content change slightly to allow UI to settle
             setTimeout(() => {
-                // Clear previous dynamic content from front face
-                cardFrontContent.innerHTML = '';
+                // --- Clear previous front content ---
+                cardFrontContent.innerHTML = ''; // Wipe the front face clean first
 
-                // Create and add core front elements
+                // --- Create core elements for the front face ---
                 const contentDiv = document.createElement('div');
                 contentDiv.id = 'card-content';
-                cardFrontContent.appendChild(contentDiv);
+                cardFrontContent.appendChild(contentDiv); // Add text div
 
-                const currentOptionsDiv = document.createElement('div');
-                currentOptionsDiv.className = 'options';
-                currentOptionsDiv.id = 'options';
-                cardFrontContent.appendChild(currentOptionsDiv);
+                const optionsDiv = document.createElement('div'); // Create options div
+                optionsDiv.className = 'options';
+                optionsDiv.id = 'options'; // Assign ID for later reference
+                // We append optionsDiv later, after potentially adding email input
 
-                 // Set back face content
-                 backsideContentDiv.textContent = backsideText;
+                // --- Set Backside Content ---
+                backsideContentDiv.textContent = backsideText;
 
-                // --- Populate Front Face Content ---
-                let cardText = ""; // To log what text is set
-                if (index === 0) { // Email Screen (Index 0)
+                // --- Determine and Set Front Content Based on Index ---
+                let statementKey = ''; // Will be s1, s2, etc.
+                let cardText = '';
+
+                if (index === 0) { // --- EMAIL SCREEN (Index 0) ---
+                    console.log("Setting up Email Screen.");
                     cardText = 'Please enter your email address to begin:';
-                    contentDiv.textContent = cardText;
-                    console.log("Displaying: Email Prompt");
+                    contentDiv.textContent = cardText; // Set the main text
 
+                    // Create and insert email input elements
                     const emailContainer = document.createElement('div');
                     emailContainer.id = 'email-input-container';
                     const emailLabel = document.createElement('label');
@@ -311,48 +144,63 @@
                     emailInput.placeholder = 'you@example.com';
                     emailInput.required = true;
                     emailInput.value = userEmail;
-                    emailInput.onclick = (e) => e.stopPropagation();
+                    emailInput.onclick = (e) => e.stopPropagation(); // Prevent flip on input click
                     emailContainer.appendChild(emailLabel);
                     emailContainer.appendChild(emailInput);
-                    cardFrontContent.insertBefore(emailContainer, currentOptionsDiv);
+                    cardFrontContent.insertBefore(emailContainer, contentDiv.nextSibling); // Insert email *after* main text
 
-                } else if (index > 0 && index < TOTAL_CARDS - 1) { // Statement cards (Index 1 to 18)
-                    cardText = statementContents[index];
-                    contentDiv.textContent = cardText;
-                    console.log(`Displaying Statement ${index}: "${cardText}"`); // <-- LOG STATEMENT
-                    const statementKey = 's' + index;
+                    cardFrontContent.appendChild(optionsDiv); // Add the (empty) options div at the end
 
+                } else if (index >= 1 && index <= NUM_STATEMENTS) { // --- STATEMENT SCREENS (Index 1 to 18) ---
+                    statementKey = 's' + index; // e.g., s1, s2, ... s18
+                    console.log(`Setting up Statement Screen for index ${index}, key: ${statementKey}`);
+
+                    // --- CRITICAL: Get the correct text ---
+                    console.log(`Accessing statementContents[${index}]...`);
+                    cardText = statementContents[index]; // Get text from array
+                    console.log(`   ...Text retrieved: "${cardText}"`);
+                    contentDiv.textContent = cardText; // Set the main text
+
+                    // --- Add options buttons ---
+                    cardFrontContent.appendChild(optionsDiv); // Add the options container
                     ['Agree', 'Disagree'].forEach(option => {
                         const btn = document.createElement('button');
                         btn.textContent = option;
+                        // Pass the *correct index* to selectAnswer
                         btn.onclick = (e) => { e.stopPropagation(); selectAnswer(index, option); };
-                        currentOptionsDiv.appendChild(btn);
+                        optionsDiv.appendChild(btn); // Add button to optionsDiv
+                        // Highlight if already answered
                         if (answers[statementKey] === option) {
                             btn.classList.add('selected');
                         }
                     });
+                    console.log(`Options buttons created for index ${index}`);
 
-                } else if (index === TOTAL_CARDS - 1) { // Finished screen (Index 19)
-                    cardText = statementContents[index];
-                    contentDiv.textContent = cardText;
-                    console.log("Displaying: Finished Screen");
-                    currentOptionsDiv.innerHTML = '';
+                } else if (index === TOTAL_CARDS - 1) { // --- FINISHED SCREEN (Index 19) ---
+                    console.log("Setting up Finished Screen.");
+                    cardText = statementContents[index]; // Get "Finished..." text
+                    contentDiv.textContent = cardText; // Set the main text
+                    cardFrontContent.appendChild(optionsDiv); // Add empty options div
+                } else {
+                     console.error(`INVALID index encountered in loadCard: ${index}`);
+                     contentDiv.textContent = `Error: Invalid card index ${index}.`;
+                     cardFrontContent.appendChild(optionsDiv);
                 }
 
-                // --- Navigation Buttons ---
-                navigationDiv.innerHTML = '';
-                statusP.textContent = '';
+                // --- Setup Navigation Buttons (Outside Card) ---
+                navigationDiv.innerHTML = ''; // Clear previous navigation
+                statusP.textContent = ''; // Clear status message
 
-                if (index === 0) { // Email screen nav
+                if (index === 0) { // Email nav
                     const startBtn = document.createElement('button');
                     startBtn.textContent = 'Start Assessment';
                     startBtn.onclick = (e) => {
-                         e.stopPropagation();
+                         e.stopPropagation(); // Prevent click reaching card flip
                          const emailValue = document.getElementById('email-input').value.trim();
                          if (validateEmail(emailValue)) {
                              userEmail = emailValue;
                              console.log("Email captured:", userEmail);
-                             nextCard(); // <-- This should call loadCard(1)
+                             nextCard(); // --> This will trigger loadCard(1)
                          } else {
                              statusP.textContent = 'Please enter a valid email address.';
                              statusP.style.color = 'orange';
@@ -361,13 +209,15 @@
                     };
                     navigationDiv.appendChild(startBtn);
                 } else { // Nav for statements & finish
-                    if (index > 0) { // Previous button needed for index 1 onwards
+                    // Add Previous button if index > 0
+                    if (index > 0) {
                         const prevBtn = document.createElement('button');
                         prevBtn.textContent = 'Previous';
                         prevBtn.onclick = (e) => { e.stopPropagation(); prevCard(); };
                         navigationDiv.appendChild(prevBtn);
                     }
-                    if (index === TOTAL_CARDS - 1) { // Submit button only on last card
+                    // Add Submit button ONLY on the last card (index 19)
+                    if (index === TOTAL_CARDS - 1) {
                          const submitBtn = document.createElement('button');
                          submitBtn.id = 'submitBtn';
                          submitBtn.textContent = 'Submit Answers';
@@ -375,7 +225,8 @@
                          navigationDiv.appendChild(submitBtn);
                     }
                 }
-             }, 50);
+                 console.log(`--- Finished loading card for index: ${index} ---`);
+             }, 50); // End of setTimeout
         }
 
         function validateEmail(email) {
@@ -384,43 +235,62 @@
         }
 
         function flipCard() {
-            // Allow flip on any card except maybe the first (email) or last (finish)?
-            // Or just allow always for simplicity.
+            console.log("flipCard() called");
             cardInner.classList.toggle('flip');
         }
 
         function selectAnswer(statementIndex, option) {
-            const statementKey = 's' + statementIndex; // Creates s1, s2, ... s18
+            // statementIndex here should be the index passed from the button (1 to 18)
+            console.log(`selectAnswer called with index: ${statementIndex}, option: ${option}`);
+            const statementKey = 's' + statementIndex; // Correctly creates s1, s2... s18
             answers[statementKey] = option;
-            console.log('Answer Selected:', statementKey, '=', option);
-            console.log('Current Answers:', answers);
+            console.log(`Answer stored: answers['${statementKey}'] = ${option}`);
+            console.log('Current Answers object:', answers);
 
-             const buttons = document.querySelectorAll('#options button');
-             buttons.forEach(btn => {
-                 btn.classList.toggle('selected', btn.textContent === option);
-             });
+             // Update visual state of buttons *within the current options div*
+             const currentOptionsDiv = document.getElementById('options');
+             if (currentOptionsDiv) {
+                 const buttons = currentOptionsDiv.querySelectorAll('button');
+                 buttons.forEach(btn => {
+                     btn.classList.toggle('selected', btn.textContent === option);
+                 });
+             } else {
+                console.error("Could not find options div to update selected state.");
+             }
 
-            // Auto-advance
+            // Auto-advance after delay
             setTimeout(() => {
+                // Check if we are not already on the last card (finish screen)
                 if (currentIndex < TOTAL_CARDS - 1) {
-                     nextCard(); // Moves to next statement or finish screen
+                     console.log(`Auto-advancing from index ${currentIndex}...`);
+                     nextCard(); // Call nextCard to load index+1
                  }
             }, 250);
         }
 
         function nextCard() {
+            // Only advance if current index is less than the last card index (19)
             if (currentIndex < TOTAL_CARDS - 1) {
-                loadCard(currentIndex + 1); // Correctly increments index
+                const nextIndex = currentIndex + 1;
+                console.log(`nextCard called. Current: ${currentIndex}, Next: ${nextIndex}`);
+                loadCard(nextIndex); // Load the card for the next index
+            } else {
+                console.log("nextCard called, but already on the last card.");
             }
         }
 
         function prevCard() {
+            // Only go back if current index is greater than 0
             if (currentIndex > 0) {
-                loadCard(currentIndex - 1); // Correctly decrements index
+                 const prevIndex = currentIndex - 1;
+                 console.log(`prevCard called. Current: ${currentIndex}, Previous: ${prevIndex}`);
+                 loadCard(prevIndex); // Load the card for the previous index
+            } else {
+                console.log("prevCard called, but already on the first card (email).");
             }
         }
 
-        // --- submitData function remains the same as previous correct version ---
+        // --- submitData function (same as before, validation check included) ---
         function submitData() {
             const submitBtn = document.getElementById('submitBtn');
             statusP.textContent = 'Submitting...';
@@ -437,11 +307,12 @@
                  if (submitBtn) submitBtn.disabled = false;
                  loadCard(0); return;
             }
-            // Check if all *statement* keys (s1 to s18) exist
              let answeredCount = 0;
              for (let i = 1; i <= NUM_STATEMENTS; i++) {
                  if (answers['s' + i]) {
                      answeredCount++;
+                 } else {
+                     console.warn(`Missing answer for s${i}`); // Log missing answers
                  }
              }
             if (answeredCount < NUM_STATEMENTS) {
@@ -450,14 +321,14 @@
                  if (submitBtn) submitBtn.disabled = false; return;
             }
 
-            // Fetch
+            // Fetch (remains the same)
             fetch(scriptURL, {
                 redirect: "follow",
                 method: 'POST',
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                 body: JSON.stringify(finalData)
             })
-            .then(response => {
+            .then(response => { /* ... fetch handling ... */
                 console.log('Fetch Raw Response:', response);
                 if (!response.ok) {
                      return response.text().then(text => {
@@ -475,8 +346,8 @@
                          catch (e) { return { result: 'success', message: 'Submission received (non-JSON response).' }; }
                     });
                  }
-            })
-            .then(data => {
+             })
+            .then(data => { /* ... success/error handling ... */
                 console.log('Processed Response Data:', data);
                 if (data && data.result === 'success') {
                     statusP.textContent = data.message || 'Success! Data submitted.';
@@ -490,7 +361,7 @@
                      if (submitBtn) submitBtn.disabled = false;
                 }
             })
-            .catch(error => {
+            .catch(error => { /* ... catch fetch errors ... */
                 console.error('Fetch Error:', error);
                 statusP.textContent = `Error: ${error.message}. Please check console/network logs.`;
                 statusP.style.color = 'red';
@@ -500,6 +371,7 @@
 
         // --- Initial Load ---
         window.onload = () => {
+            console.log("--- Initial Load ---");
             loadCard(0); // Start with the email screen (index 0)
         };
     </script>
