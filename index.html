@@ -21,7 +21,7 @@
         font-size: 24px;
         margin-bottom: 20px;
     }
-    .options button {
+    .options button, .nav-buttons button {
         background-color: #ffffffaa;
         border: none;
         padding: 10px 20px;
@@ -31,7 +31,7 @@
         cursor: pointer;
         transition: 0.3s;
     }
-    .options button:hover {
+    .options button:hover, .nav-buttons button:hover {
         background-color: #b2ebf2;
     }
 </style>
@@ -53,6 +53,9 @@
         <button onclick="saveAnswer('q1', 'Sad'); nextSlide()">Sad</button>
         <button onclick="saveAnswer('q1', 'Very Sad'); nextSlide()">Very Sad</button>
     </div>
+    <div class="nav-buttons">
+        <button onclick="prevSlide()">Previous</button>
+    </div>
 </div>
 
 <div id="q2" class="slide">
@@ -64,16 +67,23 @@
         <button onclick="saveAnswer('q2', 'Rarely'); nextSlide()">Rarely</button>
         <button onclick="saveAnswer('q2', 'Never'); nextSlide()">Never</button>
     </div>
+    <div class="nav-buttons">
+        <button onclick="prevSlide()">Previous</button>
+    </div>
 </div>
 
 <div id="q3" class="slide">
     <div class="question">3. How stressed do you feel right now?</div>
     <div class="options">
-        <button onclick="saveAnswer('q3', 'Not at all'); endQuiz()">Not at all</button>
-        <button onclick="saveAnswer('q3', 'A little'); endQuiz()">A little</button>
-        <button onclick="saveAnswer('q3', 'Moderate'); endQuiz()">Moderate</button>
-        <button onclick="saveAnswer('q3', 'Quite stressed'); endQuiz()">Quite stressed</button>
-        <button onclick="saveAnswer('q3', 'Extremely stressed'); endQuiz()">Extremely stressed</button>
+        <button onclick="saveAnswer('q3', 'Not at all')">Not at all</button>
+        <button onclick="saveAnswer('q3', 'A little')">A little</button>
+        <button onclick="saveAnswer('q3', 'Moderate')">Moderate</button>
+        <button onclick="saveAnswer('q3', 'Quite stressed')">Quite stressed</button>
+        <button onclick="saveAnswer('q3', 'Extremely stressed')">Extremely stressed</button>
+    </div>
+    <div class="nav-buttons">
+        <button onclick="prevSlide()">Previous</button>
+        <button onclick="endQuiz()">Send Answers</button>
     </div>
 </div>
 
@@ -93,6 +103,12 @@ function nextSlide() {
     slides[currentSlide].classList.add('active');
 }
 
+function prevSlide() {
+    slides[currentSlide].classList.remove('active');
+    currentSlide--;
+    slides[currentSlide].classList.add('active');
+}
+
 function saveAnswer(question, answer) {
     answers[question] = answer;
 }
@@ -104,7 +120,7 @@ function endQuiz() {
 }
 
 function sendData() {
-    const url = "PASTE_YOUR_GOOGLE_APPS_SCRIPT_URL_HERE"; // <-- change this
+    const url = "https://script.google.com/macros/s/AKfycbyr1tYZ2gW29jkogPD1PgfY2J7tC044ext2lehs9TFuPWgeiWXxlpITSrC0icIQvYogSA/exec"; // <-- your Web App URL
     fetch(url, {
         method: "POST",
         mode: "no-cors",
