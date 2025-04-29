@@ -10,36 +10,33 @@
         html { height: 100%; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-            line-height: 1.6;
+            line-height: 1.5; /* Slightly reduced base line-height */
             background-color: #ffffff;
-            /* Minimal padding for the iframe */
-            padding: 10px; /* Reduced padding slightly */
+            /* --- CHANGED: Reduced body padding --- */
+            padding: 10px 5px; /* Less vertical, minimal horizontal */
             overflow-x: hidden;
             display: flex;
             flex-direction: column;
             align-items: center;
             min-height: 100%;
-            justify-content: center; /* Center vertically */
+             /* Changed from center to start to avoid pushing down if screen is tall */
+            justify-content: flex-start;
         }
 
         /* --- Card Container & Perspective --- */
         .card-container {
-            /* --- CHANGED: Fixed width for consistent size in Google Sites --- */
             width: 480px; /* Fixed width */
-            /* --- REMOVED: max-width (redundant with fixed width) --- */
-            /* --- REMOVED: height: 100% (let card define height) --- */
-            margin: 25px auto 5px auto; /* Center horizontally, adjust vertical margins */
-            /* perspective: 1200px; /* Optional: uncomment if you want 3D flip */
+            /* --- CHANGED: Reduced top/bottom margins --- */
+            margin: 15px auto 5px auto; /* Less top margin, minimal bottom margin */
+            /* perspective: 1200px; */
         }
 
         /* --- Card Structure (Outer Shell) --- */
         .card {
-            /* --- CHANGED: Width 100% to fill the fixed-width container --- */
             width: 100%;
-            /* --- CHANGED: Fixed min-height for consistent height --- */
-            min-height: 520px; /* Define a minimum height */
-            /* --- REMOVED: height: 100% --- */
-            position: relative; /* Keep for absolute positioning of inner */
+            /* --- ADJUSTED: Slightly reduced min-height assuming less padding needed --- */
+            min-height: 500px; /* Adjust this based on testing if content overflows */
+            position: relative;
             cursor: pointer;
         }
 
@@ -53,7 +50,7 @@
             transform-style: preserve-3d;
             transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
             border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.07); /* Slightly softer shadow */
         }
         .card-inner.flip {
             transform: rotateY(180deg);
@@ -63,17 +60,20 @@
         .card-face {
             position: absolute;
             width: 100%;
-            height: 100%;
+            height: 100%; /* Ensure face tries to fill the card height */
             backface-visibility: hidden;
             border-radius: 16px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            padding: 30px 25px;
+            justify-content: center; /* Center content vertically */
+             /* --- CHANGED: Reduced padding significantly --- */
+            padding: 20px 25px; /* Less top/bottom padding */
             text-align: center;
             overflow-wrap: break-word;
-            overflow-y: auto; /* Allow content scrolling if it exceeds min-height */
+            /* --- REMOVED: overflow-y: auto to prevent scrolling --- */
+            /* overflow-y: auto; */
+            overflow: hidden; /* Hide any accidental overflow */
         }
         .card-front {
             background: #ffffff;
@@ -88,22 +88,24 @@
 
         /* --- Content Inside Front Face --- */
         #card-content {
-             margin-bottom: 25px;
+             /* --- CHANGED: Reduced bottom margin --- */
+             margin-bottom: 15px;
              font-weight: 500;
-             font-size: 1.2em;
-             line-height: 1.4;
+             font-size: 1.15em; /* Slightly smaller base font */
+             line-height: 1.35; /* Tighter line height */
              max-width: 100%;
              color: #222;
         }
         #backside-content {
             max-width: 100%;
-            font-size: 1.1em;
-            line-height: 1.5;
+            font-size: 1.05em; /* Slightly smaller */
+            line-height: 1.4;
         }
 
         /* --- Email Input Styling --- */
         #email-input-container {
-            margin-bottom: 25px;
+             /* --- CHANGED: Reduced bottom margin --- */
+            margin-bottom: 15px;
             width: 100%;
             max-width: 300px;
             display: flex;
@@ -111,10 +113,11 @@
         }
         #email-input {
             width: 100%;
-            padding: 12px 18px;
+            /* --- CHANGED: Reduced padding --- */
+            padding: 10px 15px;
             border: 1px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 1em;
+            border-radius: 8px; /* Slightly smaller radius */
+            font-size: 0.95em; /* Slightly smaller font */
             text-align: center;
             background-color: #f9f9f9;
             transition: border-color 0.2s, box-shadow 0.2s;
@@ -127,90 +130,115 @@
 
         /* --- Options Buttons Styling --- */
         .options {
+            /* --- CHANGED: Reduced top margin and gap --- */
             margin-top: 10px;
             display: flex;
             justify-content: center;
-            gap: 12px;
+            gap: 8px; /* Reduced gap */
             flex-wrap: wrap;
+            width: 100%; /* Allow options to take full width if needed */
         }
 
         /* --- Navigation Buttons (Below Card) --- */
         #navigation {
-            margin-top: 15px; /* Adjusted margin */
+             /* --- CHANGED: Reduced top margin and gap --- */
+            margin-top: 10px;
             display: flex;
             justify-content: center;
-            gap: 15px;
-            /* --- CHANGED: Fixed width to match card container --- */
-            width: 480px;
-            /* --- REMOVED: max-width (redundant with fixed width) --- */
+            gap: 10px; /* Reduced gap */
+            width: 480px; /* Fixed width */
             margin-left: auto;
             margin-right: auto;
             flex-wrap: wrap;
-            margin-bottom: 10px; /* Adjusted bottom margin */
+            /* --- CHANGED: Reduced bottom margin --- */
+            margin-bottom: 5px;
         }
 
-        /* Shared Button Styling (Unchanged) */
-        .options button, #navigation button { padding: 10px 22px; font-size: 0.95em; font-weight: 500; border: none; border-radius: 10px; cursor: pointer; transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s; flex-shrink: 0; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        /* Shared Button Styling */
+        /* --- CHANGED: Reduced padding slightly --- */
+        .options button, #navigation button { padding: 9px 20px; font-size: 0.9em; font-weight: 500; border: none; border-radius: 8px; cursor: pointer; transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s; flex-shrink: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .options button { background-color: #f5f5f5; color: #555; }
-        .options button:hover { background-color: #e0e0e0; transform: translateY(-1px); box-shadow: 0 4px 8px rgba(0,0,0,0.07); }
-        .options button.selected { background-color: #4db6ac; color: white; box-shadow: 0 1px 3px rgba(0,0,0,0.1); transform: translateY(0); }
-        #navigation button { background-color: #4db6ac; color: white; box-shadow: 0 3px 8px rgba(77, 182, 172, 0.3); }
-        #navigation button:hover { background-color: #26a69a; transform: translateY(-1px); box-shadow: 0 5px 12px rgba(77, 182, 172, 0.4); }
+        .options button:hover { background-color: #e0e0e0; transform: translateY(-1px); box-shadow: 0 3px 6px rgba(0,0,0,0.07); }
+        .options button.selected { background-color: #4db6ac; color: white; box-shadow: 0 1px 2px rgba(0,0,0,0.1); transform: translateY(0); }
+        #navigation button { background-color: #4db6ac; color: white; box-shadow: 0 2px 6px rgba(77, 182, 172, 0.3); }
+        #navigation button:hover { background-color: #26a69a; transform: translateY(-1px); box-shadow: 0 4px 9px rgba(77, 182, 172, 0.4); }
         #navigation button:disabled { background-color: #bdbdbd; color: #757575; cursor: not-allowed; box-shadow: none; transform: translateY(0); }
-        .options button:active, #navigation button:active { transform: translateY(1px); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .options button:active, #navigation button:active { transform: translateY(1px); box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
 
         /* --- Status Message --- */
         #status {
-            margin-top: 10px;
+            /* --- CHANGED: Reduced margins --- */
+            margin-top: 5px;
             font-weight: 500;
-            min-height: 1.5em;
+            min-height: 1.4em; /* Adjusted for smaller line height */
             color: #333;
             text-align: center;
-            /* --- CHANGED: Fixed width to match card container --- */
-            width: 480px;
-            /* --- REMOVED: max-width (redundant with fixed width) --- */
+            width: 480px; /* Fixed width */
             margin-left: auto;
             margin-right: auto;
-            margin-bottom: 10px;
-            line-height: 1.5;
+            margin-bottom: 5px; /* Minimal bottom margin */
+            line-height: 1.4;
+            font-size: 0.9em; /* Slightly smaller status text */
         }
 
         /* --- Responsive --- */
         /* --- Styles for smaller screens (e.g., Tablets Portrait / Large Phones) --- */
         @media (max-width: 600px) {
-             body { padding: 10px; } /* Keep minimal padding */
+             body { padding: 5px; } /* Minimal padding */
              .card-container {
-                 /* --- CHANGED: Use percentage width for responsiveness --- */
-                 width: 95%;
-                 margin-top: 15px; /* Adjust margin */
+                 width: 96%; /* More width available */
+                 margin-top: 10px;
              }
              .card {
-                 /* --- CHANGED: Adjust min-height for smaller screens --- */
-                 min-height: 480px; /* Slightly smaller height */
+                 /* --- CHANGED: Adjusted height for smaller screens with less padding --- */
+                 min-height: 460px; /* May need further adjustment */
              }
-             .card-face { padding: 25px 20px; }
-             #card-content { font-size: 1.15em; }
+             .card-face {
+                 /* --- CHANGED: Reduced padding further --- */
+                 padding: 15px 20px;
+             }
+             #card-content {
+                 font-size: 1.1em;
+                 line-height: 1.3;
+                 margin-bottom: 12px;
+             }
+             #email-input-container { margin-bottom: 12px; }
              #navigation {
-                 /* --- CHANGED: Use percentage width for responsiveness --- */
-                 width: 95%;
-                 margin-top: 15px;
+                 width: 96%;
+                 margin-top: 10px;
+                 gap: 8px;
              }
              #status {
-                 /* --- CHANGED: Use percentage width for responsiveness --- */
-                 width: 95%;
+                 width: 96%;
+                 margin-top: 5px;
              }
+             .options button, #navigation button { padding: 8px 18px; font-size: 0.88em; }
         }
 
         /* --- Styles for very small screens (e.g., Phones Portrait) --- */
-         @media (max-width: 420px) { /* Adjusted breakpoint slightly */
+         @media (max-width: 420px) {
+             .card-container { width: 98%; margin-top: 8px;} /* Almost full width */
              .card {
-                 /* --- CHANGED: Further adjust min-height for smallest screens --- */
-                 min-height: 440px;
+                 min-height: 420px; /* Further reduced height */
              }
-             #card-content { font-size: 1.1em; }
-             .card-face { padding: 20px 15px; }
-             #email-input { max-width: none; width: 95%; } /* Allow input to be wider */
-             .options button, #navigation button { padding: 10px 18px; font-size: 0.9em; } /* Slightly smaller buttons */
+             .card-face {
+                 /* --- CHANGED: Minimal padding --- */
+                 padding: 12px 12px;
+             }
+             #card-content {
+                 font-size: 1.0em; /* Smaller font */
+                 line-height: 1.3;
+                 margin-bottom: 10px;
+             }
+              #email-input-container { margin-bottom: 10px; max-width: 95%; }
+             #email-input { padding: 9px 12px; font-size: 0.9em; }
+             .options { gap: 6px; margin-top: 8px;}
+             #navigation { width: 98%; gap: 8px; margin-top: 8px;}
+             #status { width: 98%; font-size: 0.85em;}
+             .options button, #navigation button {
+                 /* --- CHANGED: Smaller buttons for small screens --- */
+                 padding: 7px 14px; font-size: 0.82em; border-radius: 6px;
+             }
          }
     </style>
 </head>
