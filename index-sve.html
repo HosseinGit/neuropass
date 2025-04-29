@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="sv"> <!-- Changed language to Swedish -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Motivation & Vanor Utvärdering</title> <!-- Updated Title -->
+        <style>
+        /* --- Modern Font & Basic Reset --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { height: 100%; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            line-height: 1.6;
+            background-color: #ffffff;
+            padding: 1px 1px;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100%;
+        }
+
+        /* --- Card Container & Perspective --- */
+        .card-container {
+            width: 90%;
+            height: 90%;
+            max-width: 460px;
+            max-height:580px;
+            margin: auto;
+            perspective: 1200px;
+            margin-top: 25px;
+            margin-bottom: 5px;
+        }
+
+        /* --- Card Structure (Outer Shell) --- */
+        .card {
+            min-height: 540px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        /* --- Card Inner (Handles the Flip) --- */
+        .card-inner {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            transform-style: preserve-3d;
+            transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+        .card-inner.flip {
+            transform: rotateY(180deg);
+        }
+
+        /* --- Card Faces (Front and Back) --- */
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center; /* Center content vertically */
+            padding: 40px 25px 30px 25px;
+            text-align: center;
+            overflow: hidden; /* Hide potential overflow from content */
+        }
+        .card-front {
+            background: #ffffff;
+            color: #333;
+            z-index: 2;
+        }
+        .card-back {
+            background: #424242;
+            color: white;
+            transform: rotateY(180deg);
+             justify-content: center; /* Keep content centered vertically */
+        }
+
+         /* --- Progress Bar Styling --- */
+        .progress-bar-container {
+            position: absolute; /* Position relative to card-face */
+            top: 15px; /* Position near the top, respecting padding */
+            left: 25px; /* Align with horizontal padding */
+            right: 25px; /* Align with horizontal padding */
+            width: calc(100% - 50px); /* Full width minus padding */
+            height: 10px; /* Slightly thinner */
+            background-color: #eeeeee; /* Light grey track */
+            border-radius: 5px; /* Adjusted border radius */
+            overflow: hidden;
+            z-index: 3; /* Ensure it's above card background */
+        }
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%; /* Starts empty, filled by JS */
+            background-color: #00b8d4; /* Light teal/blue-green */
+            border-radius: 5px; /* Adjusted border radius */
+            transition: width 0.4s ease-out; /* Smooth animation */
+        }
+        .card-back .progress-bar-container {
+             display: none;
+        }
+
+        /* --- Content Wrapper (To handle potential overflow) --- */
+         .card-content-wrapper {
+            width: 100%;
+            overflow-y: auto; /* Allow scrolling ONLY for content if needed */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+         }
+
+        /* --- Content Inside Front Face --- */
+        #card-content {
+             font-weight: 500;
+             font-size: 1.2em;
+             line-height: 1.4;
+             max-width: 100%;
+             color: #222;
+             margin-bottom: 5px;
+             width: 100%;
+        }
+        /* --- Content Inside Back Face --- */
+        #backside-content {
+            width: 100%;
+            max-width: 100%;
+            font-size: 1.1em;
+            line-height: 1.5;
+            overflow-y: auto;
+            padding: 0;
+        }
+
+        /* --- Specific Text Element Styling (Welcome/Finish) --- */
+        .card-title { font-size: 2.2em; font-weight: bold; margin-bottom: 15px; }
+        .card-subtext { font-size: 1.1em; margin-bottom: 15px; }
+        .card-hint { font-size: 0.9em; font-style: italic; color: #777; margin-bottom: 15px; }
+        .card-paragraph { margin-bottom: 1em; text-align: left; }
+        .card-paragraph:last-child { margin-bottom: 0; }
+
+        /* --- Email Input Styling --- */
+        #email-input-container {
+             margin-top: 5px;
+             margin-bottom: 15px;
+             width: 100%; max-width: 300px; display: flex; justify-content: center;
+         }
+        #email-input { width: 100%; padding: 12px 18px; border: 1px solid #e0e0e0; border-radius: 10px; font-size: 1em; text-align: center; background-color: #f9f9f9; transition: border-color 0.2s, box-shadow 0.2s; }
+        #email-input:focus { outline: none; border-color: #bdbdbd; box-shadow: 0 0 0 3px rgba(77, 182, 172, 0.2); }
+
+        /* --- Options Buttons Styling --- */
+        .options {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 0 10px;
+            margin-top: 10px;
+            flex-shrink: 0;
+        }
+
+        /* --- Styling for Option Rows --- */
+        .options-row { display: flex; width: 100%; max-width: 380px; }
+        .options-row-1, .options-row-2 { justify-content: space-between; }
+        .options-row-3 { justify-content: center; }
+
+        /* --- Shared Button Styling --- */
+        .options button, #navigation button {
+            padding: 10px 15px; font-size: 0.9em; font-weight: 500; border: none; border-radius: 8px;
+            cursor: pointer; transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+            flex-shrink: 0; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            background-color: #f5f5f5; color: #555;
+            min-width: 80px; text-align: center;
+        }
+        .options-row-1 button, .options-row-2 button { flex-basis: 48%; }
+
+        .options button:hover { background-color: #e0e0e0; transform: translateY(-1px); box-shadow: 0 4px 8px rgba(0,0,0,0.07); }
+        .options button.selected { background-color: #4db6ac; color: white; box-shadow: 0 1px 3px rgba(0,0,0,0.1); transform: translateY(0); }
+        .options button:active { transform: translateY(1px); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+
+        /* --- Navigation Buttons --- */
+        #navigation { margin-top: 5px; display: flex; justify-content: center; gap: 15px; width: 90%; max-width: 480px; margin-left: auto; margin-right: auto; flex-wrap: wrap; margin-bottom: 5px; }
+        #navigation button { padding: 10px 22px; font-size: 0.95em; background-color: #4db6ac; color: white; box-shadow: 0 3px 8px rgba(77, 182, 172, 0.3); border-radius: 10px;}
+        #navigation button:hover { background-color: #26a69a; transform: translateY(-1px); box-shadow: 0 5px 12px rgba(77, 182, 172, 0.4); }
+        #navigation button:disabled { background-color: #bdbdbd; color: #757575; cursor: not-allowed; box-shadow: none; transform: translateY(0); }
+        #navigation button:active { transform: translateY(1px); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+
+        /* --- Status Message --- */
+        #status { margin-top: 10px; font-weight: 500; min-height: 1.5em; color: #333; text-align: center; width: 90%; max-width: 480px; margin-left: auto; margin-right: auto; margin-bottom: 10px; line-height: 1.5; }
+
+        /* --- Responsive --- */
+        @media (max-width: 600px) {
+            body { padding: 5px 5px; }
+            .card-container { width: 95%; max-width: 95%; }
+            .card { min-height: 560px; }
+            .card-face { padding: 35px 15px 20px 15px; }
+            .progress-bar-container { top: 10px; left: 15px; right: 15px; width: calc(100% - 30px); height: 8px; border-radius: 4px; }
+            .progress-bar-fill { border-radius: 4px; }
+            #card-content { font-size: 1.1em; margin-bottom: 5px; }
+            .options { margin-top: 10px; }
+            .card-title { font-size: 2em; }
+            .card-subtext { font-size: 1.05em; }
+            .card-hint { font-size: 0.85em; }
+            #backside-content { font-size: 1.05em; }
+            #navigation { margin-top: 5px; max-width: 95%;}
+            #status { max-width: 95%; }
+            .options button { font-size: 0.85em; padding: 8px 10px; }
+            .options-row { max-width: 100%; }
+        }
+        @media (max-width: 400px) {
+            .card { min-height: 480px; }
+            .card-face { padding: 30px 10px 15px 10px; }
+            .progress-bar-container { top: 8px; left: 10px; right: 10px; width: calc(100% - 20px); height: 6px; }
+            .progress-bar-fill { border-radius: 3px; }
+            .progress-bar-container { border-radius: 3px; }
+            #card-content { font-size: 1.05em; }
+            .card-title { font-size: 1.8em; }
+            .card-subtext { font-size: 1em; }
+            .card-hint { font-size: 0.8em; }
+            #backside-content { font-size: 1em; }
+            #email-input { max-width: 90%; }
+            .options button { font-size: 0.8em; padding: 8px 5px; min-width: 65px;}
+            .options-row-1 button, .options-row-2 button { flex-basis: 47%; }
+        }
+        </style>
+</head>
+<body>
+
+    <!-- HTML Structure (Remains the same) -->
+    <div class="card-container">
+        <div class="card" id="main-card">
+            <div class="card-inner" id="card-inner">
+                <div class="card-face card-front" id="card-front-content">
+                    <!-- Dynamic content here -->
+                </div>
+                <div class="card-face card-back">
+                    <div id="backside-content"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="navigation"></div>
+    <p id="status"></p>
+
+    <script>
+        // --- State Variables (Remain the same) ---
+        let currentIndex = 0;
+        let userEmail = '';
+        let answers = {};
+
+        // --- Centralized Content (SWEDISH) ---
+        const cardData = [
+            // Card 0: Welcome
+            {
+                front: {
+                    type: 'structured',
+                    title: 'Välkommen!',
+                    subtext: 'Den här upplevelsen är utformad för att hjälpa dig förstå hur din hjärna, särskilt ditt dopaminsystem och basala ganglierna, formar dina vanor, ditt fokus och dina känslomönster.',
+                    hint: 'Vänd på kortet för att läsa mer!' // Adjusted hint slightly
+                },
+                back: {
+                    type: 'structured',
+                    content: `
+                        <p class="card-paragraph">Varje svar du ger hjälper till att kartlägga hur ditt motivationssystem fungerar – från vad som driver dig, till hur konsekvent du agerar, och hur väl dina vanor stämmer överens med dina mål.</p>
+                        <p class="card-paragraph">Det handlar inte om att jaga ständig njutning. Det handlar om att förstå din belöningskänslighet, din förmåga att bygga vanor och hur effektivt du anpassar ditt beteende för att hålla kursen.</p>
+                        <p class="card-paragraph">Varje kort speglar en verklig aspekt av din hjärnas motivationsmekanismer.</p>
+                        <p class="card-paragraph">Vänd på varje kort för att bättre förstå påståendet. Och kom ihåg, insikt börjar med förståelse, inte dömande.</p>
+                    `
+                }
+            },
+            // Card 1: Email
+            {
+                front: { type: 'simple', content: 'Ange din e-postadress för att fortsätta!' },
+                back: {
+                    type: 'structured',
+                    content: `
+                        <p class="card-paragraph">Tack för att du delar med dig av din e-postadress. Genom att skicka in den får du skräddarsydda insikter som stöd på din resa.</p>
+                        <p class="card-paragraph">Du kan vara trygg med att din information behandlas konfidentiellt och endast används för att förbättra din upplevelse av denna utvärdering.</p>
+                        <p class="card-paragraph">Vi respekterar din integritet och strävar efter att ge värde – inte skräppost.</p>
+                    `
+                }
+            },
+            // --- Statement Cards (Index 2 to 19) ---
+            { front: { type: 'simple', content: "Förväntan på framtida belöningar motiverar mig mer än att få omedelbara belöningar" }, back: { type: 'simple', content: "Blir du mer exalterad över det som väntar än det du kan få direkt? Som att spara till något stort istället för att unna dig småsaker." } },
+            { front: { type: 'simple', content: "Jag kan bibehålla motivationen genom att visualisera långsiktiga fördelar med mina handlingar" }, back: { type: 'simple', content: "Hjälper det dig att hålla motivationen uppe om du föreställer dig ett positivt resultat längre fram? Som att tanken på att bli vältränad hjälper dig att träna idag." } },
+            { front: { type: 'simple', content: "Jag söker ofta omedelbara belöningar, även om jag vet att en bättre belöning kommer senare" }, back: { type: 'simple', content: "Tar du hellre det som känns bra nu istället för att vänta på något bättre? Som att äta godis direkt istället för att spara aptiten till en finare middag." } },
+            { front: { type: 'simple', content: "Jag behöver ofta yttre uppmuntran (beröm, belöningar) för att hålla motivationen uppe" }, back: { type: 'simple', content: "Behöver du att andra hejar på dig eller ger dig något för att du ska fortsätta? Som att du bara städar rummet om du blir lovad något efteråt." } },
+            { front: { type: 'simple', content: "Jag får energi av att planera stegen mot ett avlägset mål" }, back: { type: 'simple', content: "Blir du peppad av att planera hur du ska nå ett mål långt fram? Som att känna dig exalterad när du planerar en framtida resa." } },
+            { front: { type: 'simple', content: "Jag tenderar att ge upp uppgifter när belöningarna inte syns direkt" }, back: { type: 'simple', content: "Ger du lätt upp om du inte ser snabba resultat? Som att sluta med en diet efter en vecka för att vågen inte rört sig." } },
+            { front: { type: 'simple', content: "När jag väl har etablerat en rutin kan jag upprätthålla den utan större medveten ansträngning" }, back: { type: 'simple', content: "Kan du fortsätta göra något nästan automatiskt när det blivit en vana? Som att borsta tänderna innan läggdags utan att tänka på det." } },
+            { front: { type: 'simple', content: "Jag kan hålla fast vid nya vanor även när jag möter hinder eller stress" }, back: { type: 'simple', content: "Kan du fortsätta med nya beteenden även när livet blir tufft? Som att ändå ta dina promenader trots en stressig vecka." } },
+            { front: { type: 'simple', content: "Jag kämpar med att upprätthålla regelbundenhet i mina dagliga rutiner" }, back: { type: 'simple', content: "Är det svårt att göra samma saker pålitligt varje dag? Som att dina läggtider varierar kraftigt under veckan." } },
+            { front: { type: 'simple', content: "Jag börjar ofta starkt med nya vanor men lyckas sällan upprätthålla dem långsiktigt" }, back: { type: 'simple', content: "Påbörjar du nya saker med energi men tappar sugen snabbt? Som att ladda ner en meditationsapp men bara använda den i två veckor." } },
+            { front: { type: 'simple', content: "Mina positiva vanor känns naturliga och automatiska snarare än påtvingade" }, back: { type: 'simple', content: "Känns bra beteenden som 'något du bara gör' snarare än ett måste? Som att dricka vatten under dagen utan påminnelser." } },
+            { front: { type: 'simple', content: "Jag tenderar att glömma eller överge vanor om jag inte ser omedelbara resultat" }, back: { type: 'simple', content: "Slutar du göra hjälpsamma saker om de inte ger snabb utdelning? Som att sluta träna för att du inte känner dig starkare efter en vecka." } },
+            { front: { type: 'simple', content: "Jag anpassar medvetet mina dagliga vanor efter mina långsiktiga mål" }, back: { type: 'simple', content: "Väljer du medvetet vardagshandlingar som stödjer dina större drömmar? Som att öva gitarr dagligen för att så småningom spela i ett band." } },
+            { front: { type: 'simple', content: "När jag inser att en vana inte gynnar mig kan jag framgångsrikt ändra den" }, back: { type: 'simple', content: "Kan du ändra beteenden som inte fungerar bra? Som att byta från att scrolla sent på kvällen till att läsa innan du somnar." } },
+            { front: { type: 'simple', content: "Jag upptäcker ibland att jag upprepar beteenden som strider mot mina mål" }, back: { type: 'simple', content: "Kommer du på dig själv med att göra saker som går emot vad du vill uppnå? Som att småäta samtidigt som du försöker äta hälsosammare." } },
+            { front: { type: 'simple', content: "Jag tycker det är svårt att bryta vanor även när jag vet att de är kontraproduktiva" }, back: { type: 'simple', content: "Är det kämpigt att sluta göra invanda saker även när de skapar problem? Som att kolla mobilen trots att du behöver fokusera." } },
+            { front: { type: 'simple', content: "Jag utvärderar och justerar regelbundet mina vanor baserat på deras effektivitet" }, back: { type: 'simple', content: "Kollar du om dina rutiner faktiskt hjälper dig och gör ändringar vid behov? Som att märka att en morgonpromenad förbättrar ditt humör mer än morgon-TV." } },
+            { front: { type: 'simple', content: "Jag agerar ofta på autopilot utan att tänka på den långsiktiga effekten av mina vanor" }, back: { type: 'simple', content: "Gör du saker utan att tänka på framtida konsekvenser? Som att regelbundet köpa snabbmat utan att tänka på hälsan." } },
+            // Card 20: Finish
+            {
+                front: {
+                    type: 'structured',
+                    content: `
+                        <p class="card-paragraph">Nästan där!</p>
+                        <p class="card-paragraph">Du har nått det sista steget i din självutvärdering.</p>
+                        <p class="card-paragraph">Ta en stund att reflektera över vad du har upptäckt hittills och hur denna resa har format din förståelse för dig själv.</p>
+                        <p class="card-hint">(Vänd kortet för att läsa de sista tankarna på baksidan, skicka sedan in nedan)</p>
+                        `
+                },
+                back: {
+                    type: 'structured',
+                    content: `
+                        <p class="card-paragraph">Grattis till att ha slutfört din utvärdering! Detta är bara början på din resa mot djupare självinsikt och tillväxt.</p>
+                        <p class="card-paragraph">Du kommer snart att få värdefulla insikter om din motivation, dina vanor och din potential.</p>
+                        <p class="card-paragraph">Använd dessa resultat som en guide för att göra medvetna, positiva förändringar i ditt liv.</p>
+                        <p class="card-paragraph">Dina resultat kommer att skickas till den e-postadress du angav, med personliga insikter och nästa steg.</p>
+                        <p class="card-paragraph">Tack för att du deltog!</p>
+                    `
+                }
+            }
+         ];
+
+        // --- Constants (Remain the same) ---
+        const TOTAL_CARDS = cardData.length;
+        const NUM_STATEMENTS = 18;
+        const EMAIL_CARD_INDEX = 1;
+        const FIRST_STATEMENT_INDEX = 2;
+        const LAST_STATEMENT_INDEX = NUM_STATEMENTS + FIRST_STATEMENT_INDEX - 1;
+        const FINISH_CARD_INDEX = TOTAL_CARDS - 1;
+        const TOTAL_PROGRESS_STEPS = NUM_STATEMENTS + 1;
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbz9k2l6LPG-N7Ql88iCuwp-y_f-pn2WZUihAsj8evIQYYrpocdzFaKBB8U84ZL_XmskzQ/exec'; // Keep the same script URL
+
+        // --- DOM Elements (Remain the same) ---
+        const cardElement = document.getElementById('main-card');
+        const cardInner = document.getElementById('card-inner');
+        const cardFrontContentEl = document.getElementById('card-front-content');
+        const backsideContentDiv = document.getElementById('backside-content');
+        const navigationDiv = document.getElementById('navigation');
+        const statusP = document.getElementById('status');
+
+
+        // --- Core Functions (Functionality remains the same, only button text changes) ---
+
+        function flipCard() {
+            cardInner.classList.toggle('flip');
+        }
+
+        function loadCard(index) {
+            currentIndex = index;
+            if (cardInner) { cardInner.classList.remove('flip'); }
+
+            setTimeout(() => {
+                if (!cardFrontContentEl || !backsideContentDiv || !navigationDiv || !statusP) {
+                    console.error("Essential DOM elements missing!"); return;
+                }
+                cardFrontContentEl.innerHTML = '';
+                backsideContentDiv.innerHTML = '';
+
+                // Progress Bar Logic (Remains the same)
+                if (index >= FIRST_STATEMENT_INDEX && index <= FINISH_CARD_INDEX) {
+                    const progressBarContainer = document.createElement('div');
+                    progressBarContainer.className = 'progress-bar-container';
+                    const progressBarFill = document.createElement('div');
+                    progressBarFill.className = 'progress-bar-fill';
+                    const currentStep = index - FIRST_STATEMENT_INDEX + 1;
+                    const progressPercent = (currentStep / TOTAL_PROGRESS_STEPS) * 100;
+                    progressBarFill.style.width = `${progressPercent}%`;
+                    progressBarContainer.appendChild(progressBarFill);
+                    cardFrontContentEl.appendChild(progressBarContainer);
+                }
+
+                const contentWrapper = document.createElement('div');
+                contentWrapper.className = 'card-content-wrapper';
+                cardFrontContentEl.appendChild(contentWrapper);
+
+                const contentDiv = document.createElement('div');
+                contentDiv.id = 'card-content';
+                contentWrapper.appendChild(contentDiv);
+
+                let emailContainer = null;
+                if (index === EMAIL_CARD_INDEX) {
+                    emailContainer = document.createElement('div');
+                    emailContainer.id = 'email-input-container';
+                    const emailInput = document.createElement('input');
+                    emailInput.type = 'email'; emailInput.id = 'email-input';
+                    emailInput.placeholder = 'Ange din e-postadress'; // SWEDISH Placeholder
+                    emailInput.required = true; emailInput.value = userEmail;
+                    emailInput.onclick = (e) => e.stopPropagation();
+                    emailContainer.appendChild(emailInput);
+                    contentWrapper.appendChild(emailContainer);
+                }
+
+                const optionsDiv = document.createElement('div');
+                optionsDiv.className = 'options';
+                optionsDiv.id = 'options';
+                optionsDiv.style.display = 'none';
+                contentWrapper.appendChild(optionsDiv);
+
+                // Populate content using SWEDISH centralized data
+                const currentCardData = cardData[index];
+                if (!currentCardData) {
+                    console.error("Card data missing for index:", index);
+                    contentDiv.innerHTML = `<p>Fel: Innehåll saknas för detta kort.</p>`; // Swedish Error
+                    backsideContentDiv.innerHTML = `<p>Fel: Innehåll saknas för detta kort.</p>`; // Swedish Error
+                    return;
+                }
+
+                // Populate Front Face (Logic remains, uses Swedish data)
+                if (currentCardData.front) {
+                    if (currentCardData.front.type === 'structured') {
+                        if (index === 0) {
+                            const title = document.createElement('div');
+                            title.className = 'card-title';
+                            title.textContent = currentCardData.front.title || '';
+                            contentDiv.appendChild(title);
+                            const subText = document.createElement('div');
+                            subText.className = 'card-subtext';
+                            subText.textContent = currentCardData.front.subtext || '';
+                            contentDiv.appendChild(subText);
+                            const hintText = document.createElement('div');
+                            hintText.className = 'card-hint';
+                            hintText.textContent = currentCardData.front.hint || '';
+                            contentDiv.appendChild(hintText);
+                        } else if (index === FINISH_CARD_INDEX) {
+                             contentDiv.innerHTML = currentCardData.front.content || '';
+                        } else {
+                             contentDiv.innerHTML = currentCardData.front.content || '';
+                        }
+                    } else {
+                        contentDiv.innerHTML = `<p>${currentCardData.front.content || ''}</p>`;
+                    }
+                } else {
+                    contentDiv.innerHTML = `<p>Innehåll för framsidan saknas.</p>`; // Swedish Error
+                }
+
+                // Populate Back Face (Logic remains, uses Swedish data)
+                 if (currentCardData.back) {
+                    if (currentCardData.back.type === 'structured') {
+                        backsideContentDiv.innerHTML = currentCardData.back.content || '';
+                    } else {
+                        backsideContentDiv.innerHTML = `<p>${currentCardData.back.content || ''}</p>`;
+                    }
+                 } else {
+                     backsideContentDiv.innerHTML = `<p>Text för baksidan saknas.</p>`; // Swedish Error
+                 }
+
+                navigationDiv.innerHTML = '';
+                statusP.textContent = '';
+
+                // Specific Logic based on index (Button text updated)
+                if (index === 0) { // WELCOME
+                    optionsDiv.style.display = 'none';
+                    const nextBtn = document.createElement('button');
+                    nextBtn.textContent = 'Nästa'; // SWEDISH
+                    nextBtn.onclick = (e) => { e.stopPropagation(); nextCard(); };
+                    navigationDiv.appendChild(nextBtn);
+
+                } else if (index === EMAIL_CARD_INDEX) { // EMAIL
+                    optionsDiv.style.display = 'none';
+                    const prevBtn = document.createElement('button');
+                    prevBtn.textContent = 'Föregående'; // SWEDISH
+                    prevBtn.onclick = (e) => { e.stopPropagation(); prevCard(); };
+                    navigationDiv.appendChild(prevBtn);
+
+                    const startBtn = document.createElement('button');
+                    startBtn.textContent = 'Starta utvärderingen'; // SWEDISH
+                    startBtn.onclick = (e) => {
+                         e.stopPropagation();
+                         const emailInput = document.getElementById('email-input');
+                         const emailValue = emailInput ? emailInput.value.trim() : '';
+                         if (validateEmail(emailValue)) {
+                             userEmail = emailValue;
+                             nextCard();
+                         } else {
+                             statusP.textContent = 'Ange en giltig e-postadress.'; // SWEDISH Error
+                             statusP.style.color = '#d32f2f';
+                             if(emailInput) emailInput.focus();
+                         }
+                    };
+                    navigationDiv.appendChild(startBtn);
+
+                } else if (index >= FIRST_STATEMENT_INDEX && index <= LAST_STATEMENT_INDEX) { // STATEMENTS
+                    optionsDiv.style.display = 'flex';
+                    // SWEDISH Options List
+                    const optionsList = ["Instämmer inte alls", "Instämmer inte", "Neutral", "Instämmer", "Instämmer helt"];
+                    const statementNumber = index - FIRST_STATEMENT_INDEX + 1;
+                    const selectedValue = answers['s' + statementNumber];
+
+                    const createOptionButton = (optionText) => {
+                         const btn = document.createElement('button');
+                         btn.textContent = optionText; // Uses Swedish text
+                         btn.onclick = (e) => { e.stopPropagation(); selectAnswer(index, optionText); };
+                         if (selectedValue === optionText) { btn.classList.add('selected'); }
+                         return btn;
+                    };
+
+                    const row1 = document.createElement('div'); row1.className = 'options-row options-row-1';
+                    row1.appendChild(createOptionButton(optionsList[0])); // Instämmer inte alls
+                    row1.appendChild(createOptionButton(optionsList[4])); // Instämmer helt
+                    optionsDiv.appendChild(row1);
+
+                    const row2 = document.createElement('div'); row2.className = 'options-row options-row-2';
+                    row2.appendChild(createOptionButton(optionsList[1])); // Instämmer inte
+                    row2.appendChild(createOptionButton(optionsList[3])); // Instämmer
+                    optionsDiv.appendChild(row2);
+
+                    const row3 = document.createElement('div'); row3.className = 'options-row options-row-3';
+                    row3.appendChild(createOptionButton(optionsList[2])); // Neutral
+                    optionsDiv.appendChild(row3);
+
+                    const prevBtn = document.createElement('button');
+                    prevBtn.textContent = 'Föregående'; // SWEDISH
+                    prevBtn.onclick = (e) => { e.stopPropagation(); prevCard(); };
+                    navigationDiv.appendChild(prevBtn);
+
+                } else if (index === FINISH_CARD_INDEX) { // FINISH
+                    optionsDiv.style.display = 'none';
+                     const prevBtn = document.createElement('button');
+                     prevBtn.textContent = 'Föregående'; // SWEDISH
+                     prevBtn.onclick = (e) => { e.stopPropagation(); prevCard(); };
+                     navigationDiv.appendChild(prevBtn);
+
+                    const submitBtn = document.createElement('button');
+                    submitBtn.id = 'submitBtn';
+                    submitBtn.textContent = 'Skicka in svar'; // SWEDISH
+                    submitBtn.onclick = (e) => { e.stopPropagation(); submitData(); };
+                    navigationDiv.appendChild(submitBtn);
+
+                } else {
+                     optionsDiv.style.display = 'none';
+                     console.error("Reached unexpected card index:", index);
+                }
+
+            }, 50);
+        }
+
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(String(email).toLowerCase());
+        }
+
+        function selectAnswer(cardIndex, option) {
+            const statementNumber = cardIndex - FIRST_STATEMENT_INDEX + 1;
+            const statementKey = 's' + statementNumber;
+            answers[statementKey] = option;
+
+            const currentOptionsDiv = document.getElementById('options');
+            if (currentOptionsDiv) {
+                const buttons = currentOptionsDiv.querySelectorAll('button');
+                buttons.forEach(btn => {
+                    btn.classList.toggle('selected', btn.textContent === option);
+                });
+            }
+
+            setTimeout(() => {
+                if (currentIndex < FINISH_CARD_INDEX) {
+                    nextCard();
+                }
+            }, 250);
+        }
+
+        function nextCard() {
+            if (currentIndex < TOTAL_CARDS - 1) {
+                loadCard(currentIndex + 1);
+            }
+        }
+
+        function prevCard() {
+            if (currentIndex > 0) {
+                loadCard(currentIndex - 1);
+            }
+        }
+
+        function submitData() {
+            const submitBtn = document.getElementById('submitBtn');
+            statusP.textContent = 'Skickar in...'; // SWEDISH
+            statusP.style.color = 'black';
+            if (submitBtn) submitBtn.disabled = true;
+
+            const finalData = { email: userEmail, ...answers };
+            console.log('Submitting final data:', JSON.stringify(finalData));
+
+            if (!userEmail) {
+                statusP.textContent = 'E-post saknas. Vänligen gå tillbaka.'; // SWEDISH Error
+                statusP.style.color = '#d32f2f';
+                if (submitBtn) submitBtn.disabled = false;
+                loadCard(EMAIL_CARD_INDEX);
+                return;
+            }
+            let answeredCount = 0;
+            for (let i = 1; i <= NUM_STATEMENTS; i++) {
+                if (answers['s' + i]) {
+                    answeredCount++;
+                }
+            }
+            if (answeredCount < NUM_STATEMENTS) {
+                 // SWEDISH Error Status
+                statusP.textContent = `Vänligen besvara alla ${NUM_STATEMENTS} påståenden. (${answeredCount}/${NUM_STATEMENTS} besvarade)`;
+                statusP.style.color = '#fb8c00';
+                if (submitBtn) submitBtn.disabled = false;
+                return;
+            }
+
+            // Fetch logic remains identical
+            fetch(scriptURL, {
+                redirect: "follow",
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify(finalData)
+            })
+            .then(response => {
+                 if (!response.ok) {
+                    return response.text().then(text => {
+                         throw new Error(`HTTP error ${response.status}: ${response.statusText} - ${text || 'No server details'}`);
+                    });
+                 }
+                 const contentType = response.headers.get("content-type");
+                 if (contentType && contentType.indexOf("application/json") !== -1) {
+                     return response.json();
+                 } else {
+                     return response.text().then(text => {
+                         try {
+                             return JSON.parse(text);
+                         } catch (e) {
+                             console.log("Received non-JSON response, assuming success:", text);
+                             return { result: 'success', message: 'Svaren mottagna (tolkat).' }; // SWEDISH Interpreted Success
+                         }
+                     });
+                 }
+            })
+            .then(data => {
+                console.log('Success/Result Data:', data);
+                if (data && data.result === 'success') {
+                    // SWEDISH Success Status
+                    statusP.textContent = data.message || 'Klart! Dina svar har skickats in.';
+                    statusP.style.color = '#388e3c';
+                    const cardContainer = document.querySelector('.card-container');
+                    if (cardContainer) cardContainer.style.display = 'none';
+                    if (navigationDiv) navigationDiv.style.display = 'none';
+                } else {
+                    // SWEDISH Submission Issue Status
+                    statusP.textContent = `Problem vid inskickning: ${data.message || 'Okänd status mottagen.'}`;
+                    statusP.style.color = '#fb8c00';
+                    if (submitBtn) submitBtn.disabled = false;
+                }
+            })
+            .catch(error => {
+                console.error('Fetch Error:', error);
+                 // SWEDISH Fetch Error Status
+                statusP.textContent = `Fel: ${error.message}. Kontrollera anslutningen och försök igen.`;
+                statusP.style.color = '#d32f2f';
+                if (submitBtn) submitBtn.disabled = false;
+            });
+        }
+
+
+        // --- Initial Load and Event Listener (Remains the same) ---
+        window.onload = () => {
+            if (cardElement) {
+                 cardElement.onclick = flipCard;
+            } else {
+                 console.error("Card element not found on load.");
+            }
+            loadCard(0);
+        };
+    </script>
+
+</body>
+</html>
