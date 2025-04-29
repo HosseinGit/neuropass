@@ -12,7 +12,7 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
             line-height: 1.6;
             background-color: #ffffff;
-            padding: 1px 1px; 
+            padding: 1px 1px;
             overflow-x: hidden;
             display: flex;
             flex-direction: column;
@@ -23,20 +23,20 @@
 
         /* --- Card Container & Perspective --- */
         .card-container {
-            width: 90%; 
+            width: 90%;
             height: 90%;
             max-width: 460px;
             max-height:580px;
             margin: auto;
             perspective: 1200px;
             margin-top: 25px;
-            margin-bottom: 5px; 
+            margin-bottom: 5px;
         }
 
         /* --- Card Structure (Outer Shell) --- */
         .card {
-            min-height: 540px; 
-            position: relative;*/
+            min-height: 540px;
+            position: relative; /* Changed from absolute to relative if needed */
             cursor: pointer;
         }
 
@@ -66,7 +66,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: center; /* Adjusted from center to space-between if needed, check content */
             padding: 30px 25px;
             text-align: center;
             overflow-wrap: break-word;
@@ -76,21 +76,29 @@
             background: #ffffff;
             color: #333;
             z-index: 2;
+             justify-content: space-between; /* Distribute space between content and options */
         }
         .card-back {
             background: #424242;
             color: white;
             transform: rotateY(180deg);
+             justify-content: center; /* Keep back centered */
         }
 
         /* --- Content Inside Front Face --- */
         #card-content {
-             margin-bottom: 25px;
+             /* Removed margin-bottom to allow space distribution */
              font-weight: 500;
-             font-size: 1.2em; 
+             font-size: 1.2em;
              line-height: 1.4;
              max-width: 100%;
              color: #222;
+             display: flex;
+             flex-direction: column;
+             align-items: center;
+             justify-content: center;
+             flex-grow: 1; /* Allow content to take available space */
+             margin-bottom: 15px; /* Add some space above options */
         }
         #backside-content {
             max-width: 100%;
@@ -98,62 +106,89 @@
             line-height: 1.5;
         }
 
+        /* --- Specific Welcome Card Text Styling --- */
+        .welcome-title { font-size: 2.2em; font-weight: bold; margin-bottom: 15px; }
+        .welcome-sub { font-size: 1.1em; margin-bottom: 15px; }
+        .welcome-hint { font-size: 0.9em; font-style: italic; color: #777; }
+
+
         /* --- Email Input Styling --- */
-        #email-input-container {
-            margin-bottom: 25px;
-            width: 100%;
-            max-width: 300px;
-            display: flex;
-            justify-content: center;
-        }
-        #email-input {
-            width: 100%;
-            padding: 12px 18px;
-            border: 1px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 1em;
-            text-align: center;
-            background-color: #f9f9f9;
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-        #email-input:focus {
-            outline: none;
-            border-color: #bdbdbd;
-            box-shadow: 0 0 0 3px rgba(77, 182, 172, 0.2);
-        }
+        #email-input-container { margin-top: 15px; margin-bottom: 15px; width: 100%; max-width: 300px; display: flex; justify-content: center; }
+        #email-input { width: 100%; padding: 12px 18px; border: 1px solid #e0e0e0; border-radius: 10px; font-size: 1em; text-align: center; background-color: #f9f9f9; transition: border-color 0.2s, box-shadow 0.2s; }
+        #email-input:focus { outline: none; border-color: #bdbdbd; box-shadow: 0 0 0 3px rgba(77, 182, 172, 0.2); }
 
         /* --- Options Buttons Styling --- */
         .options {
-            margin-top: 10px;
+            /* margin-top: 10px; */ /* Removed, using space-between on card-front */
+            width: 100%; /* Take full width */
             display: flex;
-            justify-content: center;
-            gap: 12px; 
-            flex-wrap: wrap;
+            flex-direction: column; /* Stack rows vertically */
+            align-items: center; /* Center rows horizontally */
+            gap: 8px; /* Space between rows */
+            padding: 0 10px; /* Add some horizontal padding */
+        }
+
+        /* --- NEW: Styling for Option Rows --- */
+        .options-row {
+            display: flex;
+            width: 100%;
+            max-width: 380px; /* Limit width of rows */
+        }
+        .options-row-1, .options-row-2 {
+            justify-content: space-between; /* Space out buttons in row 1 and 2 */
+        }
+        .options-row-3 {
+            justify-content: center; /* Center the button in row 3 */
         }
 
         /* --- Navigation Buttons (Below Card) --- */
         #navigation {
-            margin-top: 5px; 
+            margin-top: 5px;
             display: flex;
             justify-content: center;
-            gap: 15px; 
+            gap: 15px;
             width: 90%;
-            max-width: 480px; /* Match card container width */
+            max-width: 480px;
             margin-left: auto;
             margin-right: auto;
             flex-wrap: wrap;
             margin-bottom: 5px;
         }
 
-        /* Shared Button Styling (Unchanged from previous) */
-        .options button, #navigation button { padding: 10px 22px; font-size: 0.95em; font-weight: 500; border: none; border-radius: 10px; cursor: pointer; transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s; flex-shrink: 0; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .options button { background-color: #f5f5f5; color: #555; }
+        /* --- Shared Button Styling --- */
+        .options button, #navigation button {
+            padding: 10px 15px; /* Slightly reduced padding for 5 buttons */
+            font-size: 0.9em; /* Slightly reduced font size */
+            font-weight: 500;
+            border: none;
+            border-radius: 8px; /* Slightly smaller radius */
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+            flex-shrink: 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            background-color: #f5f5f5;
+            color: #555;
+            min-width: 80px; /* Ensure buttons have a minimum width */
+            text-align: center;
+        }
+         /* --- NEW: Specific width adjustments for first/last buttons in rows 1 & 2 --- */
+        .options-row-1 button, .options-row-2 button {
+            flex-basis: 48%; /* Roughly half the space minus gap */
+        }
+        .options-row-3 button {
+             /* Neutral button can take natural width or be set */
+        }
+
+
         .options button:hover { background-color: #e0e0e0; transform: translateY(-1px); box-shadow: 0 4px 8px rgba(0,0,0,0.07); }
         .options button.selected { background-color: #4db6ac; color: white; box-shadow: 0 1px 3px rgba(0,0,0,0.1); transform: translateY(0); }
-        #navigation button { background-color: #4db6ac; color: white; box-shadow: 0 3px 8px rgba(77, 182, 172, 0.3); }
+        .options button:active { transform: translateY(1px); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+
+        #navigation button { padding: 10px 22px; font-size: 0.95em; background-color: #4db6ac; color: white; box-shadow: 0 3px 8px rgba(77, 182, 172, 0.3); border-radius: 10px;} /* Restore nav button style */
         #navigation button:hover { background-color: #26a69a; transform: translateY(-1px); box-shadow: 0 5px 12px rgba(77, 182, 172, 0.4); }
         #navigation button:disabled { background-color: #bdbdbd; color: #757575; cursor: not-allowed; box-shadow: none; transform: translateY(0); }
-        .options button:active, #navigation button:active { transform: translateY(1px); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        #navigation button:active { transform: translateY(1px); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+
 
         /* --- Status Message --- */
         #status {
@@ -163,48 +198,56 @@
             color: #333;
             text-align: center;
             width: 90%;
-            max-width: 480px; /* Match card container width */
+            max-width: 480px;
             margin-left: auto;
             margin-right: auto;
-            margin-bottom: 10px; /* Reduced bottom margin */
+            margin-bottom: 10px;
             line-height: 1.5;
         }
-            
-       
+
+
         /* --- Responsive --- */
-        /* Adjustments may be needed here based on the new base styles */
-        @media (max-width: 600px) { 
-        body { padding: 5px 5px; } 
-        .card-container { width: 95%; max-width: 95%; } 
-        .card { min-height: 560px; } 
-        .card-face { padding: 5px 5px; }
-        #card-content { font-size: 1.15em; }
-        #navigation { margin-top: 5px; max-width: 95%;}
-        #status { max-width: 95%; }
+        @media (max-width: 600px) {
+            body { padding: 5px 5px; }
+            .card-container { width: 95%; max-width: 95%; }
+            .card { min-height: 560px; }
+            .card-face { padding: 20px 15px; }
+            #card-content { font-size: 1.1em; }
+            .welcome-title { font-size: 2em; }
+            .welcome-sub { font-size: 1.05em; }
+            .welcome-hint { font-size: 0.85em; }
+            #navigation { margin-top: 5px; max-width: 95%;}
+            #status { max-width: 95%; }
+            .options button { font-size: 0.85em; padding: 8px 10px; } /* Adjust button size */
+            .options-row { max-width: 100%; } /* Allow rows to use more width */
         }
         @media (max-width: 400px) {
-        /* Body padding already minimal from base */
-        .card { min-height: 360px; } 
-        #card-content { font-size: 1.1em; }
-        .card-face { padding: 5px 5px; }
-        #email-input { max-width: 90%; } 
+            .card { min-height: 480px; } /* Adjusted min height */
+            #card-content { font-size: 1.05em; }
+            .welcome-title { font-size: 1.8em; }
+            .welcome-sub { font-size: 1em; }
+            .welcome-hint { font-size: 0.8em; }
+            .card-face { padding: 15px 10px; }
+            #email-input { max-width: 90%; }
+             .options button { font-size: 0.8em; padding: 8px 5px; min-width: 65px;} /* Further adjust button size */
+             .options-row-1 button, .options-row-2 button { flex-basis: 47%; } /* Adjust basis */
         }
 
-        
     </style>
 </head>
 <body>
 
-    <!-- HTML Structure remains the same -->
+    <!-- HTML Structure -->
     <div class="card-container">
         <div class="card" onclick="flipCard()">
             <div class="card-inner" id="card-inner">
                 <div class="card-face card-front" id="card-front-content">
+                    <!-- Content and options are dynamically loaded here -->
                     <div id="card-content">Loading...</div>
                     <div class="options" id="options"></div>
                 </div>
                 <div class="card-face card-back">
-                    <div id="backside-content">Backside</div>
+                    <div id="backside-content"></div>
                 </div>
             </div>
         </div>
@@ -214,35 +257,65 @@
     <p id="status"></p>
 
     <script>
-        // --- State Variables, Content Array, URL remain the same ---
+        // --- State Variables, Content Arrays, URL ---
         let currentIndex = 0;
         let userEmail = '';
         let answers = {};
-        const statementContents = [
-            "THIS SHOULD NOT BE DISPLAYED (Email Placeholder)",
-            "The anticipation of future rewards motivates me more than receiving immediate rewards", // s1
-            "I can maintain motivation by visualizing longterm benefits of my actions", // s2
-            "I find myself seeking immediate rewards, even if I know a better reward will come later", // s3
-            "I often need external incentives (praise, rewards) to stay motivated", // s4
-            "I get energized by planning steps toward a distant goal", // s5
-            "I tend to abandon tasks when the rewards aren't immediately visible", // s6
-            "Once I've established a routine, I can maintain it without much conscious effort", // s7
-            "I can stick to new habits even when facing obstacles or stress", // s8
-            "I struggle to maintain consistency in my daily routines", // s9
-            "I often start strong with new habits but rarely maintain them longterm", // s10
-            "My positive habits feel natural and automatic rather than forced", // s11
-            "I tend to forget or abandon habits if I don't see immediate results", // s12
-            "I consciously align my daily habits with my longterm goals", // s13
-            "When I recognize a habit isn't serving me, I can successfully modify it", // s14
-            "I sometimes find myself repeating behaviors that conflict with my goals", // s15
-            "I find it difficult to break habits even when I know they're counterproductive", // s16
-            "I regularly evaluate and adjust my habits based on their effectiveness", // s17
-            "I often act on autopilot without considering the longterm impact of my habits", // s18
-            "Finished! Ready to submit?" // Finish Screen Placeholder
+        const statementContents = [ "WELCOME...", "EMAIL PLACEHOLDER...", /* ... other statements ... */ "Finished! Ready to submit?" ]; // Keep your full list
+        const backsideContents = [ "Back text welcome...", "Back text email...", /* ... other back texts ... */ "Back text last..." ]; // Keep your full list
+
+        // Ensure both arrays have the same length and match your actual content
+        // (Using placeholders here for brevity)
+        statementContents = [
+            "WELCOME CARD PLACEHOLDER", // Index 0
+            "THIS SHOULD NOT BE DISPLAYED (Email Placeholder)", // Index 1
+            "The anticipation of future rewards motivates me more than receiving immediate rewards", // Index 2 (s1)
+            "I can maintain motivation by visualizing longterm benefits of my actions", // Index 3 (s2)
+            "I find myself seeking immediate rewards, even if I know a better reward will come later", // Index 4 (s3)
+            "I often need external incentives (praise, rewards) to stay motivated", // Index 5 (s4)
+            "I get energized by planning steps toward a distant goal", // Index 6 (s5)
+            "I tend to abandon tasks when the rewards aren't immediately visible", // Index 7 (s6)
+            "Once I've established a routine, I can maintain it without much conscious effort", // Index 8 (s7)
+            "I can stick to new habits even when facing obstacles or stress", // Index 9 (s8)
+            "I struggle to maintain consistency in my daily routines", // Index 10 (s9)
+            "I often start strong with new habits but rarely maintain them longterm", // Index 11 (s10)
+            "My positive habits feel natural and automatic rather than forced", // Index 12 (s11)
+            "I tend to forget or abandon habits if I don't see immediate results", // Index 13 (s12)
+            "I consciously align my daily habits with my longterm goals", // Index 14 (s13)
+            "When I recognize a habit isn't serving me, I can successfully modify it", // Index 15 (s14)
+            "I sometimes find myself repeating behaviors that conflict with my goals", // Index 16 (s15)
+            "I find it difficult to break habits even when I know they're counterproductive", // Index 17 (s16)
+            "I regularly evaluate and adjust my habits based on their effectiveness", // Index 18 (s17)
+            "I often act on autopilot without considering the longterm impact of my habits", // Index 19 (s18)
+            "Finished! Ready to submit?" // Index 20
         ];
+         backsideContents = [
+            "Back text for Welcome card", // Index 0
+            "Back text for email card", // Index 1
+            "Do you get more excited about what's coming eventually than what you can have right now? Like saving up for something big rather than buying small treats.", // Index 2
+            "Can picturing a great outcome in your mind help you stay on track? Like imagining being fit helps you exercise today.", // Index 3
+            "Do you grab what feels good now instead of waiting for something better? Like eating candy now instead of saving room for a special dinner.", // Index 4
+            "Do you need others to cheer you on or give you something to keep going? Like only cleaning your room when promised a treat afterward.", // Index 5
+            "Does mapping out how to achieve something big give you energy? Like feeling excited when planning a future trip.", // Index 6
+            "Do you quit when you can't see quick results? Like stopping a diet after a week because the scale hasn't moved.", // Index 7
+            "Can you keep doing something without thinking about it once it becomes familiar? Like automatically brushing teeth before bed.", // Index 8
+            "Can you keep up new behaviors when life gets tough? Like still taking walks despite a busy week.", // Index 9
+            "Is it hard to do the same things reliably each day? Like having bedtimes that change wildly throughout the week.", // Index 10
+            "Do you begin new things with energy but fade out quickly? Like downloading a meditation app but using it for just two weeks.", // Index 11
+            "Do good behaviors feel like \"just what you do\" rather than a chore? Like drinking water throughout the day without reminders.", // Index 12
+            "Do you stop doing helpful things if they don't pay off quickly? Like quitting an exercise because you don't feel stronger after a week.", // Index 13
+            "Do you choose everyday actions that support your bigger dreams? Like practicing guitar daily to eventually play in a band.", // Index 14
+            "Can you change behaviors that aren't working well? Like switching from late-night scrolling to reading before sleep.", // Index 15
+            "Do you catch yourself doing things that work against what you want? Like snacking while trying to eat healthier.", // Index 16
+            "Is it tough to stop doing familiar things even when they cause problems? Like checking your phone despite needing to focus.", // Index 17
+            "Do you check if your routines are actually helping you and make changes? Like noticing a morning walk improves your mood more than morning TV.", // Index 18
+            "Do you do things without thinking about future effects? Like grabbing fast food regularly without considering health impacts.", // Index 19
+            "Back text for last card" // Index 20
+        ];
+
+
         const TOTAL_CARDS = statementContents.length;
         const NUM_STATEMENTS = 18;
-        const backsideText = "Backside";
         const scriptURL = 'https://script.google.com/macros/s/AKfycbz9k2l6LPG-N7Ql88iCuwp-y_f-pn2WZUihAsj8evIQYYrpocdzFaKBB8U84ZL_XmskzQ/exec'; // <-- CHECK YOUR URL
 
         // --- DOM Elements ---
@@ -256,13 +329,14 @@
         // --- Functions ---
 
         function loadCard(index) {
-            // console.log(`--- Loading card for index: ${index} ---`); // Keep console logs if needed for debug
             currentIndex = index;
             cardInner.classList.remove('flip');
 
             setTimeout(() => {
+                // Clear previous dynamic content (front)
                 cardFrontContent.innerHTML = '';
 
+                // Recreate the main content div and options div
                 const contentDiv = document.createElement('div');
                 contentDiv.id = 'card-content';
                 cardFrontContent.appendChild(contentDiv);
@@ -270,118 +344,195 @@
                 const optionsDiv = document.createElement('div');
                 optionsDiv.className = 'options';
                 optionsDiv.id = 'options';
+                // optionsDiv appended later
 
-                backsideContentDiv.textContent = backsideText;
+                // Set dynamic backside text
+                backsideContentDiv.textContent = backsideContents[index];
 
-                let statementKey = '';
-                let cardText = '';
-
-                if (index === 0) {
-                    cardText = 'Please enter your email address to proceed!'; 
-                    contentDiv.textContent = cardText;
-
-                    // --- UPDATED Email Input Creation ---
-                    const emailContainer = document.createElement('div');
-                    emailContainer.id = 'email-input-container';
-                    const emailInput = document.createElement('input');
-                    emailInput.type = 'email';
-                    emailInput.id = 'email-input';
-                    // --- REMOVED Label, UPDATED Placeholder ---
-                    emailInput.placeholder = 'Enter your email address';
-                    emailInput.required = true;
-                    emailInput.value = userEmail;
-                    emailInput.onclick = (e) => e.stopPropagation();
-                    // --- No label added ---
-                    emailContainer.appendChild(emailInput);
-                    // Insert email container after the main text (Welcome!)
-                    cardFrontContent.insertBefore(emailContainer, contentDiv.nextSibling);
-
-                    cardFrontContent.appendChild(optionsDiv); // Add empty options div
-
-                } else if (index >= 1 && index <= NUM_STATEMENTS) {
-                    statementKey = 's' + index;
-                    cardText = statementContents[index];
-                    contentDiv.textContent = cardText;
-
-                    cardFrontContent.appendChild(optionsDiv);
-                    ['Agree', 'Disagree'].forEach(option => {
-                        const btn = document.createElement('button');
-                        btn.textContent = option;
-                        btn.onclick = (e) => { e.stopPropagation(); selectAnswer(index, option); };
-                        optionsDiv.appendChild(btn);
-                        if (answers[statementKey] === option) {
-                            btn.classList.add('selected');
-                        }
-                    });
-
-                } else if (index === TOTAL_CARDS - 1) {
-                    cardText = statementContents[index];
-                    contentDiv.textContent = cardText;
-                    cardFrontContent.appendChild(optionsDiv);
-                } else {
-                     contentDiv.textContent = `Error: Invalid card index ${index}.`;
-                     cardFrontContent.appendChild(optionsDiv);
-                }
-
-                // --- Navigation Buttons (Logic unchanged) ---
+                // Clear navigation and status
                 navigationDiv.innerHTML = '';
                 statusP.textContent = '';
 
-                if (index === 0) {
-                    const startBtn = document.createElement('button');
-                    startBtn.textContent = 'Start Assessment';
+                // --- LOGIC BASED ON CURRENT INDEX ---
+
+                if (index === 0) { // *** WELCOME CARD ***
+                    const title = document.createElement('div'); title.className = 'welcome-title'; title.textContent = 'Welcome!'; contentDiv.appendChild(title);
+                    const subText = document.createElement('div'); subText.className = 'welcome-sub'; subText.textContent = 'This is a card game'; contentDiv.appendChild(subText);
+                    const hintText = document.createElement('div'); hintText.className = 'welcome-hint'; hintText.textContent = 'Click me to see my back'; contentDiv.appendChild(hintText);
+                    cardFrontContent.appendChild(optionsDiv); // Append empty options div
+
+                    const nextBtn = document.createElement('button'); nextBtn.textContent = 'Next'; nextBtn.onclick = (e) => { e.stopPropagation(); nextCard(); }; navigationDiv.appendChild(nextBtn);
+
+                } else if (index === 1) { // *** EMAIL CARD ***
+                    contentDiv.textContent = 'Please enter your email address to proceed!';
+                    const emailContainer = document.createElement('div'); emailContainer.id = 'email-input-container';
+                    const emailInput = document.createElement('input'); emailInput.type = 'email'; emailInput.id = 'email-input'; emailInput.placeholder = 'Enter your email address'; emailInput.required = true; emailInput.value = userEmail; emailInput.onclick = (e) => e.stopPropagation(); emailContainer.appendChild(emailInput);
+                    cardFrontContent.insertBefore(emailContainer, contentDiv.nextSibling); // Insert after text
+                     cardFrontContent.appendChild(optionsDiv); // Append empty options div
+
+
+                    const prevBtn = document.createElement('button'); prevBtn.textContent = 'Previous'; prevBtn.onclick = (e) => { e.stopPropagation(); prevCard(); }; navigationDiv.appendChild(prevBtn);
+                    const startBtn = document.createElement('button'); startBtn.textContent = 'Start Assessment';
                     startBtn.onclick = (e) => {
                          e.stopPropagation();
                          const emailValue = document.getElementById('email-input').value.trim();
-                         if (validateEmail(emailValue)) {
-                             userEmail = emailValue;
-                             nextCard();
-                         } else {
-                             statusP.textContent = 'Please enter a valid email address.';
-                             statusP.style.color = '#d32f2f'; // Red for error
-                             try { document.getElementById('email-input').focus(); } catch(err){}
-                         }
+                         if (validateEmail(emailValue)) { userEmail = emailValue; nextCard(); }
+                         else { statusP.textContent = 'Please enter a valid email address.'; statusP.style.color = '#d32f2f'; try { document.getElementById('email-input').focus(); } catch(err){} }
                     };
                     navigationDiv.appendChild(startBtn);
-                } else {
-                    if (index > 0) {
-                        const prevBtn = document.createElement('button');
-                        prevBtn.textContent = 'Previous';
-                        prevBtn.onclick = (e) => { e.stopPropagation(); prevCard(); };
-                        navigationDiv.appendChild(prevBtn);
-                    }
-                    if (index === TOTAL_CARDS - 1) {
-                         const submitBtn = document.createElement('button');
-                         submitBtn.id = 'submitBtn';
-                         submitBtn.textContent = 'Submit Answers';
-                         submitBtn.onclick = (e) => { e.stopPropagation(); submitData(); };
-                         navigationDiv.appendChild(submitBtn);
-                    }
+
+                } else if (index >= 2 && index <= NUM_STATEMENTS + 1) { // *** STATEMENT CARDS (5 Buttons) ***
+                    const statementNumber = index - 1;
+                    const statementKey = 's' + statementNumber;
+                    contentDiv.textContent = statementContents[index];
+
+                    // --- Create 5 Buttons in 3 Rows ---
+                    cardFrontContent.appendChild(optionsDiv); // Append options container
+
+                    const optionsList = ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"];
+                    const selectedValue = answers[statementKey]; // Get previously selected value, if any
+
+                    // Helper function to create buttons
+                    const createOptionButton = (optionText) => {
+                        const btn = document.createElement('button');
+                        btn.textContent = optionText;
+                        btn.onclick = (e) => { e.stopPropagation(); selectAnswer(index, optionText); };
+                        if (selectedValue === optionText) {
+                            btn.classList.add('selected');
+                        }
+                        return btn;
+                    };
+
+                    // Row 1: Strongly disagree | Strongly agree
+                    const row1 = document.createElement('div');
+                    row1.className = 'options-row options-row-1';
+                    row1.appendChild(createOptionButton(optionsList[0])); // Strongly disagree
+                    row1.appendChild(createOptionButton(optionsList[4])); // Strongly agree
+                    optionsDiv.appendChild(row1);
+
+                    // Row 2: Disagree | Agree
+                    const row2 = document.createElement('div');
+                    row2.className = 'options-row options-row-2';
+                    row2.appendChild(createOptionButton(optionsList[1])); // Disagree
+                    row2.appendChild(createOptionButton(optionsList[3])); // Agree
+                    optionsDiv.appendChild(row2);
+
+                    // Row 3: Neutral
+                    const row3 = document.createElement('div');
+                    row3.className = 'options-row options-row-3';
+                    row3.appendChild(createOptionButton(optionsList[2])); // Neutral
+                    optionsDiv.appendChild(row3);
+
+                    // Navigation: Previous button only
+                    const prevBtn = document.createElement('button'); prevBtn.textContent = 'Previous'; prevBtn.onclick = (e) => { e.stopPropagation(); prevCard(); }; navigationDiv.appendChild(prevBtn);
+
+                } else if (index === TOTAL_CARDS - 1) { // *** FINISH CARD ***
+                    contentDiv.textContent = statementContents[index];
+                     cardFrontContent.appendChild(optionsDiv); // Append empty options div
+
+
+                    const prevBtn = document.createElement('button'); prevBtn.textContent = 'Previous'; prevBtn.onclick = (e) => { e.stopPropagation(); prevCard(); }; navigationDiv.appendChild(prevBtn);
+                    const submitBtn = document.createElement('button'); submitBtn.id = 'submitBtn'; submitBtn.textContent = 'Submit Answers'; submitBtn.onclick = (e) => { e.stopPropagation(); submitData(); }; navigationDiv.appendChild(submitBtn);
+
+                } else { // Error fallback
+                     contentDiv.textContent = `Error: Invalid card index ${index}.`;
+                      cardFrontContent.appendChild(optionsDiv); // Append empty options div
                 }
+
              }, 50);
         }
 
-        // --- Other JS Functions (validateEmail, flipCard, selectAnswer, nextCard, prevCard, submitData) 
+        // --- Other JS Functions ---
          function validateEmail(email) { const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; return re.test(String(email).toLowerCase()); }
+
          function flipCard() { cardInner.classList.toggle('flip'); }
-         function selectAnswer(statementIndex, option) {
-             const statementKey = 's' + statementIndex; answers[statementKey] = option;
+
+         function selectAnswer(cardIndex, option) {
+             const statementNumber = cardIndex - 1;
+             const statementKey = 's' + statementNumber;
+             answers[statementKey] = option;
+
+             // Update button styles immediately for the 5-button layout
              const currentOptionsDiv = document.getElementById('options');
-             if (currentOptionsDiv) { const buttons = currentOptionsDiv.querySelectorAll('button'); buttons.forEach(btn => { btn.classList.toggle('selected', btn.textContent === option); }); }
-             setTimeout(() => { if (currentIndex < TOTAL_CARDS - 1) { nextCard(); } }, 250);
+             if (currentOptionsDiv) {
+                 const buttons = currentOptionsDiv.querySelectorAll('button'); // Get all buttons inside .options
+                 buttons.forEach(btn => {
+                     // Check if the button's text content matches the selected option
+                     btn.classList.toggle('selected', btn.textContent === option);
+                 });
+             }
+
+             // Auto-advance
+             setTimeout(() => {
+                 if (currentIndex < TOTAL_CARDS - 1) {
+                     nextCard();
+                 }
+             }, 250);
          }
-         function nextCard() { if (currentIndex < TOTAL_CARDS - 1) { loadCard(currentIndex + 1); } }
-         function prevCard() { if (currentIndex > 0) { loadCard(currentIndex - 1); } }
+
+         function nextCard() {
+             if (currentIndex < TOTAL_CARDS - 1) {
+                 loadCard(currentIndex + 1);
+             }
+         }
+
+         function prevCard() {
+             if (currentIndex > 0) {
+                 loadCard(currentIndex - 1);
+             }
+         }
+
          function submitData() {
-             const submitBtn = document.getElementById('submitBtn'); statusP.textContent = 'Submitting...'; statusP.style.color = 'black'; if (submitBtn) submitBtn.disabled = true;
-             const finalData = { email: userEmail, ...answers }; console.log('Submitting final data:', JSON.stringify(finalData));
-             if (!userEmail) { statusP.textContent = 'Email is missing. Please go back.'; statusP.style.color = '#d32f2f'; if (submitBtn) submitBtn.disabled = false; loadCard(0); return; }
-             let answeredCount = 0; for (let i = 1; i <= NUM_STATEMENTS; i++) { if (answers['s' + i]) { answeredCount++; } }
-             if (answeredCount < NUM_STATEMENTS) { statusP.textContent = `Please answer all ${NUM_STATEMENTS} statements. (${answeredCount}/${NUM_STATEMENTS} answered)`; statusP.style.color = '#fb8c00'; if (submitBtn) submitBtn.disabled = false; return; } // Orange for warning
-             fetch(scriptURL, { redirect: "follow", method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(finalData) })
-             .then(response => { /* ... fetch handling ... */ if (!response.ok) { return response.text().then(text => { throw new Error(`HTTP error ${response.status}: ${response.statusText} - ${text || 'No details'}`); }); } const contentType = response.headers.get("content-type"); if (contentType && contentType.indexOf("application/json") !== -1) { return response.json(); } else { return response.text().then(text => { try { return JSON.parse(text); } catch (e) { return { result: 'success', message: 'Submission received.' }; } }); } })
-             .then(data => { /* ... success/error handling ... */ if (data && data.result === 'success') { statusP.textContent = data.message || 'Success! Data submitted.'; statusP.style.color = '#388e3c'; const cardContainer = document.querySelector('.card-container'); if (cardContainer) cardContainer.style.display = 'none'; if (navigationDiv) navigationDiv.style.display = 'none'; } else { statusP.textContent = `Submission issue: ${data.message || 'Unknown status.'}`; statusP.style.color = '#fb8c00'; if (submitBtn) submitBtn.disabled = false; } }) // Orange for warning
-             .catch(error => { /* ... catch fetch errors ... */ console.error('Fetch Error:', error); statusP.textContent = `Error: ${error.message}. Please try again.`; statusP.style.color = '#d32f2f'; if (submitBtn) submitBtn.disabled = false; }); // Red for error
+             const submitBtn = document.getElementById('submitBtn');
+             statusP.textContent = 'Submitting...';
+             statusP.style.color = 'black';
+             if (submitBtn) submitBtn.disabled = true;
+
+             const finalData = { email: userEmail, ...answers };
+             console.log('Submitting final data:', JSON.stringify(finalData));
+
+             // Validation Checks (Email + All statements answered)
+             if (!userEmail) {
+                 statusP.textContent = 'Email is missing. Please go back.'; statusP.style.color = '#d32f2f';
+                 if (submitBtn) submitBtn.disabled = false; loadCard(1); return;
+             }
+             let answeredCount = 0;
+             for (let i = 1; i <= NUM_STATEMENTS; i++) { if (answers['s' + i]) { answeredCount++; } }
+             if (answeredCount < NUM_STATEMENTS) {
+                 statusP.textContent = `Please answer all ${NUM_STATEMENTS} statements. (${answeredCount}/${NUM_STATEMENTS} answered)`; statusP.style.color = '#fb8c00';
+                 if (submitBtn) submitBtn.disabled = false; return;
+             }
+
+             // Submission Fetch Logic (remains the same)
+              fetch(scriptURL, {
+                 redirect: "follow",
+                 method: 'POST',
+                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                 body: JSON.stringify(finalData)
+             })
+             .then(response => {
+                 if (!response.ok) { return response.text().then(text => { throw new Error(`HTTP error ${response.status}: ${response.statusText} - ${text || 'No server details'}`); }); }
+                 const contentType = response.headers.get("content-type");
+                 if (contentType && contentType.indexOf("application/json") !== -1) { return response.json(); }
+                 else { return response.text().then(text => { try { return JSON.parse(text); } catch (e) { console.log("Received non-JSON response, assuming success:", text); return { result: 'success', message: 'Submission received (interpreted).' }; } }); }
+             })
+             .then(data => {
+                 console.log('Success/Result Data:', data);
+                 if (data && data.result === 'success') {
+                     statusP.textContent = data.message || 'Success! Data submitted.'; statusP.style.color = '#388e3c';
+                     const cardContainer = document.querySelector('.card-container');
+                     if (cardContainer) cardContainer.style.display = 'none';
+                     if (navigationDiv) navigationDiv.style.display = 'none';
+                 } else {
+                     statusP.textContent = `Submission issue: ${data.message || 'Unknown status received.'}`; statusP.style.color = '#fb8c00';
+                     if (submitBtn) submitBtn.disabled = false;
+                 }
+             })
+             .catch(error => {
+                 console.error('Fetch Error:', error);
+                 statusP.textContent = `Error: ${error.message}. Please check connection and try again.`; statusP.style.color = '#d32f2f';
+                 if (submitBtn) submitBtn.disabled = false;
+             });
          }
 
 
