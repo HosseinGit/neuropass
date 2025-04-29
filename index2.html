@@ -181,6 +181,24 @@
             
        
         /* --- Responsive --- */
+        /* Adjustments may be needed here based on the new base styles */
+        @media (max-width: 600px) { /* This breakpoint might need adjustment */
+        body { padding: 5px 5px; } /* Kept minimal padding */
+        .card-container { width: 95%; max-width: 95%; } /* Allow wider on small screens */
+        .card { min-height: 480px; } /* Maintain height */
+        .card-face { padding: 5px 5px; }
+        #card-content { font-size: 1.15em; }
+        #navigation { margin-top: 5px; max-width: 95%;}
+        #status { max-width: 95%; }
+        }
+        @media (max-width: 400px) {
+        /* Body padding already minimal from base */
+        .card { min-height: 480px; } /* Adjusted height for smallest screens */
+        #card-content { font-size: 1.1em; }
+        .card-face { padding: 5px 5px; }
+        #email-input { max-width: 90%; } /* Allow input to be wider */
+        }
+
         
     </style>
 </head>
