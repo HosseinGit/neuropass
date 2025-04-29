@@ -279,7 +279,8 @@
             "Finished! Ready to submit?"
          ];
          const backsideContents = [ /* Your full array here */
-            "Back text for Welcome card", "Back text for email card",
+            "Every response you give reveals part of how your motivation system operates. This isn’t about maximizing pleasure — it’s about building self-awareness and balance. The statements ahead explore how you pursue goals, manage impulses, and respond to rewards. Tap each card to read the psychological and neurological context. Insight begins with understanding, not judgment.", 
+             "Back text for email card",
             "Do you get more excited about what's coming eventually than what you can have right now? Like saving up for something big rather than buying small treats.",
             "Can picturing a great outcome in your mind help you stay on track? Like imagining being fit helps you exercise today.",
             "Do you grab what feels good now instead of waiting for something better? Like eating candy now instead of saving room for a special dinner.",
@@ -390,8 +391,8 @@
                 if (index === 0) { // WELCOME
                     // ... welcome text setup ...
                     const title = document.createElement('div'); title.className = 'welcome-title'; title.textContent = 'Welcome!'; contentDiv.appendChild(title);
-                    const subText = document.createElement('div'); subText.className = 'welcome-sub'; subText.textContent = 'This is a card game'; contentDiv.appendChild(subText);
-                    const hintText = document.createElement('div'); hintText.className = 'welcome-hint'; hintText.textContent = 'Click me to see my back'; contentDiv.appendChild(hintText);
+                    const subText = document.createElement('div'); subText.className = 'welcome-sub'; subText.textContent = 'This experience is designed to help you understand how your brain — especially your dopamine system and basal ganglia — shapes your habits, focus, and emotional patterns.'; contentDiv.appendChild(subText);
+                    const hintText = document.createElement('div'); hintText.className = 'welcome-hint'; hintText.textContent = 'Don’t just stand there — flip me!'; contentDiv.appendChild(hintText);
                     optionsDiv.style.display = 'none';
                     const nextBtn = document.createElement('button'); nextBtn.textContent = 'Next'; nextBtn.onclick = (e) => { e.stopPropagation(); nextCard(); }; navigationDiv.appendChild(nextBtn);
 
