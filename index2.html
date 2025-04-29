@@ -11,9 +11,8 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
             line-height: 1.6;
-            background-color: black; /*black; /*#ffffff;*/
-            /* --- CHANGED: Reduced top/bottom page padding --- */
-            padding: 1px 1px; /* Was 20/10px 15px */
+            background-color: white; /*black; /*#ffffff;*/
+            padding: 1px 1px; 
             overflow-x: hidden;
             display: flex;
             flex-direction: column;
@@ -24,24 +23,19 @@
 
         /* --- Card Container & Perspective --- */
         .card-container {
-            width: 90%; /* Was 90%  */
+            width: 90%; 
             height: 90%;
-            /* --- CHANGED: Reduced max-width for portrait feel --- */
-            max-width: 460px; /* Was 550px */
+            max-width: 460px;
             max-height:580px;*/
             margin: auto;
             perspective: 1200px;
             margin-top: 25px;
-             /* Optional: Can slightly reduce margin-bottom if needed */
-             margin-bottom: 5px; /* Was 10px  */ */ /* Default is implicitly 0 via margin: auto */
+            margin-bottom: 5px; 
         }
 
         /* --- Card Structure (Outer Shell) --- */
         .card {
-            /*width: 100%;
-            height: 100%;*/
-            /* --- CHANGED: Increased min-height for portrait feel --- */
-            min-height: 540px; /* Was 320px */
+            min-height: 540px; 
             position: relative;*/
             cursor: pointer;
         }
@@ -73,8 +67,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-             /* --- CHANGED: Adjusted padding slightly for narrower card --- */
-            padding: 30px 25px; /* Was 30px 25px */
+            padding: 30px 25px;
             text-align: center;
             overflow-wrap: break-word;
             overflow-y: auto;
@@ -93,7 +86,6 @@
         /* --- Content Inside Front Face --- */
         #card-content {
              margin-bottom: 25px;
-            /* --- CHANGED: Slightly smaller font for narrower card --- */
              font-weight: 500;
              font-size: 1.2em; /* Was 1.25em */
              line-height: 1.4;
@@ -110,7 +102,7 @@
         #email-input-container {
             margin-bottom: 25px;
             width: 100%;
-            max-width: 300px; /* Slightly reduced max width */
+            max-width: 300px;
             display: flex;
             justify-content: center;
         }
@@ -132,7 +124,7 @@
 
         /* --- Options Buttons Styling --- */
         .options {
-            margin-top: 10px; /* Was 20px */
+            margin-top: 10px;
             display: flex;
             justify-content: center;
             gap: 12px; 
@@ -141,8 +133,7 @@
 
         /* --- Navigation Buttons (Below Card) --- */
         #navigation {
-            /* --- CHANGED: Reduced space between card and buttons --- */
-            margin-top: 5px; /* Was 25/5px */
+            margin-top: 5px; 
             display: flex;
             justify-content: center;
             gap: 15px; 
@@ -151,7 +142,7 @@
             margin-left: auto;
             margin-right: auto;
             flex-wrap: wrap;
-            margin-bottom: 5px; /* was 15px, Reduced bottom margin */
+            margin-bottom: 5px;
         }
 
         /* Shared Button Styling (Unchanged from previous) */
