@@ -13,7 +13,7 @@
             line-height: 1.6;
             background-color: #ffffff;
             /* --- CHANGED: Reduced top/bottom page padding --- */
-            padding: 5px 5px; /* Was 20/10px 15px */
+            padding: 1px 1px; /* Was 20/10px 15px */
             overflow-x: hidden;
             display: flex;
             flex-direction: column;
@@ -23,13 +23,13 @@
 
         /* --- Card Container & Perspective --- */
         .card-container {
-            width: 90%;
+            width: 100%; /* Was 90%  */
             /* --- CHANGED: Reduced max-width for portrait feel --- */
             max-width: 480px; /* Was 550px */
             margin: auto;
             perspective: 1200px;
              /* Optional: Can slightly reduce margin-bottom if needed */
-             /* margin-bottom: 10px; */ /* Default is implicitly 0 via margin: auto */
+             /* margin-bottom: 1px; /* Was 10px  */ */ /* Default is implicitly 0 via margin: auto */
         }
 
         /* --- Card Structure (Outer Shell) --- */
@@ -69,7 +69,7 @@
             align-items: center;
             justify-content: center;
              /* --- CHANGED: Adjusted padding slightly for narrower card --- */
-            padding: 30px 25px; /* Was 35px 30px */
+            padding: 35px 30px; /* Was 30px 25px */
             text-align: center;
             overflow-wrap: break-word;
             overflow-y: auto;
