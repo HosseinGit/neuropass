@@ -4,39 +4,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dopamine & Motivation Assessment - Modern</title>
-        <style>
+           <style>
         /* --- Modern Font & Basic Reset --- */
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        html, body { height: 100%; }
-        
+        html { height: 100%; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
             line-height: 1.6;
-            background-color: blue;
-            padding: 0;
-            margin: 0;
-            overflow: hidden;
+            background-color: #ffffff;
+            /* --- CHANGED: Reduced top/bottom page padding --- */
+            padding: 10px 15px; /* Was 20px 15px */
+            overflow-x: hidden;
             display: flex;
-            justify-content: center; /* center horizontally */
-            align-items: center;     /* center vertically */
-            height: 100vh;           /* ensure full viewport height */
+            flex-direction: column;
+            align-items: center;
+            min-height: 100%;
         }
-        
+
         /* --- Card Container & Perspective --- */
         .card-container {
             width: 90%;
-            max-width: 460px;
-            max-height: 680px;
+            /* --- CHANGED: Reduced max-width for portrait feel --- */
+            max-width: 480px; /* Was 550px */
+            margin: auto;
             perspective: 1200px;
+             /* Optional: Can slightly reduce margin-bottom if needed */
+             /* margin-bottom: 10px; */ /* Default is implicitly 0 via margin: auto */
         }
-        
+
         /* --- Card Structure (Outer Shell) --- */
         .card {
-            min-height: 560px;
+            width: 100%;
+            /* --- CHANGED: Increased min-height for portrait feel --- */
+            min-height: 380px; /* Was 320px */
             position: relative;
             cursor: pointer;
         }
-        
+
         /* --- Card Inner (Handles the Flip) --- */
         .card-inner {
             width: 100%;
@@ -65,7 +69,7 @@
             align-items: center;
             justify-content: center;
              /* --- CHANGED: Adjusted padding slightly for narrower card --- */
-            padding: 30px 25px; /* Was 30px 25px */
+            padding: 30px 25px; /* Was 35px 30px */
             text-align: center;
             overflow-wrap: break-word;
             overflow-y: auto;
@@ -123,26 +127,26 @@
 
         /* --- Options Buttons Styling --- */
         .options {
-            margin-top: 10px; /* Was 20px */
+            margin-top: 20px;
             display: flex;
             justify-content: center;
-            gap: 12px; 
+            gap: 12px;
             flex-wrap: wrap;
         }
 
         /* --- Navigation Buttons (Below Card) --- */
         #navigation {
             /* --- CHANGED: Reduced space between card and buttons --- */
-            margin-top: 5px; /* Was 25/5px */
+            margin-top: 15px; /* Was 25px */
             display: flex;
             justify-content: center;
-            gap: 15px; 
+            gap: 15px;
             width: 90%;
             max-width: 480px; /* Match card container width */
             margin-left: auto;
             margin-right: auto;
             flex-wrap: wrap;
-            margin-bottom: 5px; /* was 15px, Reduced bottom margin */
+            margin-bottom: 15px; /* Reduced bottom margin */
         }
 
         /* Shared Button Styling (Unchanged from previous) */
@@ -169,10 +173,25 @@
             margin-bottom: 10px; /* Reduced bottom margin */
             line-height: 1.5;
         }
-            
-       
+
         /* --- Responsive --- */
-        
+        /* Adjustments may be needed here based on the new base styles */
+        @media (max-width: 600px) { /* This breakpoint might need adjustment */
+             body { padding: 10px 10px; } /* Kept minimal padding */
+             .card-container { width: 95%; max-width: 95%; } /* Allow wider on small screens */
+             .card { min-height: 360px; } /* Maintain height */
+             .card-face { padding: 25px 20px; }
+             #card-content { font-size: 1.15em; }
+             #navigation { margin-top: 15px; max-width: 95%;}
+             #status { max-width: 95%; }
+        }
+         @media (max-width: 400px) {
+             /* Body padding already minimal from base */
+             .card { min-height: 340px; } /* Adjusted height for smallest screens */
+             #card-content { font-size: 1.1em; }
+             .card-face { padding: 20px 15px; }
+             #email-input { max-width: 90%; } /* Allow input to be wider */
+         }
     </style>
 </head>
 <body>
