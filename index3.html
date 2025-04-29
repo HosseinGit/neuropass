@@ -66,24 +66,58 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            /* justify-content adjusted dynamically */
-            padding: 30px 25px;
+            justify-content: center; /* Center content vertically */
+             /* Adjusted padding to make space for progress bar */
+            padding: 40px 25px 30px 25px;
             text-align: center;
-            overflow-wrap: break-word;
-            overflow-y: auto;
+            overflow: hidden; /* Hide potential overflow from content */
         }
         .card-front {
             background: #ffffff;
             color: #333;
             z-index: 2;
-             justify-content: space-between; /* Distribute space */
         }
         .card-back {
             background: #424242;
             color: white;
             transform: rotateY(180deg);
-             justify-content: center; /* Keep back centered */
+             justify-content: center; /* Keep content centered vertically */
         }
+
+         /* --- NEW: Progress Bar Styling --- */
+        .progress-bar-container {
+            position: absolute; /* Position relative to card-face */
+            top: 15px; /* Position near the top, respecting padding */
+            left: 25px; /* Align with horizontal padding */
+            right: 25px; /* Align with horizontal padding */
+            width: calc(100% - 50px); /* Full width minus padding */
+            height: 10px; /* Slightly thinner */
+            background-color: #eeeeee; /* Light grey track */
+            border-radius: 5px; /* Adjusted border radius */
+            overflow: hidden;
+            z-index: 3; /* Ensure it's above card background */
+        }
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%; /* Starts empty, filled by JS */
+            background-color: #00b8d4; /* Light teal/blue-green */
+            border-radius: 5px; /* Adjusted border radius */
+            transition: width 0.4s ease-out; /* Smooth animation */
+        }
+        /* Hide on back face if absolutely positioned (though display:none in JS is better) */
+        .card-back .progress-bar-container {
+             display: none;
+        }
+
+        /* --- Content Wrapper (To handle potential overflow) --- */
+         .card-content-wrapper {
+            width: 100%;
+            overflow-y: auto; /* Allow scrolling ONLY for content if needed */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            /* Removed margin-top to rely on padding of card-face */
+         }
 
         /* --- Content Inside Front Face --- */
         #card-content {
@@ -92,27 +126,32 @@
              line-height: 1.4;
              max-width: 100%;
              color: #222;
-             display: flex;
-             flex-direction: column;
-             align-items: center;
-             justify-content: center;
-             flex-grow: 1; /* Allow content to take available space */
-             margin-bottom: 15px; /* Add some space above options */
+             margin-bottom: 5px; /* Closer to options */
+             width: 100%; /* Ensure it takes width within wrapper */
         }
+        /* --- Content Inside Back Face --- */
         #backside-content {
+            width: 100%; /* Take full width within padding */
             max-width: 100%;
             font-size: 1.1em;
             line-height: 1.5;
+            overflow-y: auto; /* Allow scrolling if needed */
+            padding: 0; /* Padding is handled by card-face */
         }
 
-        /* --- Specific Welcome Card Text Styling --- */
-        .welcome-title { font-size: 2.2em; font-weight: bold; margin-bottom: 15px; }
-        .welcome-sub { font-size: 1.1em; margin-bottom: 15px; }
-        .welcome-hint { font-size: 0.9em; font-style: italic; color: #777; }
-
+        /* --- Specific Text Element Styling (Welcome/Finish) --- */
+        .card-title { font-size: 2.2em; font-weight: bold; margin-bottom: 15px; }
+        .card-subtext { font-size: 1.1em; margin-bottom: 15px; }
+        .card-hint { font-size: 0.9em; font-style: italic; color: #777; margin-bottom: 15px; } /* Added margin-bottom */
+        .card-paragraph { margin-bottom: 1em; text-align: left; } /* For structured text on back/finish */
+        .card-paragraph:last-child { margin-bottom: 0; } /* Remove extra space at the end */
 
         /* --- Email Input Styling --- */
-        #email-input-container { margin-top: 15px; margin-bottom: 15px; width: 100%; max-width: 300px; display: flex; justify-content: center; }
+        #email-input-container {
+             margin-top: 5px; /* Closer to text above */
+             margin-bottom: 15px;
+             width: 100%; max-width: 300px; display: flex; justify-content: center;
+         }
         #email-input { width: 100%; padding: 12px 18px; border: 1px solid #e0e0e0; border-radius: 10px; font-size: 1em; text-align: center; background-color: #f9f9f9; transition: border-color 0.2s, box-shadow 0.2s; }
         #email-input:focus { outline: none; border-color: #bdbdbd; box-shadow: 0 0 0 3px rgba(77, 182, 172, 0.2); }
 
@@ -124,36 +163,30 @@
             align-items: center;
             gap: 8px;
             padding: 0 10px;
+            margin-top: 10px; /* Space above options */
+            flex-shrink: 0; /* Prevent options from shrinking */
         }
 
         /* --- Styling for Option Rows --- */
-        .options-row {
-            display: flex;
-            width: 100%;
-            max-width: 380px;
-        }
+        .options-row { display: flex; width: 100%; max-width: 380px; }
         .options-row-1, .options-row-2 { justify-content: space-between; }
         .options-row-3 { justify-content: center; }
 
         /* --- Shared Button Styling --- */
         .options button, #navigation button {
-            padding: 10px 15px;
-            font-size: 0.9em;
-            font-weight: 500; border: none; border-radius: 8px;
+            padding: 10px 15px; font-size: 0.9em; font-weight: 500; border: none; border-radius: 8px;
             cursor: pointer; transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
             flex-shrink: 0; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
             background-color: #f5f5f5; color: #555;
             min-width: 80px; text-align: center;
         }
-         /* Specific width adjustments */
         .options-row-1 button, .options-row-2 button { flex-basis: 48%; }
-        /* .options-row-3 button { } */
 
         .options button:hover { background-color: #e0e0e0; transform: translateY(-1px); box-shadow: 0 4px 8px rgba(0,0,0,0.07); }
         .options button.selected { background-color: #4db6ac; color: white; box-shadow: 0 1px 3px rgba(0,0,0,0.1); transform: translateY(0); }
         .options button:active { transform: translateY(1px); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
 
-        /* --- Navigation Buttons (Below Card) --- */
+        /* --- Navigation Buttons --- */
         #navigation { margin-top: 5px; display: flex; justify-content: center; gap: 15px; width: 90%; max-width: 480px; margin-left: auto; margin-right: auto; flex-wrap: wrap; margin-bottom: 5px; }
         #navigation button { padding: 10px 22px; font-size: 0.95em; background-color: #4db6ac; color: white; box-shadow: 0 3px 8px rgba(77, 182, 172, 0.3); border-radius: 10px;}
         #navigation button:hover { background-color: #26a69a; transform: translateY(-1px); box-shadow: 0 5px 12px rgba(77, 182, 172, 0.4); }
@@ -168,11 +201,19 @@
             body { padding: 5px 5px; }
             .card-container { width: 95%; max-width: 95%; }
             .card { min-height: 560px; }
-            .card-face { padding: 20px 15px; }
-            #card-content { font-size: 1.1em; }
-            .welcome-title { font-size: 2em; }
-            .welcome-sub { font-size: 1.05em; }
-            .welcome-hint { font-size: 0.85em; }
+             /* Adjusted padding for progress bar */
+            .card-face { padding: 35px 15px 20px 15px; }
+            .progress-bar-container { top: 10px; left: 15px; right: 15px; width: calc(100% - 30px); height: 8px; border-radius: 4px; }
+            .progress-bar-fill { border-radius: 4px; }
+
+
+            #card-content { font-size: 1.1em; margin-bottom: 5px; }
+            .options { margin-top: 10px; }
+            .card-title { font-size: 2em; } /* Adjusted Welcome title */
+            .card-subtext { font-size: 1.05em; } /* Adjusted Welcome subtext */
+            .card-hint { font-size: 0.85em; } /* Adjusted Welcome hint */
+            #backside-content { font-size: 1.05em; }
+
             #navigation { margin-top: 5px; max-width: 95%;}
             #status { max-width: 95%; }
             .options button { font-size: 0.85em; padding: 8px 10px; }
@@ -180,11 +221,17 @@
         }
         @media (max-width: 400px) {
             .card { min-height: 480px; }
+            .card-face { padding: 30px 10px 15px 10px; }
+             .progress-bar-container { top: 8px; left: 10px; right: 10px; width: calc(100% - 20px); height: 6px; }
+             .progress-bar-fill { border-radius: 3px; }
+             .progress-bar-container { border-radius: 3px; }
+
             #card-content { font-size: 1.05em; }
-            .welcome-title { font-size: 1.8em; }
-            .welcome-sub { font-size: 1em; }
-            .welcome-hint { font-size: 0.8em; }
-            .card-face { padding: 15px 10px; }
+            .card-title { font-size: 1.8em; } /* Adjusted Welcome title */
+            .card-subtext { font-size: 1em; } /* Adjusted Welcome subtext */
+            .card-hint { font-size: 0.8em; } /* Adjusted Welcome hint */
+            #backside-content { font-size: 1em; }
+
             #email-input { max-width: 90%; }
              .options button { font-size: 0.8em; padding: 8px 5px; min-width: 65px;}
              .options-row-1 button, .options-row-2 button { flex-basis: 47%; }
@@ -196,15 +243,17 @@
 
     <!-- HTML Structure -->
     <div class="card-container">
-        <!-- FIXED: Moved onclick assignment to JS -->
         <div class="card" id="main-card">
             <div class="card-inner" id="card-inner">
                 <div class="card-face card-front" id="card-front-content">
-                    <!-- Content dynamically loaded here -->
-                    <div id="card-content">Loading...</div>
-                    <div class="options" id="options"></div>
+                    <!-- Progress bar added dynamically here -->
+                    <!-- Content wrapper added dynamically here -->
+                       <!-- #card-content added dynamically -->
+                       <!-- #email-input-container added dynamically -->
+                       <!-- #options added dynamically -->
                 </div>
                 <div class="card-face card-back">
+                    <!-- #backside-content is now populated using innerHTML -->
                     <div id="backside-content"></div>
                 </div>
             </div>
@@ -220,63 +269,95 @@
         let userEmail = '';
         let answers = {};
 
-        // --- Content Arrays (Declared ONCE with const) ---
-        const statementContents = [
-            "WELCOME CARD PLACEHOLDER", // Index 0
-            "THIS SHOULD NOT BE DISPLAYED (Email Placeholder)", // Index 1
-            "The anticipation of future rewards motivates me more than receiving immediate rewards", // Index 2 (s1)
-            "I can maintain motivation by visualizing longterm benefits of my actions", // Index 3 (s2)
-            "I find myself seeking immediate rewards, even if I know a better reward will come later", // Index 4 (s3)
-            "I often need external incentives (praise, rewards) to stay motivated", // Index 5 (s4)
-            "I get energized by planning steps toward a distant goal", // Index 6 (s5)
-            "I tend to abandon tasks when the rewards aren't immediately visible", // Index 7 (s6)
-            "Once I've established a routine, I can maintain it without much conscious effort", // Index 8 (s7)
-            "I can stick to new habits even when facing obstacles or stress", // Index 9 (s8)
-            "I struggle to maintain consistency in my daily routines", // Index 10 (s9)
-            "I often start strong with new habits but rarely maintain them longterm", // Index 11 (s10)
-            "My positive habits feel natural and automatic rather than forced", // Index 12 (s11)
-            "I tend to forget or abandon habits if I don't see immediate results", // Index 13 (s12)
-            "I consciously align my daily habits with my longterm goals", // Index 14 (s13)
-            "When I recognize a habit isn't serving me, I can successfully modify it", // Index 15 (s14)
-            "I sometimes find myself repeating behaviors that conflict with my goals", // Index 16 (s15)
-            "I find it difficult to break habits even when I know they're counterproductive", // Index 17 (s16)
-            "I regularly evaluate and adjust my habits based on their effectiveness", // Index 18 (s17)
-            "I often act on autopilot without considering the longterm impact of my habits", // Index 19 (s18)
-            "Finished! Ready to submit?" // Index 20
-        ];
-         const backsideContents = [
-            "Back text for Welcome card", // Index 0
-            "Back text for email card", // Index 1
-            "Do you get more excited about what's coming eventually than what you can have right now? Like saving up for something big rather than buying small treats.", // Index 2
-            "Can picturing a great outcome in your mind help you stay on track? Like imagining being fit helps you exercise today.", // Index 3
-            "Do you grab what feels good now instead of waiting for something better? Like eating candy now instead of saving room for a special dinner.", // Index 4
-            "Do you need others to cheer you on or give you something to keep going? Like only cleaning your room when promised a treat afterward.", // Index 5
-            "Does mapping out how to achieve something big give you energy? Like feeling excited when planning a future trip.", // Index 6
-            "Do you quit when you can't see quick results? Like stopping a diet after a week because the scale hasn't moved.", // Index 7
-            "Can you keep doing something without thinking about it once it becomes familiar? Like automatically brushing teeth before bed.", // Index 8
-            "Can you keep up new behaviors when life gets tough? Like still taking walks despite a busy week.", // Index 9
-            "Is it hard to do the same things reliably each day? Like having bedtimes that change wildly throughout the week.", // Index 10
-            "Do you begin new things with energy but fade out quickly? Like downloading a meditation app but using it for just two weeks.", // Index 11
-            "Do good behaviors feel like \"just what you do\" rather than a chore? Like drinking water throughout the day without reminders.", // Index 12
-            "Do you stop doing helpful things if they don't pay off quickly? Like quitting an exercise because you don't feel stronger after a week.", // Index 13
-            "Do you choose everyday actions that support your bigger dreams? Like practicing guitar daily to eventually play in a band.", // Index 14
-            "Can you change behaviors that aren't working well? Like switching from late-night scrolling to reading before sleep.", // Index 15
-            "Do you catch yourself doing things that work against what you want? Like snacking while trying to eat healthier.", // Index 16
-            "Is it tough to stop doing familiar things even when they cause problems? Like checking your phone despite needing to focus.", // Index 17
-            "Do you check if your routines are actually helping you and make changes? Like noticing a morning walk improves your mood more than morning TV.", // Index 18
-            "Do you do things without thinking about future effects? Like grabbing fast food regularly without considering health impacts.", // Index 19
-            "Back text for last card" // Index 20
-        ];
+        // --- Centralized Content ---
+        const cardData = [
+            // Card 0: Welcome Front
+            {
+                front: {
+                    type: 'structured', // Indicates special formatting needed
+                    title: 'Welcome!',
+                    subtext: 'This experience is designed to help you understand how your brain, especially your dopamine system and basal ganglia, shapes your habits, focus, and emotional patterns.',
+                    hint: 'Don’t just stand there — flip me!'
+                },
+                back: {
+                    type: 'structured',
+                    content: `
+                        <p class="card-paragraph">Every response you give helps map how your motivation system works — from what drives you, to how consistently you act, to how well your habits align with your goals.</p>
+                        <p class="card-paragraph">This isn’t about chasing constant pleasure. It’s about understanding your reward sensitivity, your ability to build habits, and how effectively you adjust your behavior to stay on course.</p>
+                        <p class="card-paragraph">Each card reflects a real aspect of your brain’s motivational wiring.</p>
+                        <p class="card-paragraph">Tap each card to better understand the statement. And remember, insight begins with understanding, not judgment.</p>
+                    `
+                }
+            },
+            // Card 1: Email Front
+            {
+                front: { type: 'simple', content: 'Please enter your email address to proceed!' },
+                back: {
+                    type: 'structured',
+                    content: `
+                        <p class="card-paragraph">Thank you for sharing your email. By submitting it, you’ll receive tailored insights to support your journey.</p>
+                        <p class="card-paragraph">Rest assured, your information will be kept confidential and used only to enhance your experience with this assessment.</p>
+                        <p class="card-paragraph">We respect your privacy and are committed to providing value — not spam.</p>
+                    `
+                }
+            },
+            // --- Statement Cards (Index 2 to 19) ---
+            { front: { type: 'simple', content: "The anticipation of future rewards motivates me more than receiving immediate rewards" }, back: { type: 'simple', content: "Do you get more excited about what's coming eventually than what you can have right now? Like saving up for something big rather than buying small treats." } },
+            { front: { type: 'simple', content: "I can maintain motivation by visualizing longterm benefits of my actions" }, back: { type: 'simple', content: "Can picturing a great outcome in your mind help you stay on track? Like imagining being fit helps you exercise today." } },
+            { front: { type: 'simple', content: "I find myself seeking immediate rewards, even if I know a better reward will come later" }, back: { type: 'simple', content: "Do you grab what feels good now instead of waiting for something better? Like eating candy now instead of saving room for a special dinner." } },
+            { front: { type: 'simple', content: "I often need external incentives (praise, rewards) to stay motivated" }, back: { type: 'simple', content: "Do you need others to cheer you on or give you something to keep going? Like only cleaning your room when promised a treat afterward." } },
+            { front: { type: 'simple', content: "I get energized by planning steps toward a distant goal" }, back: { type: 'simple', content: "Does mapping out how to achieve something big give you energy? Like feeling excited when planning a future trip." } },
+            { front: { type: 'simple', content: "I tend to abandon tasks when the rewards aren't immediately visible" }, back: { type: 'simple', content: "Do you quit when you can't see quick results? Like stopping a diet after a week because the scale hasn't moved." } },
+            { front: { type: 'simple', content: "Once I've established a routine, I can maintain it without much conscious effort" }, back: { type: 'simple', content: "Can you keep doing something without thinking about it once it becomes familiar? Like automatically brushing teeth before bed." } },
+            { front: { type: 'simple', content: "I can stick to new habits even when facing obstacles or stress" }, back: { type: 'simple', content: "Can you keep up new behaviors when life gets tough? Like still taking walks despite a busy week." } },
+            { front: { type: 'simple', content: "I struggle to maintain consistency in my daily routines" }, back: { type: 'simple', content: "Is it hard to do the same things reliably each day? Like having bedtimes that change wildly throughout the week." } },
+            { front: { type: 'simple', content: "I often start strong with new habits but rarely maintain them longterm" }, back: { type: 'simple', content: "Do you begin new things with energy but fade out quickly? Like downloading a meditation app but using it for just two weeks." } },
+            { front: { type: 'simple', content: "My positive habits feel natural and automatic rather than forced" }, back: { type: 'simple', content: "Do good behaviors feel like \"just what you do\" rather than a chore? Like drinking water throughout the day without reminders." } },
+            { front: { type: 'simple', content: "I tend to forget or abandon habits if I don't see immediate results" }, back: { type: 'simple', content: "Do you stop doing helpful things if they don't pay off quickly? Like quitting an exercise because you don't feel stronger after a week." } },
+            { front: { type: 'simple', content: "I consciously align my daily habits with my longterm goals" }, back: { type: 'simple', content: "Do you choose everyday actions that support your bigger dreams? Like practicing guitar daily to eventually play in a band." } },
+            { front: { type: 'simple', content: "When I recognize a habit isn't serving me, I can successfully modify it" }, back: { type: 'simple', content: "Can you change behaviors that aren't working well? Like switching from late-night scrolling to reading before sleep." } },
+            { front: { type: 'simple', content: "I sometimes find myself repeating behaviors that conflict with my goals" }, back: { type: 'simple', content: "Do you catch yourself doing things that work against what you want? Like snacking while trying to eat healthier." } },
+            { front: { type: 'simple', content: "I find it difficult to break habits even when I know they're counterproductive" }, back: { type: 'simple', content: "Is it tough to stop doing familiar things even when they cause problems? Like checking your phone despite needing to focus." } },
+            { front: { type: 'simple', content: "I regularly evaluate and adjust my habits based on their effectiveness" }, back: { type: 'simple', content: "Do you check if your routines are actually helping you and make changes? Like noticing a morning walk improves your mood more than morning TV." } },
+            { front: { type: 'simple', content: "I often act on autopilot without considering the longterm impact of my habits" }, back: { type: 'simple', content: "Do you do things without thinking about future effects? Like grabbing fast food regularly without considering health impacts." } },
+            // Card 20: Finish Front
+            {
+                front: {
+                    type: 'structured', // Use structured display
+                    content: `
+                        <p class="card-paragraph">Almost There!</p>
+                        <p class="card-paragraph">You’ve made it to the final step of your self-assessment.</p>
+                        <p class="card-paragraph">Take a moment to reflect on what you’ve discovered so far and how this journey has shaped your understanding of yourself.</p>
+                        <p class="card-hint">(Tap to read the final thoughts on the back, then submit below)</p>
+                        ` // Modified hint slightly for clarity
+                },
+                back: {
+                    type: 'structured',
+                    content: `
+                        <p class="card-paragraph">Congratulations on completing your assessment! This is just the beginning of your journey toward deeper self-awareness and growth.</p>
+                        <p class="card-paragraph">You soon have valuable insights into your motivation, habits, and potential.</p>
+                        <p class="card-paragraph">Use these findings as a guide to make intentional, positive changes in your life.</p>
+                        <p class="card-paragraph">Your results will be sent to the email you provided, giving you personalized insights and next steps.</p>
+                        <p class="card-paragraph">Thank you for participating!</p>
+                    `
+                }
+            }
+         ];
 
         // --- Constants ---
-        const TOTAL_CARDS = statementContents.length;
-        const NUM_STATEMENTS = 18;
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbz9k2l6LPG-N7Ql88iCuwp-y_f-pn2WZUihAsj8evIQYYrpocdzFaKBB8U84ZL_XmskzQ/exec'; // <-- CHECK YOUR URL
+        const TOTAL_CARDS = cardData.length;
+        const NUM_STATEMENTS = 18; // Cards 2 through 19 are statements
+        const EMAIL_CARD_INDEX = 1;
+        const FIRST_STATEMENT_INDEX = 2;
+        const LAST_STATEMENT_INDEX = NUM_STATEMENTS + FIRST_STATEMENT_INDEX - 1; // Should be 19
+        const FINISH_CARD_INDEX = TOTAL_CARDS - 1; // Should be 20
+        const TOTAL_PROGRESS_STEPS = NUM_STATEMENTS + 1; // 18 statements + 1 finish card = 19 steps for progress bar
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbz9k2l6LPG-N7Ql88iCuwp-y_f-pn2WZUihAsj8evIQYYrpocdzFaKBB8U84ZL_XmskzQ/exec';
 
-        // --- DOM Elements (Assigned AFTER declaration, BEFORE use in functions) ---
-        const cardElement = document.getElementById('main-card'); // Get the card element itself
+        // --- DOM Elements ---
+        const cardElement = document.getElementById('main-card');
         const cardInner = document.getElementById('card-inner');
-        const cardFrontContent = document.getElementById('card-front-content');
+        const cardFrontContentEl = document.getElementById('card-front-content');
         const backsideContentDiv = document.getElementById('backside-content');
         const navigationDiv = document.getElementById('navigation');
         const statusP = document.getElementById('status');
@@ -285,97 +366,173 @@
         // --- Core Functions ---
 
         function flipCard() {
-            // Now 'cardInner' is guaranteed to be initialized here
             cardInner.classList.toggle('flip');
         }
 
         function loadCard(index) {
             currentIndex = index;
-            if (cardInner) { // Check if cardInner exists before manipulating
-                cardInner.classList.remove('flip');
-            }
+            if (cardInner) { cardInner.classList.remove('flip'); }
 
-            // Use setTimeout for smoother visual transition
+            // Added short delay to allow flip animation to reset before content changes
             setTimeout(() => {
-                if (!cardFrontContent || !backsideContentDiv || !navigationDiv || !statusP) {
-                    console.error("Error: One or more essential DOM elements not found!");
-                    return; // Stop execution if elements are missing
+                if (!cardFrontContentEl || !backsideContentDiv || !navigationDiv || !statusP) {
+                    console.error("Essential DOM elements missing!"); return;
+                }
+                cardFrontContentEl.innerHTML = ''; // Clear previous front content
+                backsideContentDiv.innerHTML = ''; // Clear previous back content
+
+                // --- Create Progress Bar (Conditionally) ---
+                // Show from first statement card (index 2) up to and including finish card (index 20)
+                if (index >= FIRST_STATEMENT_INDEX && index <= FINISH_CARD_INDEX) {
+                    const progressBarContainer = document.createElement('div');
+                    progressBarContainer.className = 'progress-bar-container';
+                    const progressBarFill = document.createElement('div');
+                    progressBarFill.className = 'progress-bar-fill';
+
+                    // Calculate progress: Step 1 for index 2, ..., Step 19 for index 20
+                    const currentStep = index - FIRST_STATEMENT_INDEX + 1;
+                    const progressPercent = (currentStep / TOTAL_PROGRESS_STEPS) * 100;
+                    progressBarFill.style.width = `${progressPercent}%`;
+
+                    progressBarContainer.appendChild(progressBarFill);
+                    cardFrontContentEl.appendChild(progressBarContainer); // Add bar FIRST
                 }
 
-                // Clear previous dynamic content
-                cardFrontContent.innerHTML = '';
+                // --- Create Content Wrapper ---
+                const contentWrapper = document.createElement('div');
+                contentWrapper.className = 'card-content-wrapper';
+                cardFrontContentEl.appendChild(contentWrapper); // Add wrapper AFTER bar
 
-                // Recreate structural divs
+                // --- Create inner structure INSIDE wrapper (will hold text/inputs/options) ---
                 const contentDiv = document.createElement('div');
-                contentDiv.id = 'card-content';
-                cardFrontContent.appendChild(contentDiv);
+                contentDiv.id = 'card-content'; // Keep ID for potential specific styling if needed
+                contentWrapper.appendChild(contentDiv);
+
+                let emailContainer = null;
+                if (index === EMAIL_CARD_INDEX) { // Email Input Card
+                    emailContainer = document.createElement('div');
+                    emailContainer.id = 'email-input-container';
+                    const emailInput = document.createElement('input');
+                    emailInput.type = 'email'; emailInput.id = 'email-input';
+                    emailInput.placeholder = 'Enter your email address';
+                    emailInput.required = true; emailInput.value = userEmail; // Preserve email if user goes back
+                    emailInput.onclick = (e) => e.stopPropagation(); // Prevent card flip on input click
+                    emailContainer.appendChild(emailInput);
+                    contentWrapper.appendChild(emailContainer); // Append email inside wrapper
+                }
 
                 const optionsDiv = document.createElement('div');
                 optionsDiv.className = 'options';
-                optionsDiv.id = 'options';
-                // optionsDiv appended conditionally below
+                optionsDiv.id = 'options'; // Keep ID
+                optionsDiv.style.display = 'none'; // Hide by default
+                contentWrapper.appendChild(optionsDiv); // Append options inside wrapper
 
-                // Set dynamic backside text
-                if (backsideContents[index] !== undefined) {
-                    backsideContentDiv.textContent = backsideContents[index];
+                // --- Populate content using centralized data ---
+                const currentCardData = cardData[index];
+                if (!currentCardData) {
+                    console.error("Card data missing for index:", index);
+                    contentDiv.innerHTML = `<p>Error: Content not found for this card.</p>`;
+                    backsideContentDiv.innerHTML = `<p>Error: Content not found for this card.</p>`;
+                    return; // Stop processing this card
+                }
+
+                // Populate Front Face
+                if (currentCardData.front) {
+                    if (currentCardData.front.type === 'structured') {
+                        // Handle special structured content (like Welcome card)
+                        if (index === 0) { // Welcome Card specifics
+                            const title = document.createElement('div');
+                            title.className = 'card-title'; // Use new class
+                            title.textContent = currentCardData.front.title || '';
+                            contentDiv.appendChild(title);
+
+                            const subText = document.createElement('div');
+                            subText.className = 'card-subtext'; // Use new class
+                            subText.textContent = currentCardData.front.subtext || '';
+                            contentDiv.appendChild(subText);
+
+                            const hintText = document.createElement('div');
+                            hintText.className = 'card-hint'; // Use new class
+                            hintText.textContent = currentCardData.front.hint || '';
+                            contentDiv.appendChild(hintText);
+                        } else if (index === FINISH_CARD_INDEX) { // Finish Card front structure
+                             contentDiv.innerHTML = currentCardData.front.content || ''; // Render the HTML paragraphs
+                        } else {
+                            // Fallback for other potential 'structured' types if needed
+                             contentDiv.innerHTML = currentCardData.front.content || '';
+                        }
+                    } else { // Simple text content
+                        contentDiv.innerHTML = `<p>${currentCardData.front.content || ''}</p>`; // Wrap simple text in a paragraph for consistency
+                    }
                 } else {
-                     backsideContentDiv.textContent = "Back text missing."; // Fallback
+                    contentDiv.innerHTML = `<p>Front content missing.</p>`;
                 }
 
 
-                // Clear navigation and status
+                // Populate Back Face
+                 if (currentCardData.back) {
+                    if (currentCardData.back.type === 'structured') {
+                         // Render the pre-formatted HTML for structured back content
+                        backsideContentDiv.innerHTML = currentCardData.back.content || '';
+                    } else {
+                        // Wrap simple back content in a paragraph too
+                        backsideContentDiv.innerHTML = `<p>${currentCardData.back.content || ''}</p>`;
+                    }
+                 } else {
+                     backsideContentDiv.innerHTML = `<p>Back text missing.</p>`;
+                 }
+
+
                 navigationDiv.innerHTML = '';
                 statusP.textContent = '';
 
-                // --- LOGIC BASED ON CURRENT INDEX ---
+                // --- Specific Logic based on index ---
+                if (index === 0) { // WELCOME
+                    optionsDiv.style.display = 'none'; // No options here
+                    const nextBtn = document.createElement('button');
+                    nextBtn.textContent = 'Next';
+                    nextBtn.onclick = (e) => { e.stopPropagation(); nextCard(); };
+                    navigationDiv.appendChild(nextBtn);
 
-                if (index === 0) { // WELCOME CARD
-                    const title = document.createElement('div'); title.className = 'welcome-title'; title.textContent = 'Welcome!'; contentDiv.appendChild(title);
-                    const subText = document.createElement('div'); subText.className = 'welcome-sub'; subText.textContent = 'This is a card game'; contentDiv.appendChild(subText);
-                    const hintText = document.createElement('div'); hintText.className = 'welcome-hint'; hintText.textContent = 'Click me to see my back'; contentDiv.appendChild(hintText);
-                    cardFrontContent.appendChild(optionsDiv); // Append empty options
+                } else if (index === EMAIL_CARD_INDEX) { // EMAIL
+                    optionsDiv.style.display = 'none'; // No options here
+                    const prevBtn = document.createElement('button');
+                    prevBtn.textContent = 'Previous';
+                    prevBtn.onclick = (e) => { e.stopPropagation(); prevCard(); };
+                    navigationDiv.appendChild(prevBtn);
 
-                    const nextBtn = document.createElement('button'); nextBtn.textContent = 'Next'; nextBtn.onclick = (e) => { e.stopPropagation(); nextCard(); }; navigationDiv.appendChild(nextBtn);
-
-                } else if (index === 1) { // EMAIL CARD
-                    contentDiv.textContent = 'Please enter your email address to proceed!';
-                    const emailContainer = document.createElement('div'); emailContainer.id = 'email-input-container';
-                    const emailInput = document.createElement('input'); emailInput.type = 'email'; emailInput.id = 'email-input'; emailInput.placeholder = 'Enter your email address'; emailInput.required = true; emailInput.value = userEmail; emailInput.onclick = (e) => e.stopPropagation(); emailContainer.appendChild(emailInput);
-                    cardFrontContent.insertBefore(emailContainer, contentDiv.nextSibling);
-                    cardFrontContent.appendChild(optionsDiv); // Append empty options
-
-                    const prevBtn = document.createElement('button'); prevBtn.textContent = 'Previous'; prevBtn.onclick = (e) => { e.stopPropagation(); prevCard(); }; navigationDiv.appendChild(prevBtn);
-                    const startBtn = document.createElement('button'); startBtn.textContent = 'Start Assessment';
+                    const startBtn = document.createElement('button');
+                    startBtn.textContent = 'Start Assessment';
                     startBtn.onclick = (e) => {
                          e.stopPropagation();
-                         const emailValue = document.getElementById('email-input').value.trim();
-                         if (validateEmail(emailValue)) { userEmail = emailValue; nextCard(); }
-                         else { statusP.textContent = 'Please enter a valid email address.'; statusP.style.color = '#d32f2f'; try { document.getElementById('email-input').focus(); } catch(err){} }
+                         const emailInput = document.getElementById('email-input');
+                         const emailValue = emailInput ? emailInput.value.trim() : '';
+                         if (validateEmail(emailValue)) {
+                             userEmail = emailValue;
+                             nextCard();
+                         } else {
+                             statusP.textContent = 'Please enter a valid email address.';
+                             statusP.style.color = '#d32f2f';
+                             if(emailInput) emailInput.focus(); // Focus the input on error
+                         }
                     };
                     navigationDiv.appendChild(startBtn);
 
-                } else if (index >= 2 && index <= NUM_STATEMENTS + 1) { // STATEMENT CARDS
-                    const statementNumber = index - 1;
-                    const statementKey = 's' + statementNumber;
-                    if (statementContents[index] !== undefined) {
-                         contentDiv.textContent = statementContents[index];
-                    } else {
-                         contentDiv.textContent = "Statement missing."; // Fallback
-                    }
-
-                    cardFrontContent.appendChild(optionsDiv); // Append options container
-
+                } else if (index >= FIRST_STATEMENT_INDEX && index <= LAST_STATEMENT_INDEX) { // STATEMENTS
+                    optionsDiv.style.display = 'flex'; // Show options
                     const optionsList = ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"];
-                    const selectedValue = answers[statementKey];
+                    const statementNumber = index - FIRST_STATEMENT_INDEX + 1; // Calculate S1, S2 etc.
+                    const selectedValue = answers['s' + statementNumber]; // Get saved answer
 
                     const createOptionButton = (optionText) => {
-                        const btn = document.createElement('button');
-                        btn.textContent = optionText;
-                        btn.onclick = (e) => { e.stopPropagation(); selectAnswer(index, optionText); };
-                        if (selectedValue === optionText) { btn.classList.add('selected'); }
-                        return btn;
+                         const btn = document.createElement('button');
+                         btn.textContent = optionText;
+                         btn.onclick = (e) => { e.stopPropagation(); selectAnswer(index, optionText); };
+                         if (selectedValue === optionText) { btn.classList.add('selected'); }
+                         return btn;
                     };
 
+                    // Create option button rows (same structure as before)
                     const row1 = document.createElement('div'); row1.className = 'options-row options-row-1';
                     row1.appendChild(createOptionButton(optionsList[0]));
                     row1.appendChild(createOptionButton(optionsList[4]));
@@ -390,129 +547,173 @@
                     row3.appendChild(createOptionButton(optionsList[2]));
                     optionsDiv.appendChild(row3);
 
-                    const prevBtn = document.createElement('button'); prevBtn.textContent = 'Previous'; prevBtn.onclick = (e) => { e.stopPropagation(); prevCard(); }; navigationDiv.appendChild(prevBtn);
+                    const prevBtn = document.createElement('button');
+                    prevBtn.textContent = 'Previous';
+                    prevBtn.onclick = (e) => { e.stopPropagation(); prevCard(); };
+                    navigationDiv.appendChild(prevBtn);
+                    // Next button is implicitly handled by selectAnswer
 
-                } else if (index === TOTAL_CARDS - 1) { // FINISH CARD
-                     if (statementContents[index] !== undefined) {
-                         contentDiv.textContent = statementContents[index];
-                    } else {
-                         contentDiv.textContent = "Finish text missing."; // Fallback
-                    }
-                    cardFrontContent.appendChild(optionsDiv); // Append empty options
+                } else if (index === FINISH_CARD_INDEX) { // FINISH
+                    optionsDiv.style.display = 'none'; // No options here
+                     const prevBtn = document.createElement('button');
+                     prevBtn.textContent = 'Previous';
+                     prevBtn.onclick = (e) => { e.stopPropagation(); prevCard(); };
+                     navigationDiv.appendChild(prevBtn);
 
-                    const prevBtn = document.createElement('button'); prevBtn.textContent = 'Previous'; prevBtn.onclick = (e) => { e.stopPropagation(); prevCard(); }; navigationDiv.appendChild(prevBtn);
-                    const submitBtn = document.createElement('button'); submitBtn.id = 'submitBtn'; submitBtn.textContent = 'Submit Answers'; submitBtn.onclick = (e) => { e.stopPropagation(); submitData(); }; navigationDiv.appendChild(submitBtn);
+                    const submitBtn = document.createElement('button');
+                    submitBtn.id = 'submitBtn';
+                    submitBtn.textContent = 'Submit Answers';
+                    submitBtn.onclick = (e) => { e.stopPropagation(); submitData(); };
+                    navigationDiv.appendChild(submitBtn);
 
-                } else { // Error fallback
-                     contentDiv.textContent = `Error: Invalid card index ${index}.`;
-                     cardFrontContent.appendChild(optionsDiv);
+                } else { // Fallback for unexpected index
+                     optionsDiv.style.display = 'none';
+                     console.error("Reached unexpected card index:", index);
                 }
 
-             }, 50); // End setTimeout
+            }, 50); // End setTimeout delay for content change
         }
 
         function validateEmail(email) {
+            // Regex remains the same
             const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             return re.test(String(email).toLowerCase());
         }
 
-         function selectAnswer(cardIndex, option) {
-             const statementNumber = cardIndex - 1;
-             const statementKey = 's' + statementNumber;
-             answers[statementKey] = option;
+        function selectAnswer(cardIndex, option) {
+            // Calculate statement number (S1, S2...) based on card index
+            const statementNumber = cardIndex - FIRST_STATEMENT_INDEX + 1;
+            const statementKey = 's' + statementNumber;
+            answers[statementKey] = option; // Save answer
 
-             const currentOptionsDiv = document.getElementById('options');
-             if (currentOptionsDiv) {
-                 const buttons = currentOptionsDiv.querySelectorAll('button');
-                 buttons.forEach(btn => {
-                     btn.classList.toggle('selected', btn.textContent === option);
-                 });
-             }
+            // Update button styles
+            const currentOptionsDiv = document.getElementById('options');
+            if (currentOptionsDiv) {
+                const buttons = currentOptionsDiv.querySelectorAll('button');
+                buttons.forEach(btn => {
+                    btn.classList.toggle('selected', btn.textContent === option);
+                });
+            }
 
-             setTimeout(() => {
-                 if (currentIndex < TOTAL_CARDS - 1) {
-                     nextCard();
+            // Automatically advance to the next card after a short delay
+            setTimeout(() => {
+                if (currentIndex < FINISH_CARD_INDEX) { // Don't auto-advance from the finish card
+                    nextCard();
+                } else {
+                    // Optional: Provide feedback on the finish card if needed after selection (currently none)
+                }
+            }, 250); // Delay before advancing
+        }
+
+        function nextCard() {
+            if (currentIndex < TOTAL_CARDS - 1) {
+                loadCard(currentIndex + 1);
+            }
+        }
+
+        function prevCard() {
+            if (currentIndex > 0) {
+                loadCard(currentIndex - 1);
+            }
+        }
+
+        function submitData() {
+           // --- Submit logic remains exactly the same ---
+            const submitBtn = document.getElementById('submitBtn');
+            statusP.textContent = 'Submitting...'; statusP.style.color = 'black';
+            if (submitBtn) submitBtn.disabled = true;
+
+            const finalData = { email: userEmail, ...answers }; // Combine email and answers
+            console.log('Submitting final data:', JSON.stringify(finalData));
+
+            // Validation checks (same as before)
+            if (!userEmail) {
+                statusP.textContent = 'Email is missing. Please go back.';
+                statusP.style.color = '#d32f2f';
+                if (submitBtn) submitBtn.disabled = false;
+                loadCard(EMAIL_CARD_INDEX); // Go back to email card
+                return;
+            }
+            let answeredCount = 0;
+            for (let i = 1; i <= NUM_STATEMENTS; i++) {
+                if (answers['s' + i]) {
+                    answeredCount++;
+                }
+            }
+            if (answeredCount < NUM_STATEMENTS) {
+                statusP.textContent = `Please answer all ${NUM_STATEMENTS} statements. (${answeredCount}/${NUM_STATEMENTS} answered)`;
+                statusP.style.color = '#fb8c00'; // Warning color
+                if (submitBtn) submitBtn.disabled = false;
+                // Maybe direct user to first unanswered question? (More complex logic)
+                return;
+            }
+
+            // Fetch request (same as before)
+            fetch(scriptURL, {
+                redirect: "follow",
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // Keep as text/plain for simple Google Apps Script endpoint
+                body: JSON.stringify(finalData) // Send data as JSON string
+            })
+            .then(response => {
+                // Response handling remains the same
+                 if (!response.ok) {
+                    return response.text().then(text => {
+                         throw new Error(`HTTP error ${response.status}: ${response.statusText} - ${text || 'No server details'}`);
+                    });
                  }
-             }, 250);
-         }
-
-         function nextCard() {
-             if (currentIndex < TOTAL_CARDS - 1) {
-                 loadCard(currentIndex + 1);
-             }
-         }
-
-         function prevCard() {
-             if (currentIndex > 0) {
-                 loadCard(currentIndex - 1);
-             }
-         }
-
-         function submitData() {
-             const submitBtn = document.getElementById('submitBtn');
-             statusP.textContent = 'Submitting...';
-             statusP.style.color = 'black';
-             if (submitBtn) submitBtn.disabled = true;
-
-             const finalData = { email: userEmail, ...answers };
-             console.log('Submitting final data:', JSON.stringify(finalData));
-
-             if (!userEmail) {
-                 statusP.textContent = 'Email is missing. Please go back.'; statusP.style.color = '#d32f2f';
-                 if (submitBtn) submitBtn.disabled = false; loadCard(1); return;
-             }
-             let answeredCount = 0;
-             for (let i = 1; i <= NUM_STATEMENTS; i++) { if (answers['s' + i]) { answeredCount++; } }
-             if (answeredCount < NUM_STATEMENTS) {
-                 statusP.textContent = `Please answer all ${NUM_STATEMENTS} statements. (${answeredCount}/${NUM_STATEMENTS} answered)`; statusP.style.color = '#fb8c00';
-                 if (submitBtn) submitBtn.disabled = false; return;
-             }
-
-             fetch(scriptURL, {
-                 redirect: "follow", method: 'POST',
-                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                 body: JSON.stringify(finalData)
-             })
-             .then(response => {
-                 // (Response handling logic remains the same)
-                 if (!response.ok) { return response.text().then(text => { throw new Error(`HTTP error ${response.status}: ${response.statusText} - ${text || 'No server details'}`); }); }
                  const contentType = response.headers.get("content-type");
-                 if (contentType && contentType.indexOf("application/json") !== -1) { return response.json(); }
-                 else { return response.text().then(text => { try { return JSON.parse(text); } catch (e) { console.log("Received non-JSON response, assuming success:", text); return { result: 'success', message: 'Submission received (interpreted).' }; } }); }
-             })
-             .then(data => {
-                // (Success/Error message handling remains the same)
-                 console.log('Success/Result Data:', data);
-                 if (data && data.result === 'success') {
-                     statusP.textContent = data.message || 'Success! Data submitted.'; statusP.style.color = '#388e3c';
-                     const cardContainer = document.querySelector('.card-container');
-                     if (cardContainer) cardContainer.style.display = 'none';
-                     if (navigationDiv) navigationDiv.style.display = 'none';
+                 if (contentType && contentType.indexOf("application/json") !== -1) {
+                     return response.json();
                  } else {
-                     statusP.textContent = `Submission issue: ${data.message || 'Unknown status received.'}`; statusP.style.color = '#fb8c00';
-                     if (submitBtn) submitBtn.disabled = false;
+                     return response.text().then(text => {
+                         try {
+                             // Try to parse even if content-type isn't JSON (some GAS setups might return plain text JSON)
+                             return JSON.parse(text);
+                         } catch (e) {
+                             console.log("Received non-JSON response, assuming success:", text);
+                             // Assume success if response is OK but not JSON
+                             return { result: 'success', message: 'Submission received (interpreted).' };
+                         }
+                     });
                  }
-             })
-             .catch(error => {
-                // (Fetch error handling remains the same)
-                 console.error('Fetch Error:', error);
-                 statusP.textContent = `Error: ${error.message}. Please check connection and try again.`; statusP.style.color = '#d32f2f';
-                 if (submitBtn) submitBtn.disabled = false;
-             });
-         }
+            })
+            .then(data => {
+                // Success/Error display remains the same
+                console.log('Success/Result Data:', data);
+                if (data && data.result === 'success') {
+                    statusP.textContent = data.message || 'Success! Data submitted.';
+                    statusP.style.color = '#388e3c'; // Success color
+                    // Hide card and navigation on successful submission
+                    const cardContainer = document.querySelector('.card-container');
+                    if (cardContainer) cardContainer.style.display = 'none';
+                    if (navigationDiv) navigationDiv.style.display = 'none';
+                } else {
+                    // Handle potential submission issues reported by the server
+                    statusP.textContent = `Submission issue: ${data.message || 'Unknown status received.'}`;
+                    statusP.style.color = '#fb8c00'; // Warning color
+                    if (submitBtn) submitBtn.disabled = false; // Re-enable button
+                }
+            })
+            .catch(error => {
+                // Network/Fetch error handling remains the same
+                console.error('Fetch Error:', error);
+                statusP.textContent = `Error: ${error.message}. Please check connection and try again.`;
+                statusP.style.color = '#d32f2f'; // Error color
+                if (submitBtn) submitBtn.disabled = false; // Re-enable button
+            });
+        }
+
 
         // --- Initial Load and Event Listener ---
         window.onload = () => {
-            // Ensure DOM elements are loaded before assigning event listeners or loading cards
             if (cardElement) {
-                 // FIXED: Assign onclick listener here instead of inline HTML
+                 // Attach flip function to the main card element
                  cardElement.onclick = flipCard;
             } else {
-                console.error("Card element not found on load.");
+                 console.error("Card element not found on load.");
             }
-
-            // Load the first card
-            loadCard(0);
+            loadCard(0); // Load the first card (Welcome)
         };
     </script>
 
