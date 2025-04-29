@@ -36,7 +36,7 @@
         /* --- Card Structure (Outer Shell) --- */
         .card {
             min-height: 540px;
-            position: relative; /* Changed from absolute to relative if needed */
+            position: relative;
             cursor: pointer;
         }
 
@@ -66,7 +66,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center; /* Adjusted from center to space-between if needed, check content */
+            /* justify-content adjusted dynamically */
             padding: 30px 25px;
             text-align: center;
             overflow-wrap: break-word;
@@ -76,7 +76,7 @@
             background: #ffffff;
             color: #333;
             z-index: 2;
-             justify-content: space-between; /* Distribute space between content and options */
+             justify-content: space-between; /* Distribute space */
         }
         .card-back {
             background: #424242;
@@ -87,7 +87,6 @@
 
         /* --- Content Inside Front Face --- */
         #card-content {
-             /* Removed margin-bottom to allow space distribution */
              font-weight: 500;
              font-size: 1.2em;
              line-height: 1.4;
@@ -119,92 +118,50 @@
 
         /* --- Options Buttons Styling --- */
         .options {
-            /* margin-top: 10px; */ /* Removed, using space-between on card-front */
-            width: 100%; /* Take full width */
+            width: 100%;
             display: flex;
-            flex-direction: column; /* Stack rows vertically */
-            align-items: center; /* Center rows horizontally */
-            gap: 8px; /* Space between rows */
-            padding: 0 10px; /* Add some horizontal padding */
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 0 10px;
         }
 
-        /* --- NEW: Styling for Option Rows --- */
+        /* --- Styling for Option Rows --- */
         .options-row {
             display: flex;
             width: 100%;
-            max-width: 380px; /* Limit width of rows */
+            max-width: 380px;
         }
-        .options-row-1, .options-row-2 {
-            justify-content: space-between; /* Space out buttons in row 1 and 2 */
-        }
-        .options-row-3 {
-            justify-content: center; /* Center the button in row 3 */
-        }
-
-        /* --- Navigation Buttons (Below Card) --- */
-        #navigation {
-            margin-top: 5px;
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            width: 90%;
-            max-width: 480px;
-            margin-left: auto;
-            margin-right: auto;
-            flex-wrap: wrap;
-            margin-bottom: 5px;
-        }
+        .options-row-1, .options-row-2 { justify-content: space-between; }
+        .options-row-3 { justify-content: center; }
 
         /* --- Shared Button Styling --- */
         .options button, #navigation button {
-            padding: 10px 15px; /* Slightly reduced padding for 5 buttons */
-            font-size: 0.9em; /* Slightly reduced font size */
-            font-weight: 500;
-            border: none;
-            border-radius: 8px; /* Slightly smaller radius */
-            cursor: pointer;
-            transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
-            flex-shrink: 0;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            background-color: #f5f5f5;
-            color: #555;
-            min-width: 80px; /* Ensure buttons have a minimum width */
-            text-align: center;
+            padding: 10px 15px;
+            font-size: 0.9em;
+            font-weight: 500; border: none; border-radius: 8px;
+            cursor: pointer; transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+            flex-shrink: 0; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            background-color: #f5f5f5; color: #555;
+            min-width: 80px; text-align: center;
         }
-         /* --- NEW: Specific width adjustments for first/last buttons in rows 1 & 2 --- */
-        .options-row-1 button, .options-row-2 button {
-            flex-basis: 48%; /* Roughly half the space minus gap */
-        }
-        .options-row-3 button {
-             /* Neutral button can take natural width or be set */
-        }
-
+         /* Specific width adjustments */
+        .options-row-1 button, .options-row-2 button { flex-basis: 48%; }
+        /* .options-row-3 button { } */
 
         .options button:hover { background-color: #e0e0e0; transform: translateY(-1px); box-shadow: 0 4px 8px rgba(0,0,0,0.07); }
         .options button.selected { background-color: #4db6ac; color: white; box-shadow: 0 1px 3px rgba(0,0,0,0.1); transform: translateY(0); }
         .options button:active { transform: translateY(1px); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
 
-        #navigation button { padding: 10px 22px; font-size: 0.95em; background-color: #4db6ac; color: white; box-shadow: 0 3px 8px rgba(77, 182, 172, 0.3); border-radius: 10px;} /* Restore nav button style */
+        /* --- Navigation Buttons (Below Card) --- */
+        #navigation { margin-top: 5px; display: flex; justify-content: center; gap: 15px; width: 90%; max-width: 480px; margin-left: auto; margin-right: auto; flex-wrap: wrap; margin-bottom: 5px; }
+        #navigation button { padding: 10px 22px; font-size: 0.95em; background-color: #4db6ac; color: white; box-shadow: 0 3px 8px rgba(77, 182, 172, 0.3); border-radius: 10px;}
         #navigation button:hover { background-color: #26a69a; transform: translateY(-1px); box-shadow: 0 5px 12px rgba(77, 182, 172, 0.4); }
         #navigation button:disabled { background-color: #bdbdbd; color: #757575; cursor: not-allowed; box-shadow: none; transform: translateY(0); }
         #navigation button:active { transform: translateY(1px); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
 
-
         /* --- Status Message --- */
-        #status {
-            margin-top: 10px;
-            font-weight: 500;
-            min-height: 1.5em;
-            color: #333;
-            text-align: center;
-            width: 90%;
-            max-width: 480px;
-            margin-left: auto;
-            margin-right: auto;
-            margin-bottom: 10px;
-            line-height: 1.5;
-        }
-
+        #status { margin-top: 10px; font-weight: 500; min-height: 1.5em; color: #333; text-align: center; width: 90%; max-width: 480px; margin-left: auto; margin-right: auto; margin-bottom: 10px; line-height: 1.5; }
 
         /* --- Responsive --- */
         @media (max-width: 600px) {
@@ -218,19 +175,19 @@
             .welcome-hint { font-size: 0.85em; }
             #navigation { margin-top: 5px; max-width: 95%;}
             #status { max-width: 95%; }
-            .options button { font-size: 0.85em; padding: 8px 10px; } /* Adjust button size */
-            .options-row { max-width: 100%; } /* Allow rows to use more width */
+            .options button { font-size: 0.85em; padding: 8px 10px; }
+            .options-row { max-width: 100%; }
         }
         @media (max-width: 400px) {
-            .card { min-height: 480px; } /* Adjusted min height */
+            .card { min-height: 480px; }
             #card-content { font-size: 1.05em; }
             .welcome-title { font-size: 1.8em; }
             .welcome-sub { font-size: 1em; }
             .welcome-hint { font-size: 0.8em; }
             .card-face { padding: 15px 10px; }
             #email-input { max-width: 90%; }
-             .options button { font-size: 0.8em; padding: 8px 5px; min-width: 65px;} /* Further adjust button size */
-             .options-row-1 button, .options-row-2 button { flex-basis: 47%; } /* Adjust basis */
+             .options button { font-size: 0.8em; padding: 8px 5px; min-width: 65px;}
+             .options-row-1 button, .options-row-2 button { flex-basis: 47%; }
         }
 
     </style>
@@ -239,10 +196,11 @@
 
     <!-- HTML Structure -->
     <div class="card-container">
-        <div class="card" onclick="flipCard()">
+        <!-- FIXED: Moved onclick assignment to JS -->
+        <div class="card" id="main-card">
             <div class="card-inner" id="card-inner">
                 <div class="card-face card-front" id="card-front-content">
-                    <!-- Content and options are dynamically loaded here -->
+                    <!-- Content dynamically loaded here -->
                     <div id="card-content">Loading...</div>
                     <div class="options" id="options"></div>
                 </div>
@@ -257,16 +215,13 @@
     <p id="status"></p>
 
     <script>
-        // --- State Variables, Content Arrays, URL ---
+        // --- State Variables ---
         let currentIndex = 0;
         let userEmail = '';
         let answers = {};
-        const statementContents = [ "WELCOME...", "EMAIL PLACEHOLDER...", /* ... other statements ... */ "Finished! Ready to submit?" ]; // Keep your full list
-        const backsideContents = [ "Back text welcome...", "Back text email...", /* ... other back texts ... */ "Back text last..." ]; // Keep your full list
 
-        // Ensure both arrays have the same length and match your actual content
-        // (Using placeholders here for brevity)
-        statementContents = [
+        // --- Content Arrays (Declared ONCE with const) ---
+        const statementContents = [
             "WELCOME CARD PLACEHOLDER", // Index 0
             "THIS SHOULD NOT BE DISPLAYED (Email Placeholder)", // Index 1
             "The anticipation of future rewards motivates me more than receiving immediate rewards", // Index 2 (s1)
@@ -289,7 +244,7 @@
             "I often act on autopilot without considering the longterm impact of my habits", // Index 19 (s18)
             "Finished! Ready to submit?" // Index 20
         ];
-         backsideContents = [
+         const backsideContents = [
             "Back text for Welcome card", // Index 0
             "Back text for email card", // Index 1
             "Do you get more excited about what's coming eventually than what you can have right now? Like saving up for something big rather than buying small treats.", // Index 2
@@ -313,12 +268,13 @@
             "Back text for last card" // Index 20
         ];
 
-
+        // --- Constants ---
         const TOTAL_CARDS = statementContents.length;
         const NUM_STATEMENTS = 18;
         const scriptURL = 'https://script.google.com/macros/s/AKfycbz9k2l6LPG-N7Ql88iCuwp-y_f-pn2WZUihAsj8evIQYYrpocdzFaKBB8U84ZL_XmskzQ/exec'; // <-- CHECK YOUR URL
 
-        // --- DOM Elements ---
+        // --- DOM Elements (Assigned AFTER declaration, BEFORE use in functions) ---
+        const cardElement = document.getElementById('main-card'); // Get the card element itself
         const cardInner = document.getElementById('card-inner');
         const cardFrontContent = document.getElementById('card-front-content');
         const backsideContentDiv = document.getElementById('backside-content');
@@ -326,17 +282,30 @@
         const statusP = document.getElementById('status');
 
 
-        // --- Functions ---
+        // --- Core Functions ---
+
+        function flipCard() {
+            // Now 'cardInner' is guaranteed to be initialized here
+            cardInner.classList.toggle('flip');
+        }
 
         function loadCard(index) {
             currentIndex = index;
-            cardInner.classList.remove('flip');
+            if (cardInner) { // Check if cardInner exists before manipulating
+                cardInner.classList.remove('flip');
+            }
 
+            // Use setTimeout for smoother visual transition
             setTimeout(() => {
-                // Clear previous dynamic content (front)
+                if (!cardFrontContent || !backsideContentDiv || !navigationDiv || !statusP) {
+                    console.error("Error: One or more essential DOM elements not found!");
+                    return; // Stop execution if elements are missing
+                }
+
+                // Clear previous dynamic content
                 cardFrontContent.innerHTML = '';
 
-                // Recreate the main content div and options div
+                // Recreate structural divs
                 const contentDiv = document.createElement('div');
                 contentDiv.id = 'card-content';
                 cardFrontContent.appendChild(contentDiv);
@@ -344,10 +313,15 @@
                 const optionsDiv = document.createElement('div');
                 optionsDiv.className = 'options';
                 optionsDiv.id = 'options';
-                // optionsDiv appended later
+                // optionsDiv appended conditionally below
 
                 // Set dynamic backside text
-                backsideContentDiv.textContent = backsideContents[index];
+                if (backsideContents[index] !== undefined) {
+                    backsideContentDiv.textContent = backsideContents[index];
+                } else {
+                     backsideContentDiv.textContent = "Back text missing."; // Fallback
+                }
+
 
                 // Clear navigation and status
                 navigationDiv.innerHTML = '';
@@ -355,21 +329,20 @@
 
                 // --- LOGIC BASED ON CURRENT INDEX ---
 
-                if (index === 0) { // *** WELCOME CARD ***
+                if (index === 0) { // WELCOME CARD
                     const title = document.createElement('div'); title.className = 'welcome-title'; title.textContent = 'Welcome!'; contentDiv.appendChild(title);
                     const subText = document.createElement('div'); subText.className = 'welcome-sub'; subText.textContent = 'This is a card game'; contentDiv.appendChild(subText);
                     const hintText = document.createElement('div'); hintText.className = 'welcome-hint'; hintText.textContent = 'Click me to see my back'; contentDiv.appendChild(hintText);
-                    cardFrontContent.appendChild(optionsDiv); // Append empty options div
+                    cardFrontContent.appendChild(optionsDiv); // Append empty options
 
                     const nextBtn = document.createElement('button'); nextBtn.textContent = 'Next'; nextBtn.onclick = (e) => { e.stopPropagation(); nextCard(); }; navigationDiv.appendChild(nextBtn);
 
-                } else if (index === 1) { // *** EMAIL CARD ***
+                } else if (index === 1) { // EMAIL CARD
                     contentDiv.textContent = 'Please enter your email address to proceed!';
                     const emailContainer = document.createElement('div'); emailContainer.id = 'email-input-container';
                     const emailInput = document.createElement('input'); emailInput.type = 'email'; emailInput.id = 'email-input'; emailInput.placeholder = 'Enter your email address'; emailInput.required = true; emailInput.value = userEmail; emailInput.onclick = (e) => e.stopPropagation(); emailContainer.appendChild(emailInput);
-                    cardFrontContent.insertBefore(emailContainer, contentDiv.nextSibling); // Insert after text
-                     cardFrontContent.appendChild(optionsDiv); // Append empty options div
-
+                    cardFrontContent.insertBefore(emailContainer, contentDiv.nextSibling);
+                    cardFrontContent.appendChild(optionsDiv); // Append empty options
 
                     const prevBtn = document.createElement('button'); prevBtn.textContent = 'Previous'; prevBtn.onclick = (e) => { e.stopPropagation(); prevCard(); }; navigationDiv.appendChild(prevBtn);
                     const startBtn = document.createElement('button'); startBtn.textContent = 'Start Assessment';
@@ -381,88 +354,81 @@
                     };
                     navigationDiv.appendChild(startBtn);
 
-                } else if (index >= 2 && index <= NUM_STATEMENTS + 1) { // *** STATEMENT CARDS (5 Buttons) ***
+                } else if (index >= 2 && index <= NUM_STATEMENTS + 1) { // STATEMENT CARDS
                     const statementNumber = index - 1;
                     const statementKey = 's' + statementNumber;
-                    contentDiv.textContent = statementContents[index];
+                    if (statementContents[index] !== undefined) {
+                         contentDiv.textContent = statementContents[index];
+                    } else {
+                         contentDiv.textContent = "Statement missing."; // Fallback
+                    }
 
-                    // --- Create 5 Buttons in 3 Rows ---
                     cardFrontContent.appendChild(optionsDiv); // Append options container
 
                     const optionsList = ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"];
-                    const selectedValue = answers[statementKey]; // Get previously selected value, if any
+                    const selectedValue = answers[statementKey];
 
-                    // Helper function to create buttons
                     const createOptionButton = (optionText) => {
                         const btn = document.createElement('button');
                         btn.textContent = optionText;
                         btn.onclick = (e) => { e.stopPropagation(); selectAnswer(index, optionText); };
-                        if (selectedValue === optionText) {
-                            btn.classList.add('selected');
-                        }
+                        if (selectedValue === optionText) { btn.classList.add('selected'); }
                         return btn;
                     };
 
-                    // Row 1: Strongly disagree | Strongly agree
-                    const row1 = document.createElement('div');
-                    row1.className = 'options-row options-row-1';
-                    row1.appendChild(createOptionButton(optionsList[0])); // Strongly disagree
-                    row1.appendChild(createOptionButton(optionsList[4])); // Strongly agree
+                    const row1 = document.createElement('div'); row1.className = 'options-row options-row-1';
+                    row1.appendChild(createOptionButton(optionsList[0]));
+                    row1.appendChild(createOptionButton(optionsList[4]));
                     optionsDiv.appendChild(row1);
 
-                    // Row 2: Disagree | Agree
-                    const row2 = document.createElement('div');
-                    row2.className = 'options-row options-row-2';
-                    row2.appendChild(createOptionButton(optionsList[1])); // Disagree
-                    row2.appendChild(createOptionButton(optionsList[3])); // Agree
+                    const row2 = document.createElement('div'); row2.className = 'options-row options-row-2';
+                    row2.appendChild(createOptionButton(optionsList[1]));
+                    row2.appendChild(createOptionButton(optionsList[3]));
                     optionsDiv.appendChild(row2);
 
-                    // Row 3: Neutral
-                    const row3 = document.createElement('div');
-                    row3.className = 'options-row options-row-3';
-                    row3.appendChild(createOptionButton(optionsList[2])); // Neutral
+                    const row3 = document.createElement('div'); row3.className = 'options-row options-row-3';
+                    row3.appendChild(createOptionButton(optionsList[2]));
                     optionsDiv.appendChild(row3);
 
-                    // Navigation: Previous button only
                     const prevBtn = document.createElement('button'); prevBtn.textContent = 'Previous'; prevBtn.onclick = (e) => { e.stopPropagation(); prevCard(); }; navigationDiv.appendChild(prevBtn);
 
-                } else if (index === TOTAL_CARDS - 1) { // *** FINISH CARD ***
-                    contentDiv.textContent = statementContents[index];
-                     cardFrontContent.appendChild(optionsDiv); // Append empty options div
-
+                } else if (index === TOTAL_CARDS - 1) { // FINISH CARD
+                     if (statementContents[index] !== undefined) {
+                         contentDiv.textContent = statementContents[index];
+                    } else {
+                         contentDiv.textContent = "Finish text missing."; // Fallback
+                    }
+                    cardFrontContent.appendChild(optionsDiv); // Append empty options
 
                     const prevBtn = document.createElement('button'); prevBtn.textContent = 'Previous'; prevBtn.onclick = (e) => { e.stopPropagation(); prevCard(); }; navigationDiv.appendChild(prevBtn);
                     const submitBtn = document.createElement('button'); submitBtn.id = 'submitBtn'; submitBtn.textContent = 'Submit Answers'; submitBtn.onclick = (e) => { e.stopPropagation(); submitData(); }; navigationDiv.appendChild(submitBtn);
 
                 } else { // Error fallback
                      contentDiv.textContent = `Error: Invalid card index ${index}.`;
-                      cardFrontContent.appendChild(optionsDiv); // Append empty options div
+                     cardFrontContent.appendChild(optionsDiv);
                 }
 
-             }, 50);
+             }, 50); // End setTimeout
         }
 
-        // --- Other JS Functions ---
-         function validateEmail(email) { const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; return re.test(String(email).toLowerCase()); }
-
-         function flipCard() { cardInner.classList.toggle('flip'); }
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(String(email).toLowerCase());
+        }
 
          function selectAnswer(cardIndex, option) {
              const statementNumber = cardIndex - 1;
              const statementKey = 's' + statementNumber;
              answers[statementKey] = option;
 
-             // Update button styles immediately for the 5-button layout
              const currentOptionsDiv = document.getElementById('options');
              if (currentOptionsDiv) {
-                 const buttons = currentOptionsDiv.querySelectorAll('button'); // Get all buttons inside .options
+                 const buttons = currentOptionsDiv.querySelectorAll('button');
                  buttons.forEach(btn => {
-                     // Check if the button's text content matches the selected option
                      btn.classList.toggle('selected', btn.textContent === option);
                  });
              }
 
-             // Auto-advance
              setTimeout(() => {
                  if (currentIndex < TOTAL_CARDS - 1) {
                      nextCard();
@@ -491,7 +457,6 @@
              const finalData = { email: userEmail, ...answers };
              console.log('Submitting final data:', JSON.stringify(finalData));
 
-             // Validation Checks (Email + All statements answered)
              if (!userEmail) {
                  statusP.textContent = 'Email is missing. Please go back.'; statusP.style.color = '#d32f2f';
                  if (submitBtn) submitBtn.disabled = false; loadCard(1); return;
@@ -503,20 +468,20 @@
                  if (submitBtn) submitBtn.disabled = false; return;
              }
 
-             // Submission Fetch Logic (remains the same)
-              fetch(scriptURL, {
-                 redirect: "follow",
-                 method: 'POST',
+             fetch(scriptURL, {
+                 redirect: "follow", method: 'POST',
                  headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                  body: JSON.stringify(finalData)
              })
              .then(response => {
+                 // (Response handling logic remains the same)
                  if (!response.ok) { return response.text().then(text => { throw new Error(`HTTP error ${response.status}: ${response.statusText} - ${text || 'No server details'}`); }); }
                  const contentType = response.headers.get("content-type");
                  if (contentType && contentType.indexOf("application/json") !== -1) { return response.json(); }
                  else { return response.text().then(text => { try { return JSON.parse(text); } catch (e) { console.log("Received non-JSON response, assuming success:", text); return { result: 'success', message: 'Submission received (interpreted).' }; } }); }
              })
              .then(data => {
+                // (Success/Error message handling remains the same)
                  console.log('Success/Result Data:', data);
                  if (data && data.result === 'success') {
                      statusP.textContent = data.message || 'Success! Data submitted.'; statusP.style.color = '#388e3c';
@@ -529,15 +494,24 @@
                  }
              })
              .catch(error => {
+                // (Fetch error handling remains the same)
                  console.error('Fetch Error:', error);
                  statusP.textContent = `Error: ${error.message}. Please check connection and try again.`; statusP.style.color = '#d32f2f';
                  if (submitBtn) submitBtn.disabled = false;
              });
          }
 
-
-        // --- Initial Load ---
+        // --- Initial Load and Event Listener ---
         window.onload = () => {
+            // Ensure DOM elements are loaded before assigning event listeners or loading cards
+            if (cardElement) {
+                 // FIXED: Assign onclick listener here instead of inline HTML
+                 cardElement.onclick = flipCard;
+            } else {
+                console.error("Card element not found on load.");
+            }
+
+            // Load the first card
             loadCard(0);
         };
     </script>
