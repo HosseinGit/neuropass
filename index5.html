@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dopamine & Motivation Assessment - Modern</title>
+        <style>
+        /* --- Modern Font & Basic Reset --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { height: 100%; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            line-height: 1.6;
+            background-color: #ffffff;
+            /* Minimal padding for the iframe */
+            padding: 10px; /* Reduced padding slightly */
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100%;
+            justify-content: center; /* Center vertically */
+        }
+
+        /* --- Card Container & Perspective --- */
+        .card-container {
+            /* --- CHANGED: Fixed width for consistent size in Google Sites --- */
+            width: 480px; /* Fixed width */
+            /* --- REMOVED: max-width (redundant with fixed width) --- */
+            /* --- REMOVED: height: 100% (let card define height) --- */
+            margin: 25px auto 5px auto; /* Center horizontally, adjust vertical margins */
+            /* perspective: 1200px; /* Optional: uncomment if you want 3D flip */
+        }
+
+        /* --- Card Structure (Outer Shell) --- */
+        .card {
+            /* --- CHANGED: Width 100% to fill the fixed-width container --- */
+            width: 100%;
+            /* --- CHANGED: Fixed min-height for consistent height --- */
+            min-height: 520px; /* Define a minimum height */
+            /* --- REMOVED: height: 100% --- */
+            position: relative; /* Keep for absolute positioning of inner */
+            cursor: pointer;
+        }
+
+        /* --- Card Inner (Handles the Flip) --- */
+        .card-inner {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            transform-style: preserve-3d;
+            transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+        .card-inner.flip {
+            transform: rotateY(180deg);
+        }
+
+        /* --- Card Faces (Front and Back) --- */
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 30px 25px;
+            text-align: center;
+            overflow-wrap: break-word;
+            overflow-y: auto; /* Allow content scrolling if it exceeds min-height */
+        }
+        .card-front {
+            background: #ffffff;
+            color: #333;
+            z-index: 2;
+        }
+        .card-back {
+            background: #424242;
+            color: white;
+            transform: rotateY(180deg);
+        }
+
+        /* --- Content Inside Front Face --- */
+        #card-content {
+             margin-bottom: 25px;
+             font-weight: 500;
+             font-size: 1.2em;
+             line-height: 1.4;
+             max-width: 100%;
+             color: #222;
+        }
+        #backside-content {
+            max-width: 100%;
+            font-size: 1.1em;
+            line-height: 1.5;
+        }
+
+        /* --- Email Input Styling --- */
+        #email-input-container {
+            margin-bottom: 25px;
+            width: 100%;
+            max-width: 300px;
+            display: flex;
+            justify-content: center;
+        }
+        #email-input {
+            width: 100%;
+            padding: 12px 18px;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1em;
+            text-align: center;
+            background-color: #f9f9f9;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        #email-input:focus {
+            outline: none;
+            border-color: #bdbdbd;
+            box-shadow: 0 0 0 3px rgba(77, 182, 172, 0.2);
+        }
+
+        /* --- Options Buttons Styling --- */
+        .options {
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        /* --- Navigation Buttons (Below Card) --- */
+        #navigation {
+            margin-top: 15px; /* Adjusted margin */
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            /* --- CHANGED: Fixed width to match card container --- */
+            width: 480px;
+            /* --- REMOVED: max-width (redundant with fixed width) --- */
+            margin-left: auto;
+            margin-right: auto;
+            flex-wrap: wrap;
+            margin-bottom: 10px; /* Adjusted bottom margin */
+        }
+
+        /* Shared Button Styling (Unchanged) */
+        .options button, #navigation button { padding: 10px 22px; font-size: 0.95em; font-weight: 500; border: none; border-radius: 10px; cursor: pointer; transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s; flex-shrink: 0; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .options button { background-color: #f5f5f5; color: #555; }
+        .options button:hover { background-color: #e0e0e0; transform: translateY(-1px); box-shadow: 0 4px 8px rgba(0,0,0,0.07); }
+        .options button.selected { background-color: #4db6ac; color: white; box-shadow: 0 1px 3px rgba(0,0,0,0.1); transform: translateY(0); }
+        #navigation button { background-color: #4db6ac; color: white; box-shadow: 0 3px 8px rgba(77, 182, 172, 0.3); }
+        #navigation button:hover { background-color: #26a69a; transform: translateY(-1px); box-shadow: 0 5px 12px rgba(77, 182, 172, 0.4); }
+        #navigation button:disabled { background-color: #bdbdbd; color: #757575; cursor: not-allowed; box-shadow: none; transform: translateY(0); }
+        .options button:active, #navigation button:active { transform: translateY(1px); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+
+        /* --- Status Message --- */
+        #status {
+            margin-top: 10px;
+            font-weight: 500;
+            min-height: 1.5em;
+            color: #333;
+            text-align: center;
+            /* --- CHANGED: Fixed width to match card container --- */
+            width: 480px;
+            /* --- REMOVED: max-width (redundant with fixed width) --- */
+            margin-left: auto;
+            margin-right: auto;
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+
+        /* --- Responsive --- */
+        /* --- Styles for smaller screens (e.g., Tablets Portrait / Large Phones) --- */
+        @media (max-width: 600px) {
+             body { padding: 10px; } /* Keep minimal padding */
+             .card-container {
+                 /* --- CHANGED: Use percentage width for responsiveness --- */
+                 width: 95%;
+                 margin-top: 15px; /* Adjust margin */
+             }
+             .card {
+                 /* --- CHANGED: Adjust min-height for smaller screens --- */
+                 min-height: 480px; /* Slightly smaller height */
+             }
+             .card-face { padding: 25px 20px; }
+             #card-content { font-size: 1.15em; }
+             #navigation {
+                 /* --- CHANGED: Use percentage width for responsiveness --- */
+                 width: 95%;
+                 margin-top: 15px;
+             }
+             #status {
+                 /* --- CHANGED: Use percentage width for responsiveness --- */
+                 width: 95%;
+             }
+        }
+
+        /* --- Styles for very small screens (e.g., Phones Portrait) --- */
+         @media (max-width: 420px) { /* Adjusted breakpoint slightly */
+             .card {
+                 /* --- CHANGED: Further adjust min-height for smallest screens --- */
+                 min-height: 440px;
+             }
+             #card-content { font-size: 1.1em; }
+             .card-face { padding: 20px 15px; }
+             #email-input { max-width: none; width: 95%; } /* Allow input to be wider */
+             .options button, #navigation button { padding: 10px 18px; font-size: 0.9em; } /* Slightly smaller buttons */
+         }
+    </style>
+</head>
+<body>
+
+    <!-- HTML Structure remains the same -->
+    <div class="card-container">
+        <div class="card" onclick="flipCard()">
+            <div class="card-inner" id="card-inner">
+                <div class="card-face card-front" id="card-front-content">
+                    <div id="card-content">Loading...</div>
+                    <div class="options" id="options"></div>
+                </div>
+                <div class="card-face card-back">
+                    <div id="backside-content">Backside</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="navigation"></div>
+    <p id="status"></p>
+
+    <script>
+        // --- State Variables, Content Array, URL remain the same ---
+        let currentIndex = 0;
+        let userEmail = '';
+        let answers = {};
+        const statementContents = [
+            "THIS SHOULD NOT BE DISPLAYED (Email Placeholder)",
+            "The anticipation of future rewards motivates me more than receiving immediate rewards", // s1
+            "I can maintain motivation by visualizing longterm benefits of my actions", // s2
+            "I find myself seeking immediate rewards, even if I know a better reward will come later", // s3
+            "I often need external incentives (praise, rewards) to stay motivated", // s4
+            "I get energized by planning steps toward a distant goal", // s5
+            "I tend to abandon tasks when the rewards aren't immediately visible", // s6
+            "Once I've established a routine, I can maintain it without much conscious effort", // s7
+            "I can stick to new habits even when facing obstacles or stress", // s8
+            "I struggle to maintain consistency in my daily routines", // s9
+            "I often start strong with new habits but rarely maintain them longterm", // s10
+            "My positive habits feel natural and automatic rather than forced", // s11
+            "I tend to forget or abandon habits if I don't see immediate results", // s12
+            "I consciously align my daily habits with my longterm goals", // s13
+            "When I recognize a habit isn't serving me, I can successfully modify it", // s14
+            "I sometimes find myself repeating behaviors that conflict with my goals", // s15
+            "I find it difficult to break habits even when I know they're counterproductive", // s16
+            "I regularly evaluate and adjust my habits based on their effectiveness", // s17
+            "I often act on autopilot without considering the longterm impact of my habits", // s18
+            "Finished! Ready to submit?" // Finish Screen Placeholder
+        ];
+        const TOTAL_CARDS = statementContents.length;
+        const NUM_STATEMENTS = 18;
+        const backsideText = "Backside";
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbz9k2l6LPG-N7Ql88iCuwp-y_f-pn2WZUihAsj8evIQYYrpocdzFaKBB8U84ZL_XmskzQ/exec'; // <-- CHECK YOUR URL
+
+        // --- DOM Elements ---
+        const cardInner = document.getElementById('card-inner');
+        const cardFrontContent = document.getElementById('card-front-content');
+        const backsideContentDiv = document.getElementById('backside-content');
+        const navigationDiv = document.getElementById('navigation');
+        const statusP = document.getElementById('status');
+
+
+        // --- Functions ---
+
+        function loadCard(index) {
+            // console.log(`--- Loading card for index: ${index} ---`);
+            currentIndex = index;
+            cardInner.classList.remove('flip');
+
+            // Short delay to allow flip animation to reset visually
+            setTimeout(() => {
+                cardFrontContent.innerHTML = ''; // Clear previous content
+
+                const contentDiv = document.createElement('div');
+                contentDiv.id = 'card-content';
+                cardFrontContent.appendChild(contentDiv);
+
+                const optionsDiv = document.createElement('div');
+                optionsDiv.className = 'options';
+                optionsDiv.id = 'options';
+                // Append optionsDiv later based on card type
+
+                backsideContentDiv.textContent = backsideText; // Reset backside text
+
+                let statementKey = '';
+                let cardText = '';
+
+                // --- Email Input Card (Index 0) ---
+                if (index === 0) {
+                    cardText = 'Please enter your email address to proceed.'; // Prompt text
+                    contentDiv.textContent = cardText;
+
+                    const emailContainer = document.createElement('div');
+                    emailContainer.id = 'email-input-container';
+                    const emailInput = document.createElement('input');
+                    emailInput.type = 'email';
+                    emailInput.id = 'email-input';
+                    emailInput.placeholder = 'Enter your email address'; // Placeholder text
+                    emailInput.required = true;
+                    emailInput.value = userEmail; // Pre-fill if user goes back
+                    emailInput.onclick = (e) => e.stopPropagation(); // Prevent card flip on input click
+                    emailContainer.appendChild(emailInput);
+
+                    // Insert email input container *after* the text content
+                    cardFrontContent.insertBefore(emailContainer, contentDiv.nextSibling);
+                    cardFrontContent.appendChild(optionsDiv); // Add empty options div
+
+                // --- Statement Cards (Index 1 to NUM_STATEMENTS) ---
+                } else if (index >= 1 && index <= NUM_STATEMENTS) {
+                    statementKey = 's' + index;
+                    cardText = statementContents[index];
+                    contentDiv.textContent = cardText; // Display statement
+
+                    cardFrontContent.appendChild(optionsDiv); // Add options div now
+                    ['Agree', 'Disagree'].forEach(option => {
+                        const btn = document.createElement('button');
+                        btn.textContent = option;
+                        btn.onclick = (e) => { e.stopPropagation(); selectAnswer(index, option); };
+                        optionsDiv.appendChild(btn);
+                        // Highlight selected answer if user goes back
+                        if (answers[statementKey] === option) {
+                            btn.classList.add('selected');
+                        }
+                    });
+
+                // --- Finish Card (Last Index) ---
+                } else if (index === TOTAL_CARDS - 1) {
+                    cardText = statementContents[index];
+                    contentDiv.textContent = cardText; // Display finish message
+                    cardFrontContent.appendChild(optionsDiv); // Add empty options div
+
+                // --- Error Fallback ---
+                } else {
+                     contentDiv.textContent = `Error: Invalid card index ${index}.`;
+                     cardFrontContent.appendChild(optionsDiv); // Add empty options div
+                }
+
+                // --- Navigation Buttons ---
+                navigationDiv.innerHTML = ''; // Clear previous buttons
+                statusP.textContent = ''; // Clear status message
+
+                // --- Navigation for Email Card ---
+                if (index === 0) {
+                    const startBtn = document.createElement('button');
+                    startBtn.textContent = 'Start Assessment';
+                    startBtn.onclick = (e) => {
+                         e.stopPropagation(); // Prevent card flip
+                         const emailInput = document.getElementById('email-input');
+                         const emailValue = emailInput ? emailInput.value.trim() : '';
+                         if (validateEmail(emailValue)) {
+                             userEmail = emailValue; // Store valid email
+                             nextCard(); // Move to next card
+                         } else {
+                             statusP.textContent = 'Please enter a valid email address.';
+                             statusP.style.color = '#d32f2f'; // Red error color
+                             if (emailInput) { emailInput.focus(); } // Focus input on error
+                         }
+                    };
+                    navigationDiv.appendChild(startBtn);
+
+                // --- Navigation for Other Cards ---
+                } else {
+                    // Add 'Previous' button if not the first statement card
+                    if (index > 1 || (index === 1 && userEmail)) { // Show previous always after email screen
+                        const prevBtn = document.createElement('button');
+                        prevBtn.textContent = 'Previous';
+                        prevBtn.onclick = (e) => { e.stopPropagation(); prevCard(); };
+                        navigationDiv.appendChild(prevBtn);
+                    }
+
+                    // Add 'Submit' button on the last card
+                    if (index === TOTAL_CARDS - 1) {
+                         const submitBtn = document.createElement('button');
+                         submitBtn.id = 'submitBtn';
+                         submitBtn.textContent = 'Submit Answers';
+                         submitBtn.onclick = (e) => { e.stopPropagation(); submitData(); };
+                         navigationDiv.appendChild(submitBtn);
+                    }
+                    // Note: No 'Next' button needed as selecting an answer auto-advances
+                }
+             }, 50); // End of setTimeout
+        }
+
+        // --- Helper Functions (validateEmail, flipCard, selectAnswer, nextCard, prevCard) ---
+        function validateEmail(email) {
+             const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+             return re.test(String(email).toLowerCase());
+        }
+
+        function flipCard() {
+            // Only allow flipping on statement cards (optional, prevents flipping email/finish)
+            if (currentIndex > 0 && currentIndex < TOTAL_CARDS - 1) {
+                 cardInner.classList.toggle('flip');
+            }
+        }
+
+        function selectAnswer(statementIndex, option) {
+             const statementKey = 's' + statementIndex;
+             answers[statementKey] = option; // Store answer
+
+             // Visually update selected button
+             const currentOptionsDiv = document.getElementById('options');
+             if (currentOptionsDiv) {
+                 const buttons = currentOptionsDiv.querySelectorAll('button');
+                 buttons.forEach(btn => {
+                     btn.classList.toggle('selected', btn.textContent === option);
+                 });
+             }
+
+             // Automatically move to the next card after a short delay
+             setTimeout(() => {
+                 if (currentIndex < TOTAL_CARDS - 1) {
+                     nextCard();
+                 }
+             }, 250); // Delay in milliseconds
+         }
+
+         function nextCard() {
+             if (currentIndex < TOTAL_CARDS - 1) {
+                 loadCard(currentIndex + 1);
+             }
+         }
+
+         function prevCard() {
+             if (currentIndex > 0) {
+                 loadCard(currentIndex - 1);
+             }
+         }
+
+         // --- Submit Data Function ---
+         function submitData() {
+             const submitBtn = document.getElementById('submitBtn');
+             statusP.textContent = 'Submitting...';
+             statusP.style.color = '#333'; // Neutral color while submitting
+             if (submitBtn) submitBtn.disabled = true; // Prevent double submission
+
+             const finalData = { email: userEmail, timestamp: new Date().toISOString(), ...answers }; // Added timestamp
+             // console.log('Submitting final data:', JSON.stringify(finalData)); // For debugging
+
+             // --- Pre-submission Checks ---
+             // Check if email is somehow missing (e.g., user manipulated flow)
+             if (!userEmail) {
+                 statusP.textContent = 'Email is missing. Please go back to the first step.';
+                 statusP.style.color = '#d32f2f'; // Red error
+                 if (submitBtn) submitBtn.disabled = false;
+                 loadCard(0); // Send user back to email screen
+                 return;
+             }
+             // Check if all statements are answered
+             let answeredCount = 0;
+             for (let i = 1; i <= NUM_STATEMENTS; i++) {
+                 if (answers['s' + i]) { answeredCount++; }
+             }
+             if (answeredCount < NUM_STATEMENTS) {
+                 statusP.textContent = `Please answer all ${NUM_STATEMENTS} statements. (${answeredCount}/${NUM_STATEMENTS} answered)`;
+                 statusP.style.color = '#fb8c00'; // Orange warning
+                 if (submitBtn) submitBtn.disabled = false;
+                 // Optional: Find the first unanswered question and go there
+                 // for (let i = 1; i <= NUM_STATEMENTS; i++) { if (!answers['s' + i]) { loadCard(i); break; } }
+                 return;
+             }
+
+             // --- Fetch API Call to Google Apps Script ---
+             fetch(scriptURL, {
+                 redirect: "follow",
+                 method: 'POST',
+                 headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // Important for GAS plain text body
+                 body: JSON.stringify(finalData) // Send data as a JSON string
+             })
+             .then(response => {
+                 // Check if the response is okay (status 200-299)
+                 if (!response.ok) {
+                     // Try to get more details from the response body if possible
+                     return response.text().then(text => {
+                         throw new Error(`HTTP error ${response.status}: ${response.statusText} - ${text || 'No details from server'}`);
+                     });
+                 }
+                 // Check content type - GAS might return JSON or HTML/text depending on setup
+                 const contentType = response.headers.get("content-type");
+                 if (contentType && contentType.indexOf("application/json") !== -1) {
+                     return response.json(); // Process as JSON
+                 } else {
+                     // If not JSON, process as text and wrap in a standard structure
+                     return response.text().then(text => {
+                         // console.log("Received non-JSON response text:", text); // Debug
+                         // Assume success if we got a 2xx response, even if not JSON
+                         // You might need to adjust this based on your specific GAS return value
+                         return { result: 'success', message: 'Submission received.' };
+                     });
+                 }
+             })
+             .then(data => {
+                 // Process the result (JSON or wrapped text)
+                 // console.log('Success/Data:', data); // Debug
+                 if (data && data.result === 'success') {
+                     statusP.textContent = data.message || 'Success! Your answers have been submitted.';
+                     statusP.style.color = '#388e3c'; // Green success color
+                     // Hide the card and navigation on success
+                     const cardContainer = document.querySelector('.card-container');
+                     if (cardContainer) cardContainer.style.display = 'none';
+                     if (navigationDiv) navigationDiv.style.display = 'none';
+                 } else {
+                     // Handle potential errors reported by the script (e.g., script logic error)
+                     statusP.textContent = `Submission issue: ${data.message || 'Unknown status reported by server.'}`;
+                     statusP.style.color = '#fb8c00'; // Orange warning
+                     if (submitBtn) submitBtn.disabled = false; // Re-enable button
+                 }
+             })
+             .catch(error => {
+                 // Handle network errors or errors thrown during response processing
+                 console.error('Fetch Error:', error);
+                 statusP.textContent = `Error submitting data: ${error.message}. Please check your connection and try again.`;
+                 statusP.style.color = '#d32f2f'; // Red error
+                 if (submitBtn) submitBtn.disabled = false; // Re-enable button
+             });
+         }
+
+
+        // --- Initial Load ---
+        window.onload = () => {
+            loadCard(0); // Start with the email card
+        };
+    </script>
+
+</body>
+</html>
