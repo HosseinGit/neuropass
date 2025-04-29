@@ -23,14 +23,14 @@
 
         /* --- Card Container & Perspective --- */
         .card-container {
-            width: 90%; /* Was 90%  */
+            width: 100%; /* Was 90%  */
             /* --- CHANGED: Reduced max-width for portrait feel --- */
             max-width: 480px; /* Was 550px */
             margin: auto;
             perspective: 1200px;
+            margin-top: 1px;
              /* Optional: Can slightly reduce margin-bottom if needed */
              margin-bottom: 1px; /* Was 10px  */ */ /* Default is implicitly 0 via margin: auto */
-            margin-top: 1px; 
         }
 
         /* --- Card Structure (Outer Shell) --- */
@@ -131,14 +131,14 @@
             margin-top: 10px; /* Was 20px */
             display: flex;
             justify-content: center;
-            gap: 15px; /* Was 12px */
+            gap: 12px; 
             flex-wrap: wrap;
         }
 
         /* --- Navigation Buttons (Below Card) --- */
         #navigation {
             /* --- CHANGED: Reduced space between card and buttons --- */
-            margin-top: 1px; /* Was 25/5px */
+            margin-top: 5px; /* Was 25/5px */
             display: flex;
             justify-content: center;
             gap: 15px; 
