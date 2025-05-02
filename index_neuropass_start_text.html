@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>Neuropass Early Access</title>
+    <style>
+        /* Grundläggande reset och font */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* --- ÄNDRINGAR HÄR --- */
+        html {
+            height: 100%; /* Kan hjälpa i vissa iframe-scenarier */
+        }
+        body {
+            display: flex; /* Använd Flexbox för centrering */
+            flex-direction: column; /* Stacka innehållet vertikalt (även om det bara är ett kort) */
+            align-items: center; /* Centrera .card-container horisontellt */
+            /*justify-content: center; /* Centrera .card-container vertikalt */
+            min-height: 100vh; /* Försök fylla hela visningshöjden */
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            background-color: transparent;
+            padding: 5px 2px; /* Lite mer luft runt om */
+            overflow-x: hidden;
+        }
+
+        /* Kortets container: Ta bort margin: auto, centreras av body nu */
+        .card-container {
+            width: 100%;
+            max-width: 550px;
+            perspective: 1200px;
+            /* margin: 0 auto; <-- Borttagen */
+        }
+        /* --- SLUT PÅ ÄNDRINGAR --- */
+
+
+        /* Kortet: position: relative behövs för barnen. min-height är en fallback. */
+        .card {
+            width: 100%;
+            position: relative;
+            cursor: pointer;
+            min-height: 420px;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        /* Kortets inre del: Måste vara position: absolute för att flippa korrekt inom .card */
+        .card-inner {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            transform-style: preserve-3d;
+            transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+            background-color: #ffffff;
+        }
+
+        .card-inner.is-flipped {
+            transform: rotateY(180deg);
+        }
+
+        /* Kortets sidor: position: absolute inuti .card-inner. */
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 5px 6px;
+            text-align: center;
+            overflow-y: auto;
+            border: 1px solid #e0e0e0;
+        }
+
+        /* Specifika stilar för fram- och baksida */
+        .card-front {
+            background-color: #ffffff;
+            color: #333333;
+            z-index: 2;
+        }
+
+        .card-back {
+            background-color: #f8f9fa;
+            color: #333333;
+            transform: rotateY(180deg);
+            /* Rättade syntaxfelet 'color: #333333;a' från din kod */
+        }
+
+        /* Stilmallar för textinnehåll */
+        .card-face h2 {
+            font-size: 1.6em;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 0.8em;
+            line-height: 1.3;
+        }
+        .card-face h3 {
+             font-size: 1.4em;
+             font-weight: 600;
+             color: #2c3e50;
+             margin-bottom: 0.8em;
+             line-height: 1.3;
+         }
+        .card-face p {
+            font-size: 1.05em;
+            line-height: 1.6;
+            margin-bottom: 1em;
+            font-weight: 400;
+            color: #555555;
+            max-width: 95%;
+        }
+        .card-face p:last-child {
+            margin-bottom: 0;
+        }
+        .card-face strong {
+            font-weight: 600;
+            color: #1a252f;
+        }
+         .card-face em {
+            font-style: italic;
+            color: #2980b9;
+            background-color: rgba(41, 128, 185, 0.08);
+            padding: 0.1em 0.3em;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        .card-face .emoji {
+            display: inline-block;
+            margin-left: 0.3em;
+            font-size: 1.2em;
+        }
+        .flip-hint {
+            font-style: italic;
+            color: #777;
+            font-size: 0.95em;
+            margin-top: 15px;
+        }
+
+        /* Responsivitet: Justera padding, textstorlek OCH min-height */
+        @media screen and (max-width: 600px) {
+            /* Justerade body padding i media query också */
+             body { padding: 15px 8px; }
+            .card-container { max-width: 95%; }
+            .card { min-height: 530px; }
+            /* Återställde face padding från din kod, men överväg att ha lite mer */
+            .card-face { padding: 25px 20px; }
+            .card-face h2 { font-size: 1.4em; }
+            .card-face h3 { font-size: 1.3em; }
+            .card-face p { font-size: 1em; }
+        }
+
+        @media screen and (max-width: 450px) {
+            body { padding: 5px 2px; }
+            .card { min-height: 460px; }
+             /* Återställde face padding från din kod */
+            .card-face { padding: 5px 4px; }
+            .card-face h2 { font-size: 1.3em; }
+            .card-face h3 { font-size: 1.2em; }
+            .card-face p { font-size: 0.95em; }
+            .flip-hint { font-size: 0.9em; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="card-container">
+        <div class="card" id="neuropass-card">
+            <div class="card-inner" id="neuropass-card-inner">
+                <!-- Framsideinnehåll (behållit din text) -->
+                <div class="card-face card-front">
+                    <h2>Exciting Things Are on the Way!</h2>
+                    <p>I'm thrilled to introduce <strong>Neuropass</strong>, a tool designed to empower you to unlock your full potential. While Neuropass is still in development, progress is moving quickly, and I can't wait to share it with you.</p>
+                    <p>Stay tuned for updates, and be sure to join the waitlist to be among the first to try the complete tool when it launches!</p>
+                    <p class="flip-hint">Don't just stand there - flip me!</p>
+                </div>
+
+                <!-- Baksidesinnehåll (behållit din text) -->
+                <div class="card-face card-back">
+                     <h2>Early Access Starts Now!<span class="emoji">✨</span></h2>
+                     <p><strong>The first part of Neuropass is now live!</strong> You're invited to explore this early version below and help shape what's coming next.</p>
+                     <p>Your feedback is <em>incredibly valuable</em> and it will directly influence how Neuropass grows. Start using it today and let me know what you think.</p>
+                 </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // JavaScript är oförändrad
+        const card = document.getElementById('neuropass-card');
+        const cardInner = document.getElementById('neuropass-card-inner');
+
+        if (card && cardInner) {
+            card.addEventListener('click', () => {
+                cardInner.classList.toggle('is-flipped');
+            });
+        } else {
+            console.error("Kunde inte hitta kortelementen (#neuropass-card eller #neuropass-card-inner).");
+        }
+    </script>
+
+</body>
+</html>
