@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Iris Coach Test</title>
+    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Added for mobile responsiveness -->
+</head>
+<body>
+    <header>
+         <h1><img src="iris-icon.png" alt="" width="30" height="30" style="vertical-align: middle; margin-right: 10px;">Iris - Neuropass Coach</h1> <!-- Placeholder for icon -->
+    </header>
+
+    <main>
+        <div id="auth-container">
+            <h2>Welcome! Please sign in or create an account.</h2>
+            <input type="email" id="email" placeholder="Email" aria-label="Email" />
+            <input type="password" id="password" placeholder="Password" aria-label="Password" />
+            <div class="button-group">
+                <button id="login-button">Login</button>
+                <button id="signup-button">Sign Up</button>
+            </div>
+            <p id="auth-error" class="error" aria-live="assertive"></p>
+        </div>
+
+        <div id="chat-container" style="display: none;">
+             <div class="welcome-message">
+                <p>Welcome back, <span id="user-email"></span>! Ready to explore? <button id="logout-button">Logout</button></p>
+             </div>
+            <div id="chat-history">
+                <!-- Chat messages will appear here -->
+            </div>
+            <div class="input-area">
+                <input type="text" id="message-input" placeholder="What's on your mind?" aria-label="Your message to Iris" />
+                <button id="send-button" aria-label="Send message">Send</button>
+            </div>
+            <p id="chat-error" class="error" aria-live="assertive"></p>
+            <p id="loading-indicator" style="display: none;"><i>Iris is processing...</i></p>
+        </div>
+    </main>
+
+    <!-- Firebase SDKs (using modules) -->
+    <script type="module" src="script.js"></script>
+
+</body>
+</html>
