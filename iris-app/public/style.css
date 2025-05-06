@@ -73,29 +73,29 @@ body {
     width: 280px;
     background-color: var(--sidebar-bg);
     color: var(--text-color);
-    display: none; /* MODIFIED: Default to hidden. JS controls visibility. */
+    display: none; /* Default to hidden. JS controls visibility. */
     flex-direction: column;
     padding: 15px 0;
     border-right: 0.5px solid var(--border-thin-color);
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    position: absolute; /* For mobile overlay behavior, and desktop static later */
+    position: absolute;
     left: 0;
     top: 0;
     bottom: 0;
-    transform: translateX(-100%); /* Initially off-screen for mobile animation */
+    transform: translateX(-100%);
     z-index: 1001;
 }
-#sidebar.open { /* Toggled by JS for mobile view */
+#sidebar.open {
     transform: translateX(0%);
 }
-#sidebar-overlay { /* For dimming content when mobile sidebar is open */
+#sidebar-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     background-color: rgba(0,0,0,0.3);
-    z-index: 1000; /* Below sidebar, above content */
+    z-index: 1000;
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.3s ease, visibility 0s 0.3s linear;
@@ -234,10 +234,10 @@ header {
     background: none;
     border: none;
     padding: 8px;
-    margin-left: -8px; /* Pull to edge */
+    margin-left: -8px;
     cursor: pointer;
     color: var(--text-light-color);
-    display: none; /* JS manages this based on login and screen size */
+    display: none;
 }
 #hamburger-menu:hover {
     color: var(--primary-color);
@@ -249,7 +249,6 @@ header {
 .logo-title {
     display: flex;
     align-items: center;
-    /* Centering handled by JS or flex properties of header */
 }
 .iris-logo {
     color: var(--primary-color);
@@ -263,16 +262,16 @@ header h1 {
     font-weight: 600;
     letter-spacing: -0.01em;
 }
-.header-actions-placeholder { /* For balancing hamburger in flex layout */
-    width: 40px; /* Approx width of hamburger + padding */
+.header-actions-placeholder {
+    width: 40px;
     flex-shrink: 0;
-    visibility: hidden; /* Takes up space but not visible */
+    visibility: hidden;
 }
 
 
 main {
     flex-grow: 1;
-    display: flex; /* This allows switching between auth-view and chat-view */
+    display: flex;
     flex-direction: column;
     overflow: hidden;
 }
@@ -280,7 +279,7 @@ main {
 /* ===== Auth View (Centered in Main) ===== */
 #auth-view {
     flex-grow: 1;
-    display: flex; /* JS sets this to 'flex' when active, 'none' otherwise */
+    display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
@@ -337,13 +336,12 @@ main {
     gap: 10px;
     margin-top: 10px;
 }
-/* Auth buttons inherit general button styles */
 
 
 /* ===== Chat View ===== */
 #chat-view {
     flex-grow: 1;
-    display: none; /* JS sets this to 'flex' when active */
+    display: none;
     flex-direction: column;
     height: 100%;
     background-color: var(--surface-color);
@@ -445,28 +443,7 @@ main {
     padding: 6px 8px;
     border: 0.5px solid var(--border-color);
 }
-.input-action-button {
-    background: none;
-    border: none;
-    color: var(--text-light-color);
-    padding: 6px;
-    border-radius: 50%;
-    width: 34px;
-    height: 34px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: color 0.15s ease-out, background-color 0.15s ease-out;
-    flex-shrink: 0;
-}
-.input-action-button:hover {
-    color: var(--primary-color);
-    background-color: rgba(0,0,0,0.05);
-}
-.input-action-button svg {
-    width: 18px; height: 18px;
-}
+/* Removed .input-action-button styles as the button was removed */
 
 #message-input {
     flex-grow: 1;
@@ -511,7 +488,7 @@ main {
     padding: 0;
     text-align: center;
     margin-top: 12px;
-    display: none; /* JS will toggle .active-error to show */
+    display: none;
 }
 .error.active-error {
     display: block;
@@ -520,7 +497,7 @@ main {
 #loading-indicator {
     text-align: center;
     padding: 10px 0;
-    display: none; /* JS toggles this */
+    display: none;
 }
 .loading-animation-placeholder {
     width: 30px;
@@ -547,16 +524,16 @@ main {
         position: static;
         transform: translateX(0%);
         height: 100%;
-        /* JS sets display:flex when logged in */
+        /* display: flex !important; JS sets display:flex when logged in */
     }
     #hamburger-menu {
-        display: none !important; /* Ensure hidden on desktop */
+        display: none !important;
     }
     .logo-title {
         margin: 0 auto;
     }
     .header-actions-placeholder {
-        display: none !important; /* Not needed */
+        display: none !important;
     }
     #sidebar-overlay.active {
         display: none;
@@ -564,20 +541,19 @@ main {
 }
 
 @media (max-width: 768px) { /* Mobile & Tablet */
-    /* #sidebar transform for open/close is already defined */
-    /* #hamburger-menu display is handled by JS based on login state */
-
+    /* #hamburger-menu {
+        /* display: block; JS manages display based on login */
+    /* } */ */
     .logo-title {
         flex-grow: 1;
         justify-content: center;
-        padding-right: 40px; /* Balance hamburger space for visual centering */
+        padding-right: 40px;
     }
     .header-actions-placeholder {
-         display: none; /* Not used with this centering method */
+         display: none;
      }
 
     header {
-        /* padding: 0 15px; */ /* Handled by hamburger and placeholder */
         min-height: 56px;
     }
 
@@ -590,8 +566,8 @@ main {
 
     .input-area-wrapper { padding: 10px 15px; }
     #message-input { font-size: 0.95em; }
-    #send-button, .input-action-button { width: 32px; height: 32px; min-width: 32px; }
-    #send-button svg, .input-action-button svg { width: 14px; height: 14px; }
+    #send-button { width: 32px; height: 32px; min-width: 32px; }
+    #send-button svg { width: 14px; height: 14px; }
 }
 
 @media (max-width: 480px) {
