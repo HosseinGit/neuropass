@@ -1,161 +1,498 @@
-/* Basic Reset & Font */
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Clean, accessible font */
+/* style.css */
+:root {
+    --primary-color: #4A90E2; /* Calming Blue */
+    --secondary-color: #50E3C2; /* Teal Accent */
+    --background-color: #F4F7F6; /* Very Light Grey/Off-white */
+    --surface-color: #FFFFFF; /* White for cards, inputs */
+    --text-color: #333D47; /* Dark Grey for text */
+    --text-light-color: #5A6978;
+    --border-color: #D8DFE5;
+    --error-color: #D0021B; /* Strong Red for errors */
+    --iris-message-bg: #E9F2FC; /* Light blue for Iris */
+    --user-message-bg: #E2F7F2; /* Light teal for User */
+
+    --font-primary: 'Inter', sans-serif;
+    --font-headings: 'Playfair Display', serif; /* Or stick with Inter for modern feel */
+
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.03), 0 1px 2px rgba(0,0,0,0.06);
+    --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.06);
+}
+
+/* Basic Reset & Global Styles */
+*, *::before, *::after {
+    box-sizing: border-box;
     margin: 0;
-    padding: 20px;
-    background-color: #fdfdff; /* Very light, slightly warm off-white */
-    color: #333;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-primary);
+    background-color: var(--background-color);
+    color: var(--text-color);
     line-height: 1.6;
+    display: flex;
+    min-height: 100vh;
+    font-size: 16px;
 }
 
-h1, h2 {
-    color: #4a4e69; /* Muted, calm purple/gray */
+.app-layout {
+    display: flex;
+    width: 100%;
+    height: 100vh; /* Full viewport height */
+    overflow: hidden; /* Prevent body scroll, manage scroll within components */
 }
 
+/* Sidebar Styling */
+#sidebar {
+    width: 260px;
+    background-color: #2C3A47; /* Darker, sophisticated sidebar */
+    color: #EAEFF3;
+    display: flex;
+    flex-direction: column;
+    padding: 20px 0;
+    border-right: 1px solid #384858;
+    transition: width 0.3s ease;
+}
+
+.sidebar-header {
+    padding: 0 15px 15px 15px;
+    border-bottom: 1px solid #384858;
+}
+
+#new-chat-button {
+    width: 100%;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+    font-size: 0.95em;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background-color 0.2s ease;
+}
+#new-chat-button:hover {
+    background-color: #3A80D2;
+}
+#new-chat-button svg {
+    margin-right: 5px;
+}
+
+#chat-list-container {
+    flex-grow: 1;
+    overflow-y: auto;
+    margin-top: 10px;
+}
+#chat-list {
+    list-style: none;
+}
+#chat-list li {
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 0.9em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border-radius: 4px;
+    margin: 2px 10px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+#chat-list li:hover {
+    background-color: #384858;
+}
+#chat-list li.active-chat {
+    background-color: var(--primary-color);
+    color: white;
+    font-weight: 500;
+}
+
+.sidebar-footer {
+    padding: 15px;
+    border-top: 1px solid #384858;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85em;
+}
+#user-info-sidebar {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 180px;
+}
+#logout-button-sidebar {
+    background: none;
+    border: none;
+    color: #9BA9B4;
+    cursor: pointer;
+    padding: 5px;
+}
+#logout-button-sidebar:hover {
+    color: white;
+}
+
+/* Main Content Area */
+.main-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100vh; /* Full viewport height */
+    background-color: var(--background-color);
+}
+
+header {
+    padding: 15px 25px;
+    background-color: var(--surface-color);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: var(--shadow-sm);
+    min-height: 65px; /* Fixed height */
+}
+.logo-title {
+    display: flex;
+    align-items: center;
+}
+.iris-logo {
+    color: var(--primary-color);
+    margin-right: 12px;
+    flex-shrink: 0;
+}
 header h1 {
-    text-align: center;
-    margin-bottom: 30px;
-    font-weight: 400; /* Less heavy */
+    font-family: var(--font-headings);
+    color: var(--primary-color);
+    font-size: 1.5em; /* Slightly smaller */
+    font-weight: 500;
 }
- header img { /* Style the placeholder icon */
-    vertical-align: middle;
-    margin-right: 10px;
- }
+
+#logout-button-main { /* For mobile primarily */
+    display: none; /* Hidden by default, shown via JS/media query */
+    background-color: transparent;
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+#logout-button-main:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
 
 main {
-    max-width: 700px; /* Limit width for readability */
-    margin: 0 auto; /* Center content */
-    background-color: #ffffff;
-    padding: 25px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    flex-grow: 1;
+    padding: 20px 30px; /* More padding */
+    overflow-y: auto; /* Allow main content to scroll if it overflows */
+    display: flex;
+    flex-direction: column; /* Ensure main content itself can grow */
 }
-
 
 /* Authentication Styling */
-#auth-container h2 {
+#auth-container {
+    max-width: 450px;
+    margin: auto; /* Vertically and horizontally center */
+    padding: 30px 40px;
+    background-color: var(--surface-color);
+    border-radius: 12px;
+    box-shadow: var(--shadow-md);
     text-align: center;
-    margin-bottom: 20px;
-    font-weight: 300;
 }
- #auth-container input {
-     display: block;
-     width: calc(100% - 20px); /* Full width minus padding */
-     margin-bottom: 15px;
-     padding: 12px 10px;
-     border: 1px solid #ccc;
-     border-radius: 4px;
- }
+#auth-container h2 {
+    font-family: var(--font-headings);
+    color: var(--primary-color);
+    margin-bottom: 10px;
+    font-size: 1.8em;
+}
+.auth-subtitle {
+    color: var(--text-light-color);
+    margin-bottom: 25px;
+    font-size: 0.95em;
+}
+#auth-container input {
+    display: block;
+    width: 100%;
+    margin-bottom: 15px;
+    padding: 12px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 1em;
+    background-color: #FBFDFF;
+}
+#auth-container input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+}
 
- .button-group {
-     display: flex;
-     justify-content: space-around; /* Space out buttons */
-     margin-top: 10px;
- }
-
+.button-group {
+    display: flex;
+    gap: 10px; /* Space between buttons */
+    margin-top: 20px;
+}
+.button-group button {
+    flex-grow: 1;
+}
 
 /* Chat Area Styling */
-.welcome-message {
-     text-align: right;
-     font-size: 0.9em;
-     color: #555;
-     margin-bottom: 15px;
+#chat-container {
+    display: flex; /* Use flex to manage layout */
+    flex-direction: column;
+    height: 100%; /* Take full height of parent (main) */
+    max-width: 800px; /* Max width for chat content */
+    width: 100%;
+    margin: 0 auto; /* Center chat container */
 }
- .welcome-message button { /* Smaller logout button */
-    padding: 4px 8px;
-    font-size: 0.8em;
-    margin-left: 10px;
- }
-
-
-#chat-history {
-    border: 1px solid #e0e0e0; /* Lighter border */
-    height: 400px; /* Taller chat history */
-    overflow-y: scroll;
+.chat-header-info {
+     text-align: center;
+     font-size: 0.9em;
+     color: var(--text-light-color);
+     margin-bottom: 15px;
+     padding: 8px;
+     background-color: var(--surface-color);
+     border-radius: 6px;
+     box-shadow: var(--shadow-sm);
+}
+#chat-history-wrapper {
+    flex-grow: 1; /* Chat history takes available space */
+    overflow-y: auto; /* Scroll for chat history */
+    border: 1px solid var(--border-color);
+    background-color: var(--surface-color); /* White background for chat */
+    border-radius: 8px;
+    padding: 20px;
     margin-bottom: 15px;
-    padding: 15px;
-    background-color: #f9f9fc; /* Slightly different background for chat */
-    border-radius: 4px;
+    box-shadow: var(--shadow-sm);
+    display: flex; /* To center the placeholder */
+    flex-direction: column; /* To allow messages to stack */
+}
+#chat-history {
+    width: 100%;
+}
+
+.empty-chat-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: var(--text-light-color);
+    height: 100%; /* Fill the wrapper */
+    padding: 20px;
+}
+.empty-chat-placeholder svg {
+    color: var(--primary-color);
+    opacity: 0.6;
+    margin-bottom: 20px;
+}
+.empty-chat-placeholder h3 {
+    font-size: 1.2em;
+    color: var(--text-color);
+    margin-bottom: 10px;
+}
+
+
+.message {
+    margin-bottom: 12px;
+    padding: 10px 15px;
+    border-radius: 18px; /* Softer bubbles */
+    max-width: 75%;
+    word-wrap: break-word;
+    line-height: 1.4;
+    box-shadow: var(--shadow-sm);
+    opacity: 0; /* For fade-in animation */
+    transform: translateY(10px); /* For slide-up animation */
+    animation: fadeInMessage 0.3s ease forwards;
+}
+@keyframes fadeInMessage {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .user-message {
-    text-align: right;
-    margin-bottom: 10px;
-    margin-left: auto; /* Push to right */
-    max-width: 75%; /* Don't take full width */
-    padding: 10px 15px;
-    background-color: #e7f0ff; /* Light blue for user */
-    border-radius: 15px 15px 0 15px; /* Bubble effect */
-    word-wrap: break-word;
+    background-color: var(--user-message-bg);
+    color: #1E6052; /* Darker teal text for contrast */
+    margin-left: auto;
+    border-bottom-right-radius: 5px; /* Tail effect */
 }
 
 .iris-message {
-    text-align: left;
-    margin-bottom: 10px;
-    margin-right: auto; /* Push to left */
-    max-width: 75%;
-    padding: 10px 15px;
-    background-color: #f1f0f5; /* Warm, light gray for Iris */
-    border-radius: 15px 15px 15px 0; /* Bubble effect */
-    word-wrap: break-word;
+    background-color: var(--iris-message-bg);
+    color: #2C5B8E; /* Darker blue text for contrast */
+    margin-right: auto;
+    border-bottom-left-radius: 5px; /* Tail effect */
+}
+.iris-message.error-message { /* Specific style for system error messages from Iris */
+    background-color: #FFEBEB;
+    color: var(--error-color);
+    border: 1px solid var(--error-color);
 }
 
+
 .input-area {
-    display: flex; /* Align input and button side-by-side */
-    margin-top: 10px;
+    display: flex;
+    margin-top: auto; /* Pushes input to bottom if chat history is short */
+    padding-top: 10px; /* Space above input area */
+    background-color: var(--surface-color);
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 -2px 5px rgba(0,0,0,0.03);
 }
 
 #message-input {
-    flex-grow: 1; /* Input takes available space */
-    padding: 12px 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px 0 0 4px; /* Round left corners */
-    margin-right: -1px; /* Overlap border slightly */
+    flex-grow: 1;
+    padding: 12px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 20px 0 0 20px; /* Pill shape part 1 */
+    font-size: 1em;
+    resize: none; /* Prevent manual resize */
+    min-height: 46px; /* Match button height */
+    max-height: 120px; /* Allow some expansion for multiline */
+    overflow-y: auto; /* Scroll if text exceeds max-height */
+    background-color: #FBFDFF;
+}
+#message-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+}
+
+#send-button {
+    border-radius: 0 20px 20px 0; /* Pill shape part 2 */
+    padding: 10px 18px;
+    min-width: 50px; /* Ensure button has some width */
 }
 
 /* General Button Styling */
 button {
-    padding: 12px 18px;
+    padding: 12px 20px;
     cursor: pointer;
-    background-color: #9a8c98; /* Muted purple/gray */
+    background-color: var(--primary-color);
     color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 6px;
     font-size: 1em;
-    transition: background-color 0.2s ease;
+    font-weight: 500;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
 }
-
- button:hover {
-     background-color: #4a4e69; /* Darker shade on hover */
- }
-
- #send-button {
-     border-radius: 0 4px 4px 0; /* Round right corners */
- }
- button:disabled { /* Style for disabled send button */
-     background-color: #cccccc;
-     cursor: not-allowed;
- }
-
+button:hover:not(:disabled) {
+    background-color: #3A80D2; /* Darker primary */
+    box-shadow: var(--shadow-sm);
+}
+button:disabled {
+    background-color: #A8B0B8;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
 
 /* Error and Loading Messages */
 .error {
-    color: #c9184a; /* More distinct error red */
+    color: var(--error-color);
     font-size: 0.9em;
     margin-top: 10px;
     text-align: center;
+    padding: 8px;
+    background-color: #FFEBEB;
+    border-radius: 4px;
 }
 
 #loading-indicator {
     text-align: center;
-    color: #555;
+    color: var(--text-light-color);
     font-style: italic;
-    margin-top: 10px;
+    margin: 15px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
 }
 
-/* Basic Responsive */
-@media (max-width: 600px) {
-    body { padding: 10px; }
-    main { padding: 15px; }
-    .user-message, .iris-message { max-width: 85%; }
+/* Neuron Pulse Animation */
+.neuron-pulse {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.neuron-pulse div {
+    width: 10px;
+    height: 10px;
+    margin: 0 4px;
+    background-color: var(--primary-color);
+    border-radius: 50%;
+    opacity: 0.3;
+    animation: neuronPulseAnimation 1.4s infinite ease-in-out both;
+}
+.neuron-pulse div:nth-child(1) { animation-delay: -0.32s; }
+.neuron-pulse div:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes neuronPulseAnimation {
+    0%, 80%, 100% {
+        transform: scale(0.8);
+        opacity: 0.3;
+    }
+    40% {
+        transform: scale(1.2);
+        opacity: 1;
+    }
+}
+
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    #sidebar {
+        position: fixed; /* Or absolute, depending on desired effect */
+        left: -260px; /* Hidden by default */
+        top: 0;
+        bottom: 0;
+        z-index: 1000;
+        box-shadow: var(--shadow-md);
+        transition: left 0.3s ease; /* Smooth slide-in */
+    }
+    #sidebar.open {
+        left: 0;
+    }
+    /* You'd need a hamburger menu button in .main-content header to toggle this */
+
+    .main-content header {
+        padding: 10px 15px;
+    }
+    header h1 {
+        font-size: 1.3em;
+    }
+    .iris-logo { margin-right: 8px; width: 28px; height: 28px; }
+
+    main {
+        padding: 15px;
+    }
+    #auth-container {
+        padding: 20px;
+        margin: 20px auto; /* Give some top/bottom margin */
+    }
+    #chat-history-wrapper {
+        padding: 15px;
+    }
+    .message { max-width: 85%; }
+    #message-input { padding: 10px 12px; }
+
+    #logout-button-main { display: block; } /* Show main logout on small screens */
+    .sidebar-footer #logout-button-sidebar { display: none; } /* Hide sidebar one if main is shown */
+    .chat-header-info { display: none; } /* Welcome message can be in sidebar */
+}
+
+@media (max-width: 480px) {
+    header h1 { font-size: 1.1em; }
+    .iris-logo { width: 24px; height: 24px; }
+    .button-group { flex-direction: column; }
+    .button-group button { width: 100%; }
+    #message-input, #send-button { font-size: 0.9em; }
+    .message { font-size: 0.95em; }
+}
+
+/* Auto-adjust textarea height */
+#message-input {
+    overflow-y: hidden; /* Start with hidden to calculate scrollHeight correctly */
 }

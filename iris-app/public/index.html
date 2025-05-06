@@ -1,45 +1,92 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Iris Coach Test</title>
+    <meta charset="UTF-8">
+    <title>Iris - Your Neuropass Coach</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Added for mobile responsiveness -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-    <header>
-         <h1><img src="iris-icon.png" alt="" width="30" height="30" style="vertical-align: middle; margin-right: 10px;">Iris - Neuropass Coach</h1> <!-- Placeholder for icon -->
-    </header>
-
-    <main>
-        <div id="auth-container">
-            <h2>Welcome! Please sign in or create an account.</h2>
-            <input type="email" id="email" placeholder="Email" aria-label="Email" />
-            <input type="password" id="password" placeholder="Password" aria-label="Password" />
-            <div class="button-group">
-                <button id="login-button">Login</button>
-                <button id="signup-button">Sign Up</button>
+    <div class="app-layout">
+        <aside id="sidebar" style="display: none;">
+            <div class="sidebar-header">
+                <button id="new-chat-button">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    New Chat
+                </button>
             </div>
-            <p id="auth-error" class="error" aria-live="assertive"></p>
+            <nav id="chat-list-container">
+                <ul id="chat-list">
+                    <!-- Chat sessions will be listed here -->
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <span id="user-info-sidebar"></span>
+                <button id="logout-button-sidebar" aria-label="Logout">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                </button>
+            </div>
+        </aside>
+
+        <div class="main-content">
+            <header>
+                <div class="logo-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="iris-logo"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z"/><path d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5z"/><path d="M12 12a1 1 0 1 0-1-1 1 1 0 0 0 1 1z"/></svg>
+                    <h1>Iris</h1>
+                </div>
+                <button id="logout-button-main" style="display:none;">Logout</button> <!-- For smaller screens where sidebar might be hidden -->
+            </header>
+
+            <main>
+                <div id="auth-container">
+                    <h2>Welcome to Iris</h2>
+                    <p class="auth-subtitle">Sign in or create an account to begin your journey.</p>
+                    <input type="text" id="nickname" placeholder="Nickname (for new accounts)" aria-label="Nickname" />
+                    <input type="email" id="email" placeholder="Email" aria-label="Email" />
+                    <input type="password" id="password" placeholder="Password (min. 6 characters)" aria-label="Password" />
+                    <div class="button-group">
+                        <button id="login-button">Login</button>
+                        <button id="signup-button">Sign Up</button>
+                    </div>
+                    <p id="auth-error" class="error" aria-live="assertive"></p>
+                </div>
+
+                <div id="chat-container" style="display: none;">
+                    <div class="chat-header-info">
+                         <p>Welcome back, <span id="user-display-name"></span>!</p>
+                     </div>
+                    <div id="chat-history-wrapper">
+                        <div id="chat-history">
+                            <!-- Chat messages will appear here -->
+                            <!-- Placeholder for when no chat is active -->
+                            <div id="no-chat-selected" class="empty-chat-placeholder">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="text-[hsl(var(--primary))]"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z"/><path d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5z"/><path d="M12 12a1 1 0 1 0-1-1 1 1 0 0 0 1 1z"/></svg>
+                                <h3>Start a new conversation</h3>
+                                <p>Click "New Chat" in the sidebar or just start typing below if a chat is active.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="loading-indicator" style="display: none;">
+                        <div class="neuron-pulse">
+                            <div></div><div></div><div></div>
+                        </div>
+                        <i>Iris is processing...</i>
+                    </div>
+                    <p id="chat-error" class="error" aria-live="assertive"></p>
+                    <div class="input-area">
+                        <textarea id="message-input" placeholder="What's on your mind?" aria-label="Your message to Iris" rows="1"></textarea>
+                        <button id="send-button" aria-label="Send message">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                        </button>
+                    </div>
+                </div>
+            </main>
         </div>
+    </div>
 
-        <div id="chat-container" style="display: none;">
-             <div class="welcome-message">
-                <p>Welcome back, <span id="user-email"></span>! Ready to explore? <button id="logout-button">Logout</button></p>
-             </div>
-            <div id="chat-history">
-                <!-- Chat messages will appear here -->
-            </div>
-            <div class="input-area">
-                <input type="text" id="message-input" placeholder="What's on your mind?" aria-label="Your message to Iris" />
-                <button id="send-button" aria-label="Send message">Send</button>
-            </div>
-            <p id="chat-error" class="error" aria-live="assertive"></p>
-            <p id="loading-indicator" style="display: none;"><i>Iris is processing...</i></p>
-        </div>
-    </main>
-
-    <!-- Firebase SDKs (using modules) -->
     <script type="module" src="script.js"></script>
-
 </body>
 </html>
