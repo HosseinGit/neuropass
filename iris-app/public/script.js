@@ -22,14 +22,15 @@ import {
     getDocs
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+// IMPORTANT: Replace with your actual Firebase configuration!
 const firebaseConfig = {
-    apiKey: "AIzaSyCFviEOu-Y1_-Pf3WeLjgXU5lZI42N-EQg",
-    authDomain: "iris-neuropass.firebaseapp.com",
-    projectId: "iris-neuropass",
-    storageBucket: "iris-neuropass.firebasestorage.app",
-    messagingSenderId: "470784656826",
-    appId: "1:470784656826:web:49bceaf81642ec54ad8983",
-    measurementId: "G-6E9618FLL4"
+    apiKey: "AIzaSyCFviEOu-Y1_-Pf3WeLjgXU5lZI42N-EQg", // YOUR_API_KEY
+    authDomain: "iris-neuropass.firebaseapp.com", // YOUR_AUTH_DOMAIN
+    projectId: "iris-neuropass", // YOUR_PROJECT_ID
+    storageBucket: "iris-neuropass.firebasestorage.app", // YOUR_STORAGE_BUCKET
+    messagingSenderId: "470784656826", // YOUR_MESSAGING_SENDER_ID
+    appId: "1:470784656826:web:49bceaf81642ec54ad8983", // YOUR_APP_ID
+    measurementId: "G-6E9618FLL4" // YOUR_MEASUREMENT_ID
   };
 
 const app = initializeApp(firebaseConfig);
@@ -38,7 +39,7 @@ const db = getFirestore(app);
 
 // DOM Elements
 const sidebar = document.getElementById('sidebar');
-const sidebarOverlay = document.getElementById('sidebar-overlay'); // For mobile overlay
+const sidebarOverlay = document.getElementById('sidebar-overlay');
 const hamburgerMenu = document.getElementById('hamburger-menu');
 const authView = document.getElementById('auth-view');
 const chatView = document.getElementById('chat-view');
@@ -50,7 +51,7 @@ const emailInput = document.getElementById('email');
 const passwordInput = document.getElementById('password');
 const authError = document.getElementById('auth-error');
 const chatError = document.getElementById('chat-error');
-const userDisplayNameSpan = document.getElementById('user-display-name');
+// const userDisplayNameSpan = document.getElementById('user-display-name'); // Not used
 const userInfoSidebarSpan = document.getElementById('user-info-sidebar');
 const messageInput = document.getElementById('message-input');
 const sendButton = document.getElementById('send-button');
@@ -59,6 +60,9 @@ const loadingIndicator = document.getElementById('loading-indicator');
 const newChatButton = document.getElementById('new-chat-button');
 const chatListUl = document.getElementById('chat-list');
 const noChatSelectedDiv = document.getElementById('no-chat-selected');
+const uploadFileButton = document.getElementById('upload-file-button');
+const fileInputHidden = document.getElementById('file-input-hidden');
+
 
 let currentUserId = null;
 let currentUserNickname = null;
@@ -71,14 +75,10 @@ let currentChatFormattedHistory = [];
 hamburgerMenu.addEventListener('click', () => {
     const isOpen = sidebar.classList.toggle('open');
     hamburgerMenu.setAttribute('aria-expanded', isOpen.toString());
-    if (isOpen) {
-        sidebarOverlay.classList.add('active');
-    } else {
-        sidebarOverlay.classList.remove('active');
-    }
+    sidebarOverlay.classList.toggle('active', isOpen);
 });
 
-sidebarOverlay.addEventListener('click', () => { // Close sidebar if overlay is clicked
+sidebarOverlay.addEventListener('click', () => {
     sidebar.classList.remove('open');
     sidebarOverlay.classList.remove('active');
     hamburgerMenu.setAttribute('aria-expanded', 'false');
@@ -89,7 +89,7 @@ sidebarOverlay.addEventListener('click', () => { // Close sidebar if overlay is 
 messageInput.addEventListener('input', () => {
     messageInput.style.height = 'auto';
     let scrollHeight = messageInput.scrollHeight;
-    const maxHeight = parseInt(window.getComputedStyle(messageInput).maxHeight) || 100; // Default 100 if not set
+    const maxHeight = parseInt(window.getComputedStyle(messageInput).maxHeight) || 100;
     if (scrollHeight > maxHeight) {
         messageInput.style.height = maxHeight + 'px';
         messageInput.style.overflowY = 'auto';
@@ -130,7 +130,6 @@ signupButton.addEventListener('click', async () => {
             email: user.email,
             createdAt: serverTimestamp()
         });
-        // currentUserNickname = nickname; // Set by onAuthStateChanged after fetching
     } catch (error) {
         console.error("Signup Error:", error);
         authError.textContent = `Signup failed: ${getFirebaseErrorMessage(error)}`;
@@ -164,13 +163,7 @@ const handleLogout = async () => {
         unsubscribeChatMessages = null;
         unsubscribeChatList = null;
         currentChatFormattedHistory = [];
-        await signOut(auth);
-        // UI changes handled by onAuthStateChanged
-        if (sidebar.classList.contains('open')) { // Close sidebar on logout if open
-            sidebar.classList.remove('open');
-            sidebarOverlay.classList.remove('active');
-            hamburgerMenu.setAttribute('aria-expanded', 'false');
-        }
+        await signOut(auth); // onAuthStateChanged will handle UI cleanup
     } catch (error) {
         console.error("Logout Error:", error);
         chatError.textContent = "Logout failed. Please try again.";
@@ -182,6 +175,8 @@ logoutButtonSidebar.addEventListener('click', handleLogout);
 
 async function createNewChatSession(userId, activate = true) {
     if (!userId) return null;
+    chatError.textContent = '';
+    chatError.classList.remove('active-error');
     try {
         const newChatRef = await addDoc(collection(db, "users", userId, "chats"), {
             title: "New Chat",
@@ -193,8 +188,7 @@ async function createNewChatSession(userId, activate = true) {
             currentChatId = newChatRef.id;
             loadChatMessages(userId, currentChatId);
             updateActiveChatInSidebar(currentChatId);
-            messageInput.focus();
-            if (sidebar.classList.contains('open')) { // Close mobile sidebar after creating new chat
+            if (window.innerWidth <= 768 && sidebar.classList.contains('open')) {
                 sidebar.classList.remove('open');
                 sidebarOverlay.classList.remove('active');
                 hamburgerMenu.setAttribute('aria-expanded', 'false');
@@ -211,7 +205,7 @@ async function createNewChatSession(userId, activate = true) {
 
 
 onAuthStateChanged(auth, async (user) => {
-    if (user) {
+    if (user) { // User is signed IN
         if (currentUserId !== user.uid) { // New login or different user
             currentUserId = user.uid;
             try {
@@ -219,7 +213,7 @@ onAuthStateChanged(auth, async (user) => {
                 const userDocSnap = await getDoc(userDocRef);
                 if (userDocSnap.exists()) {
                     currentUserNickname = userDocSnap.data().nickname;
-                } else { // Should not happen if signup is correct, but handle as fallback
+                } else {
                     currentUserNickname = user.email.split('@')[0];
                     await setDoc(doc(db, "users", user.uid), {
                         nickname: currentUserNickname, email: user.email, createdAt: serverTimestamp()
@@ -227,38 +221,36 @@ onAuthStateChanged(auth, async (user) => {
                 }
             } catch (fetchError) {
                 console.error("Error fetching user nickname:", fetchError);
-                currentUserNickname = user.email.split('@')[0]; // Fallback
+                currentUserNickname = user.email.split('@')[0];
             }
 
-            userDisplayNameSpan.textContent = currentUserNickname;
-            userInfoSidebarSpan.textContent = `${currentUserNickname}`; // Just nickname or "Logged in as..."
+            userInfoSidebarSpan.textContent = `${currentUserNickname}`;
 
             authView.style.display = 'none';
             chatView.style.display = 'flex';
-            sidebar.style.display = 'flex'; // Sidebar is always display:flex, visibility controlled by transform
-            hamburgerMenu.style.display = 'block'; // Show hamburger once logged in
+            sidebar.style.display = 'flex'; // Make sidebar eligible for display
+            checkScreenSize(); // This will set hamburger visibility based on screen AND login
 
             messageInput.value = '';
-            chatError.textContent = '';
-            chatError.classList.remove('active-error');
-            authError.textContent = '';
-            authError.classList.remove('active-error');
+            chatError.textContent = ''; chatError.classList.remove('active-error');
+            authError.textContent = ''; authError.classList.remove('active-error');
 
-            loadUserChats(currentUserId); // This will also handle auto-selecting/creating a chat
+            currentChatId = null;
+            loadUserChats(currentUserId);
 
-        } else { // Same user, already logged in (e.g., page refresh) - ensure UI is correct
+        } else { // Same user, page refresh
             authView.style.display = 'none';
             chatView.style.display = 'flex';
             sidebar.style.display = 'flex';
-            hamburgerMenu.style.display = 'block';
-            // Ensure chat list and current chat are loaded if necessary
+            checkScreenSize();
             if (!unsubscribeChatList) loadUserChats(currentUserId);
-            if (currentChatId && !unsubscribeChatMessages) loadChatMessages(currentUserId, currentChatId);
-            else if (!currentChatId) updateChatUIForNoSelection();
-
+            else if (currentChatId && !unsubscribeChatMessages) loadChatMessages(currentUserId, currentChatId);
+            else if (currentChatId) updateChatUIForActiveChat();
+            else updateChatUIForNoSelection();
         }
-    } else { // User is signed out
-        if (currentUserId !== null) {
+    } else { // User is signed OUT
+        // Only run full cleanup if a user was previously logged in
+        if (currentUserId !== null || authView.style.display === 'none') {
             currentUserId = null;
             currentUserNickname = null;
             currentChatId = null;
@@ -273,24 +265,30 @@ onAuthStateChanged(auth, async (user) => {
 
             authView.style.display = 'flex';
             chatView.style.display = 'none';
-            sidebar.style.display = 'none'; // Hide sidebar container too
-            hamburgerMenu.style.display = 'none'; // Hide hamburger
-            sidebar.classList.remove('open'); // Ensure it's closed
+            sidebar.style.display = 'none';
+            hamburgerMenu.style.display = 'none';
+            sidebar.classList.remove('open');
             sidebarOverlay.classList.remove('active');
+            if(hamburgerMenu) hamburgerMenu.setAttribute('aria-expanded', 'false');
 
-            userDisplayNameSpan.textContent = '';
+
             userInfoSidebarSpan.textContent = '';
             nicknameInput.value = '';
             emailInput.value = '';
             passwordInput.value = '';
         }
+        // Ensure clean state if on initial load and no user
+        authView.style.display = 'flex';
+        chatView.style.display = 'none';
+        sidebar.style.display = 'none';
+        hamburgerMenu.style.display = 'none';
     }
 });
 
 function getFirebaseErrorMessage(error) {
-    // Basic error mapping
     if (error.code) {
         switch (error.code) {
+            case 'auth/api-key-not-valid.-please-pass-a-valid-api-key.': return 'Firebase API Key is invalid.';
             case 'auth/invalid-email': return 'Invalid email address.';
             case 'auth/user-not-found': return 'No account found with this email.';
             case 'auth/wrong-password': return 'Incorrect password.';
@@ -309,25 +307,30 @@ newChatButton.addEventListener('click', async () => {
 
 function loadUserChats(userId) {
     if (unsubscribeChatList) unsubscribeChatList();
+    chatError.textContent = ''; chatError.classList.remove('active-error');
 
     const chatsRef = collection(db, "users", userId, "chats");
     const q = query(chatsRef, orderBy("lastMessageAt", "desc"), limit(30));
 
-    unsubscribeChatList = onSnapshot(q, async (snapshot) => { // Made async for await
+    unsubscribeChatList = onSnapshot(q, async (snapshot) => {
         chatListUl.innerHTML = '';
-        let firstChatId = null;
-        let activeChatExistsInSnapshot = false;
+        let firstChatIdFromSnapshot = null;
+        let activeChatStillExists = false;
 
         if (snapshot.empty) {
             chatListUl.innerHTML = '<li class="no-chats">No chats yet.</li>';
-            console.log("No chats found for user, creating initial chat from loadUserChats.");
-            const newId = await createNewChatSession(userId, true); // Create and activate
-            // createNewChatSession will set currentChatId and load messages
-            return; // Exit early as new chat creation will handle UI
+            console.log("No chats found. Creating initial chat.");
+            if (!currentChatId) { // Prevent re-creation if one was just made
+                 await createNewChatSession(userId, true);
+            } else {
+                updateChatUIForNoSelection();
+            }
+            return;
         }
 
         snapshot.forEach((docSnap, index) => {
-            if (index === 0) firstChatId = docSnap.id;
+            if (index === 0) firstChatIdFromSnapshot = docSnap.id;
+            if (docSnap.id === currentChatId) activeChatStillExists = true;
 
             const chatData = docSnap.data();
             const li = document.createElement('li');
@@ -335,39 +338,32 @@ function loadUserChats(userId) {
             li.textContent = chatData.title || `Chat from ${chatData.createdAt?.toDate().toLocaleDateString([], {month:'short', day:'numeric'}) || 'earlier'}`;
             if (docSnap.id === currentChatId) {
                 li.classList.add('active-chat');
-                activeChatExistsInSnapshot = true;
             }
             li.addEventListener('click', () => {
                 if (currentChatId !== docSnap.id) {
                     currentChatId = docSnap.id;
                     loadChatMessages(userId, currentChatId);
                     updateActiveChatInSidebar(currentChatId);
-                    if (sidebar.classList.contains('open')) { // Close mobile sidebar on chat selection
+                    if (window.innerWidth <= 768 && sidebar.classList.contains('open')) {
                         sidebar.classList.remove('open');
                         sidebarOverlay.classList.remove('active');
-                        hamburgerMenu.setAttribute('aria-expanded', 'false');
+                        if(hamburgerMenu) hamburgerMenu.setAttribute('aria-expanded', 'false');
                     }
                 }
             });
             chatListUl.appendChild(li);
         });
 
-        if (!activeChatExistsInSnapshot && firstChatId) { // If currentChatId was deleted or null
-            console.log("Auto-selecting most recent chat as current was not found or null:", firstChatId);
-            currentChatId = firstChatId;
+        if (currentChatId && activeChatStillExists) {
+            updateChatUIForActiveChat();
+            updateActiveChatInSidebar(currentChatId);
+        } else if (firstChatIdFromSnapshot) {
+            console.log("Selecting first available chat:", firstChatIdFromSnapshot);
+            currentChatId = firstChatIdFromSnapshot;
             loadChatMessages(userId, currentChatId);
             updateActiveChatInSidebar(currentChatId);
-        } else if (!currentChatId && firstChatId) { // No current chat selected, select the first one
-             console.log("No chat selected, auto-selecting most recent:", firstChatId);
-             currentChatId = firstChatId;
-             loadChatMessages(userId, currentChatId);
-             updateActiveChatInSidebar(currentChatId);
-        } else if (currentChatId && activeChatExistsInSnapshot) {
-            // Current chat is valid and exists, ensure UI is correct for active chat
-            updateChatUIForActiveChat();
-        } else if (!currentChatId && !firstChatId && !snapshot.empty) {
-            // This case should ideally not be reached if snapshot.empty handles creation
-            updateChatUIForNoSelection();
+        } else {
+             updateChatUIForNoSelection();
         }
 
     }, (error) => {
@@ -379,17 +375,18 @@ function loadUserChats(userId) {
 
 function updateActiveChatInSidebar(chatId) {
     Array.from(chatListUl.children).forEach(li => {
-        if (li.classList.contains('no-chats')) return; // Skip the "no-chats" item
+        if (li.classList.contains('no-chats')) return;
         li.classList.toggle('active-chat', li.dataset.chatId === chatId);
     });
 }
 
 function updateChatUIForNoSelection() {
-    chatHistoryDiv.innerHTML = ''; // Clear messages
+    chatHistoryDiv.innerHTML = '';
     currentChatFormattedHistory = [];
     noChatSelectedDiv.style.display = 'flex';
     messageInput.disabled = true;
     sendButton.disabled = true;
+    uploadFileButton.disabled = true;
     messageInput.placeholder = "Select or create a chat";
 }
 
@@ -397,8 +394,8 @@ function updateChatUIForActiveChat() {
     noChatSelectedDiv.style.display = 'none';
     messageInput.disabled = false;
     sendButton.disabled = false;
+    uploadFileButton.disabled = false;
     messageInput.placeholder = "Message Iris...";
-    // messageInput.focus(); // Be careful with auto-focus, can be annoying on mobile
 }
 
 function displayMessage(sender, text, isError = false) {
@@ -408,7 +405,7 @@ function displayMessage(sender, text, isError = false) {
         messageDiv.classList.add('error-message');
     }
 
-    const textNode = document.createTextNode(text); // Use textNode for safety
+    const textNode = document.createTextNode(text);
     messageDiv.appendChild(textNode);
 
     const timestampSpan = document.createElement('span');
@@ -417,7 +414,6 @@ function displayMessage(sender, text, isError = false) {
     messageDiv.appendChild(timestampSpan);
 
     chatHistoryDiv.appendChild(messageDiv);
-    // Smooth scroll to bottom, ensuring it happens after element is rendered
     requestAnimationFrame(() => {
         chatHistoryDiv.scrollTo({ top: chatHistoryDiv.scrollHeight, behavior: 'smooth' });
     });
@@ -438,19 +434,19 @@ async function saveMessageToFirestore(userId, chatId, sender, text) {
         const chatDocRef = doc(db, "users", userId, "chats", chatId);
         const updateData = { lastMessageAt: serverTimestamp() };
         const chatDocSnap = await getDoc(chatDocRef);
-        // Only update title if it's the default "New Chat" and it's the first user message in this interaction
-        if (chatDocSnap.exists() && chatData.title === "New Chat" && sender === 'user') {
-             const messagesQuery = query(messagesCollectionRef, orderBy("timestamp", "asc"), limit(1));
-             const messagesSnapshot = await getDocs(messagesQuery);
-             if (messagesSnapshot.docs.length === 1 && messagesSnapshot.docs[0].data().sender === 'user') { // Check if it's truly the first user message
-                updateData.title = text.substring(0, 25) + (text.length > 25 ? "..." : "");
-             }
-        } else if (chatDocSnap.exists() && !chatDocSnap.data().title && sender === 'user') { // If title is empty
-            updateData.title = text.substring(0, 25) + (text.length > 25 ? "..." : "");
-        }
 
+        if (chatDocSnap.exists()) {
+            const chatDataVal = chatDocSnap.data();
+            if ((chatDataVal.title === "New Chat" || !chatDataVal.title) && sender === 'user') {
+                const messagesQuery = query(messagesCollectionRef, orderBy("timestamp", "asc"), limit(1)); // Get the very first message
+                const messagesSnapshot = await getDocs(messagesQuery);
+                // If this newly added message is the first user message in the chat
+                if (messagesSnapshot.docs.length > 0 && messagesSnapshot.docs[0].data().text === text && messagesSnapshot.docs[0].data().sender === 'user') {
+                     updateData.title = text.substring(0, 25) + (text.length > 25 ? "..." : "");
+                }
+            }
+        }
         await setDoc(chatDocRef, updateData, { merge: true });
-        console.log("Message saved to chat:", chatId);
     } catch (error) {
         console.error("Error saving message to Firestore:", error);
         chatError.textContent = "Error saving message.";
@@ -464,28 +460,18 @@ function loadChatMessages(userId, chatId) {
         return;
     }
     if (unsubscribeChatMessages) unsubscribeChatMessages();
+    chatError.textContent = ''; chatError.classList.remove('active-error');
     chatHistoryDiv.innerHTML = '';
     updateChatUIForActiveChat();
     currentChatFormattedHistory = [];
 
     const messagesRef = collection(db, "users", userId, "chats", chatId, "messages");
-    const q_msg = query(messagesRef, orderBy("timestamp", "asc"), limit(50)); // Get last 50 messages
+    const q_msg = query(messagesRef, orderBy("timestamp", "asc"), limit(50));
 
     unsubscribeChatMessages = onSnapshot(q_msg, (querySnapshot) => {
-        const newMessages = []; // To avoid re-rendering all messages if not needed
         const newFormattedHistory = [];
-
-        querySnapshot.docChanges().forEach((change) => {
-            if (change.type === "added") {
-                newMessages.push(change.doc.data());
-            }
-            // Handle "modified" or "removed" if needed for more complex scenarios
-        });
-
-        // Efficiently build history and display only new messages if possible
-        // For simplicity here, re-rendering on any change in the limited snapshot
-        chatHistoryDiv.innerHTML = ''; // Clear and re-render for simplicity with timestamps
-        querySnapshot.forEach((doc) => { // Iterate full snapshot to maintain order
+        chatHistoryDiv.innerHTML = '';
+        querySnapshot.forEach((doc) => {
             const data = doc.data();
             displayMessage(data.sender, data.text, data.sender === 'iris' && data.text.startsWith("[System Error"));
             newFormattedHistory.push({
@@ -495,18 +481,11 @@ function loadChatMessages(userId, chatId) {
         });
         currentChatFormattedHistory = newFormattedHistory;
 
-        if (chatHistoryDiv.innerHTML === '' && !querySnapshot.empty) {
-            // This means messages were loaded, but displayMessage might not have run yet or scrolled
-             requestAnimationFrame(() => {
+        if (chatHistoryDiv.innerHTML !== '') {
+            requestAnimationFrame(() => {
                 chatHistoryDiv.scrollTo({ top: chatHistoryDiv.scrollHeight, behavior: 'auto' });
             });
-        } else if (chatHistoryDiv.innerHTML !== '') {
-            requestAnimationFrame(() => { // Ensure scroll happens after DOM update
-                chatHistoryDiv.scrollTo({ top: chatHistoryDiv.scrollHeight, behavior: 'auto' }); // 'auto' on load
-            });
         }
-
-
     }, (error) => {
         console.error("Error listening to chat messages:", error);
         chatError.textContent = "Could not load messages for this chat.";
@@ -529,26 +508,17 @@ async function sendMessage() {
 
     const messageToSend = messageText;
     messageInput.value = '';
-    messageInput.style.height = 'auto'; // Reset textarea height
-    messageInput.dispatchEvent(new Event('input')); // Trigger input event to resize if needed
-    chatError.textContent = '';
-    chatError.classList.remove('active-error');
+    messageInput.style.height = 'auto';
+    messageInput.dispatchEvent(new Event('input'));
+    chatError.textContent = ''; chatError.classList.remove('active-error');
 
-    // Display user message immediately & save (onSnapshot will reflect this in history)
-    displayMessage('user', messageToSend); // Display locally first
+    displayMessage('user', messageToSend);
     await saveMessageToFirestore(currentUserId, currentChatId, 'user', messageToSend);
 
-    // Prepare history for the API call.
-    // currentChatFormattedHistory will be updated by onSnapshot from the save above.
-    // To be safe, construct it from what we know, ensuring the latest message is last.
-    let historyForAPI = [...currentChatFormattedHistory];
-    // Ensure the message just sent by the user is the last 'user' message in the history sent to API
-    // Remove any older instance of this exact text by user (edge case) and add the new one
-    historyForAPI = historyForAPI.filter(m => !(m.role === 'user' && m.parts[0].text === messageToSend));
+    let historyForAPI = currentChatFormattedHistory.filter(m => !(m.role === 'user' && m.parts[0].text === messageToSend));
     historyForAPI.push({ role: 'user', parts: [{ text: messageToSend }] });
 
-
-    const MAX_HISTORY_MESSAGES = 20; // e.g., last 10 turns
+    const MAX_HISTORY_MESSAGES = 20;
     if (historyForAPI.length > MAX_HISTORY_MESSAGES) {
         historyForAPI = historyForAPI.slice(-MAX_HISTORY_MESSAGES);
     }
@@ -556,6 +526,7 @@ async function sendMessage() {
     loadingIndicator.style.display = 'flex';
     sendButton.disabled = true;
     messageInput.disabled = true;
+    uploadFileButton.disabled = true;
 
     try {
         const functionUrl = '/.netlify/functions/chat';
@@ -563,79 +534,109 @@ async function sendMessage() {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                message: messageToSend, // Current message for context/logging on backend
+                message: messageToSend,
                 chatHistory: historyForAPI,
-                userId: currentUserId, // Optional: for backend logging/logic
-                chatId: currentChatId   // Optional: for backend logging/logic
+                userId: currentUserId,
+                chatId: currentChatId
             })
         });
 
         if (!response.ok) {
             let errorMsg = `Network: ${response.status} ${response.statusText}`;
-            try {
-                const errorData = await response.json();
-                errorMsg += ` - ${errorData.error || 'Unknown backend error'}`;
-            } catch (parseError) { /* ignore if not JSON */ }
+            try { const errorData = await response.json(); errorMsg += ` - ${errorData.error || 'Unknown backend error'}`; } catch (parseError) {}
             throw new Error(errorMsg);
         }
 
         const data = await response.json();
         if (data.reply) {
-            // Iris's reply will be displayed and saved by onSnapshot from Firestore
-            // So, we just need to save it. displayMessage is handled by loadChatMessages.
             await saveMessageToFirestore(currentUserId, currentChatId, 'iris', data.reply);
         } else {
             const noReplyMsg = "Iris didn't have a response to that.";
             await saveMessageToFirestore(currentUserId, currentChatId, 'iris', noReplyMsg);
-            // displayMessage('iris', noReplyMsg, true); // onSnapshot will display it
         }
-
     } catch (error) {
         console.error('Error during sendMessage:', error);
-        const displayErrorMessage = `Sorry, an issue occurred: ${error.message || "Could not reach Iris."}`;
+        const displayErrorMessage = `An issue occurred: ${error.message || "Could not reach Iris."}`;
         chatError.textContent = displayErrorMessage;
         chatError.classList.add('active-error');
-        // Save and display system error message from Iris's side
         await saveMessageToFirestore(currentUserId, currentChatId, 'iris', `[System Error: ${error.message || "Could not reach Iris."}]`);
-        // displayMessage('iris', `[System Error: ${error.message || "Could not reach Iris."}]`, true); // onSnapshot
     } finally {
         loadingIndicator.style.display = 'none';
         sendButton.disabled = false;
         messageInput.disabled = false;
-        // messageInput.focus(); // Consider if auto-focus is always desired
+        uploadFileButton.disabled = false;
     }
 }
 
-// Initial check for screen size to set sidebar state correctly
+uploadFileButton.addEventListener('click', () => {
+    fileInputHidden.click();
+});
+
+fileInputHidden.addEventListener('change', (event) => {
+    const file = event.target.files[0];
+    if (file) {
+        if (file.type === "application/pdf") {
+            console.log("PDF selected:", file.name);
+            displayMessage('user', `File selected: ${file.name} (upload feature demo)`);
+            alert(`Selected PDF: ${file.name}. Actual upload to Iris is not yet implemented.`);
+        } else {
+            chatError.textContent = "Only PDF files can be selected.";
+            chatError.classList.add('active-error');
+        }
+        fileInputHidden.value = '';
+    }
+});
+
+
 function checkScreenSize() {
     const isMobile = window.innerWidth <= 768;
-    if (isMobile) {
-        sidebar.style.display = 'flex'; // Keep it in DOM for transform
-        hamburgerMenu.style.display = 'block'; // Show hamburger if logged in
-        // Sidebar starts closed on mobile, JS handles .open
-    } else { // Desktop
-        sidebar.style.display = 'flex'; // Always display flex on desktop
-        sidebar.classList.remove('open'); // Ensure not in 'open' state from mobile
-        sidebarOverlay.classList.remove('active');
+    const isLoggedIn = auth.currentUser != null;
+
+    if (isLoggedIn) {
+        // Sidebar's display:flex is set in onAuthStateChanged when user logs in.
+        // Here, we only manage mobile-specific transform and hamburger visibility.
+        if (isMobile) {
+            hamburgerMenu.style.display = 'block';
+            // CSS handles .open class transform for sidebar
+        } else { // Desktop
+            hamburgerMenu.style.display = 'none';
+            sidebar.classList.remove('open'); // Ensure not 'open' from mobile
+            sidebar.style.transform = 'translateX(0%)'; // Ensure visible in static desktop position
+            sidebarOverlay.classList.remove('active');
+        }
+    } else { // Not logged in
+        sidebar.style.display = 'none'; // Explicitly hide sidebar if not logged in
         hamburgerMenu.style.display = 'none';
+        sidebar.classList.remove('open');
+        sidebarOverlay.classList.remove('active');
     }
-     // Adjust logo-title centering based on hamburger visibility
+
     const logoTitle = document.querySelector('.logo-title');
     const headerActionsPlaceholder = document.querySelector('.header-actions-placeholder');
-    if (logoTitle && headerActionsPlaceholder) {
-        if (hamburgerMenu.style.display === 'block') {
-            logoTitle.style.marginLeft = '10px'; // Give some space from hamburger
-            logoTitle.style.marginRight = 'auto';
-            headerActionsPlaceholder.style.display = 'block'; // Takes up space on the right
-        } else {
+    if (logoTitle) {
+        const hamburgerIsEffectivelyVisible = isLoggedIn && isMobile;
+        if (hamburgerIsEffectivelyVisible) {
+            logoTitle.style.marginLeft = '0';
+            logoTitle.style.marginRight = 'auto'; // Pushes placeholder to right
+            logoTitle.style.flexGrow = '0'; // Don't let it grow too much
+            logoTitle.style.justifyContent = 'flex-start'; // Align to start
+            if (headerActionsPlaceholder) headerActionsPlaceholder.style.display = 'block'; // Show placeholder to balance
+        } else { // Desktop or not logged in (hamburger hidden)
             logoTitle.style.marginLeft = 'auto';
             logoTitle.style.marginRight = 'auto';
-            headerActionsPlaceholder.style.display = 'none';
+            logoTitle.style.flexGrow = '0';
+            logoTitle.style.justifyContent = 'center';
+            if (headerActionsPlaceholder) headerActionsPlaceholder.style.display = 'none';
         }
     }
 }
 
 window.addEventListener('resize', checkScreenSize);
-// Call on load, but onAuthStateChanged will also call it once user state is known
-// document.addEventListener('DOMContentLoaded', checkScreenSize);
-// onAuthStateChanged will handle initial hamburger visibility based on login state.
+document.addEventListener('DOMContentLoaded', () => {
+    // Initial UI setup before Firebase auth state is known
+    authView.style.display = 'flex'; // Show auth by default
+    chatView.style.display = 'none';
+    sidebar.style.display = 'none';
+    hamburgerMenu.style.display = 'none';
+    checkScreenSize(); // Initial call to set up responsive elements if needed (though onAuthStateChanged is key)
+});

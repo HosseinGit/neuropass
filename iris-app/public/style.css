@@ -4,8 +4,9 @@
 :root {
     --primary-color: #007AFF;
     --primary-color-dark: #0056b3;
-    --button-light-blue-bg: #87CEEB;
-    --button-light-blue-hover-bg: #76BFE0;
+    --button-action-bg: #87CEEB;
+    --button-action-hover-bg: #76BFE0;
+    --button-action-text-color: #1D1D1F;
 
     --background-color: #F9F9FB;
     --surface-color: #FFFFFF;
@@ -23,9 +24,9 @@
 
     --iris-message-bg: #E5E5EA;
     --iris-message-text: #1D1D1F;
-    --user-message-bg: #007AFF;
-    --user-message-text: #FFFFFF;
-    --message-timestamp-user-color: rgba(255,255,255,0.7);
+    --user-message-bg: #B0E0E6;
+    --user-message-text: #1D1D1F;
+    --message-timestamp-user-color: var(--text-light-color);
     --message-timestamp-iris-color: var(--text-light-color);
 
 
@@ -33,7 +34,6 @@
     --font-headings: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", "Arial", sans-serif;
 
     --shadow-soft: 0 1px 2px rgba(0, 0, 0, 0.04), 0 2px 8px rgba(0, 0, 0, 0.08);
-    --shadow-interface: 0 0 0 0.5px rgba(0,0,0,0.08), 0 0.5px 1px rgba(0,0,0,0.03);
     --border-radius-standard: 10px;
     --border-radius-large: 20px;
 }
@@ -73,23 +73,22 @@ body {
     width: 280px;
     background-color: var(--sidebar-bg);
     color: var(--text-color);
-    display: flex; /* Controlled by JS for initial visibility */
+    display: none; /* MODIFIED: Default to hidden. JS controls visibility. */
     flex-direction: column;
     padding: 15px 0;
     border-right: 0.5px solid var(--border-thin-color);
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* Smooth slide */
-    position: absolute; /* For mobile overlay behavior */
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: absolute; /* For mobile overlay behavior, and desktop static later */
     left: 0;
     top: 0;
     bottom: 0;
-    transform: translateX(-100%); /* Initially off-screen */
-    z-index: 1001; /* Above overlay */
+    transform: translateX(-100%); /* Initially off-screen for mobile animation */
+    z-index: 1001;
 }
-#sidebar.open {
+#sidebar.open { /* Toggled by JS for mobile view */
     transform: translateX(0%);
 }
-/* Overlay for when mobile sidebar is open */
-#sidebar-overlay {
+#sidebar-overlay { /* For dimming content when mobile sidebar is open */
     position: fixed;
     top: 0;
     left: 0;
@@ -113,25 +112,32 @@ body {
     border-bottom: 0.5px solid var(--border-thin-color);
 }
 
-#new-chat-button {
-    width: 100%;
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
+/* General Button Styling */
+button {
     padding: 10px 15px;
+    cursor: pointer;
+    background-color: var(--button-action-bg);
+    color: var(--button-action-text-color);
+    border: none;
     border-radius: var(--border-radius-standard);
     font-size: 0.95em;
     font-weight: 500;
-    cursor: pointer;
+    transition: background-color 0.15s ease-out, box-shadow 0.15s ease-out;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
-    transition: background-color 0.15s ease-out;
 }
-#new-chat-button:hover {
-    background-color: var(--primary-color-dark);
+button:hover:not(:disabled) {
+    background-color: var(--button-action-hover-bg);
 }
+button:disabled {
+    background-color: #E9E9EB !important;
+    color: var(--text-placeholder-color) !important;
+    cursor: not-allowed;
+    opacity: 1;
+}
+
 #new-chat-button svg {
     stroke-width: 2.5;
 }
@@ -191,14 +197,12 @@ body {
 }
 #logout-button-sidebar {
     background: none;
-    border: none;
     color: var(--text-light-color);
-    cursor: pointer;
-    padding: 5px;
     opacity: 0.7;
-    transition: opacity 0.15s ease-out, color 0.15s ease-out;
+    padding: 5px;
 }
 #logout-button-sidebar:hover {
+    background: none;
     color: var(--primary-color);
     opacity: 1;
 }
@@ -210,12 +214,12 @@ body {
     flex-direction: column;
     height: 100vh;
     background-color: var(--surface-color);
-    position: relative; /* For sidebar interaction on desktop if needed */
-    width: 100%; /* Ensure it takes full width initially */
+    position: relative;
+    width: 100%;
 }
 
 header {
-    padding: 0 15px; /* Consistent padding */
+    padding: 0 15px;
     background-color: var(--header-bg);
     border-bottom: 0.5px solid var(--border-thin-color);
     display: flex;
@@ -224,28 +228,28 @@ header {
     min-height: 60px;
     position: relative;
     z-index: 10;
-    justify-content: space-between; /* For hamburger and logo/title */
+    justify-content: space-between;
 }
-#hamburger-menu { /* Hamburger button styling */
+#hamburger-menu {
     background: none;
     border: none;
     padding: 8px;
-    margin-left: -8px; /* Align with edge */
+    margin-left: -8px; /* Pull to edge */
     cursor: pointer;
     color: var(--text-light-color);
-    display: none; /* JS will show this on mobile */
+    display: none; /* JS manages this based on login and screen size */
 }
 #hamburger-menu:hover {
     color: var(--primary-color);
 }
 #hamburger-menu svg {
-    display: block; /* Fix potential svg alignment issues */
+    display: block;
 }
 
 .logo-title {
     display: flex;
     align-items: center;
-    /* margin: 0 auto; Removed to allow hamburger on left */
+    /* Centering handled by JS or flex properties of header */
 }
 .iris-logo {
     color: var(--primary-color);
@@ -259,15 +263,16 @@ header h1 {
     font-weight: 600;
     letter-spacing: -0.01em;
 }
-.header-actions-placeholder { /* To balance hamburger if title is centered */
-    width: 40px; /* Approx width of hamburger button */
+.header-actions-placeholder { /* For balancing hamburger in flex layout */
+    width: 40px; /* Approx width of hamburger + padding */
     flex-shrink: 0;
+    visibility: hidden; /* Takes up space but not visible */
 }
 
 
 main {
     flex-grow: 1;
-    display: flex;
+    display: flex; /* This allows switching between auth-view and chat-view */
     flex-direction: column;
     overflow: hidden;
 }
@@ -275,7 +280,7 @@ main {
 /* ===== Auth View (Centered in Main) ===== */
 #auth-view {
     flex-grow: 1;
-    display: flex; /* JS toggles this; ensure default matches JS initial state */
+    display: flex; /* JS sets this to 'flex' when active, 'none' otherwise */
     flex-direction: column;
     align-items: center;
     justify-content: center;
@@ -332,44 +337,19 @@ main {
     gap: 10px;
     margin-top: 10px;
 }
-#auth-container .button-group button {
-    flex-grow: 1;
-    background-color: var(--button-light-blue-bg);
-    color: var(--text-color);
-    font-weight: 500;
-    padding: 11px 20px;
-    border-radius: var(--border-radius-standard);
-    border: none;
-    transition: background-color 0.15s ease-out;
-}
-#auth-container .button-group button:hover:not(:disabled) {
-    background-color: var(--button-light-blue-hover-bg);
-    color: var(--text-color);
-}
-#auth-container .button-group button:disabled {
-    background-color: #E9E9EB;
-    color: var(--text-placeholder-color);
-    cursor: not-allowed;
-}
+/* Auth buttons inherit general button styles */
 
 
 /* ===== Chat View ===== */
 #chat-view {
     flex-grow: 1;
-    display: none; /* JS toggles this to 'flex' */
+    display: none; /* JS sets this to 'flex' when active */
     flex-direction: column;
     height: 100%;
     background-color: var(--surface-color);
     overflow: hidden;
 }
-.chat-header-info {
-    text-align: center;
-    font-size: 0.85em;
-    color: var(--text-light-color);
-    padding: 10px 20px 8px;
-    border-bottom: 0.5px solid var(--border-thin-color);
-    background-color: var(--header-bg);
-}
+
 #chat-history-wrapper {
     flex-grow: 1;
     overflow-y: auto;
@@ -379,7 +359,7 @@ main {
 }
 #chat-history {
     width: 100%;
-    max-width: 720px;
+    max-width: 600px;
     margin: 0 auto;
 }
 .empty-chat-placeholder {
@@ -419,7 +399,7 @@ main {
     position: relative;
     font-size: 0.98em;
 }
-@keyframes fadeInMessage { /* Ensure this is defined */
+@keyframes fadeInMessage {
     to {
         opacity: 1;
         transform: translateY(0);
@@ -462,12 +442,35 @@ main {
     align-items: center;
     background-color: var(--surface-color);
     border-radius: var(--border-radius-large);
-    padding: 6px 8px 6px 15px;
+    padding: 6px 8px;
     border: 0.5px solid var(--border-color);
 }
+.input-action-button {
+    background: none;
+    border: none;
+    color: var(--text-light-color);
+    padding: 6px;
+    border-radius: 50%;
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: color 0.15s ease-out, background-color 0.15s ease-out;
+    flex-shrink: 0;
+}
+.input-action-button:hover {
+    color: var(--primary-color);
+    background-color: rgba(0,0,0,0.05);
+}
+.input-action-button svg {
+    width: 18px; height: 18px;
+}
+
 #message-input {
     flex-grow: 1;
-    padding: 8px 0;
+    padding: 8px 10px;
     border: none;
     font-size: 1em;
     background-color: transparent;
@@ -486,32 +489,20 @@ main {
 }
 
 #send-button {
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
     border-radius: 50%;
     width: 34px;
     height: 34px;
     min-width: 34px;
     padding: 0;
     margin-left: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: background-color 0.15s ease-out;
-}
-#send-button:hover:not(:disabled) {
-    background-color: var(--primary-color-dark);
-}
-#send-button:disabled {
-    background-color: #BDBDC2;
-    opacity: 1;
+    flex-shrink: 0;
 }
 #send-button svg {
     width: 16px; height: 16px;
     stroke-width: 2.5;
+    stroke: var(--button-action-text-color);
 }
+
 
 /* ===== Error Paragraphs & Loading ===== */
 .error {
@@ -520,7 +511,7 @@ main {
     padding: 0;
     text-align: center;
     margin-top: 12px;
-    display: none;
+    display: none; /* JS will toggle .active-error to show */
 }
 .error.active-error {
     display: block;
@@ -529,15 +520,19 @@ main {
 #loading-indicator {
     text-align: center;
     padding: 10px 0;
-    display: none;
-    /* Styles for the new animation will go here */
+    display: none; /* JS toggles this */
 }
-.loading-animation-placeholder { /* Placeholder div for new animation */
-    width: 50px;
-    height: 50px;
-    /* background-color: var(--border-color); */ /* Temp visual */
-    margin: 0 auto 8px auto; /* Center and space from text */
-    /* border-radius: 50%; */
+.loading-animation-placeholder {
+    width: 30px;
+    height: 30px;
+    margin: 0 auto 8px auto;
+    border: 3px solid var(--border-color);
+    border-top-color: var(--primary-color);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+    to { transform: rotate(360deg); }
 }
 #loading-indicator i {
     font-size: 0.9em;
@@ -547,40 +542,42 @@ main {
 
 
 /* ===== Responsive Design ===== */
-@media (min-width: 769px) { /* Desktop: Sidebar is part of the layout */
+@media (min-width: 769px) { /* Desktop */
     #sidebar {
-        position: static; /* Not fixed/absolute */
-        transform: translateX(0%); /* Always visible */
+        position: static;
+        transform: translateX(0%);
         height: 100%;
+        /* JS sets display:flex when logged in */
     }
     #hamburger-menu {
-        display: none; /* No hamburger on desktop */
+        display: none !important; /* Ensure hidden on desktop */
     }
     .logo-title {
-        margin: 0 auto; /* Center title on desktop */
+        margin: 0 auto;
     }
     .header-actions-placeholder {
-        display: none; /* Not needed if title is centered */
+        display: none !important; /* Not needed */
+    }
+    #sidebar-overlay.active {
+        display: none;
     }
 }
 
-@media (max-width: 768px) {
-    /* #sidebar styles for mobile overlay are already defined above */
-    #hamburger-menu {
-        display: block; /* Show hamburger on mobile */
-    }
+@media (max-width: 768px) { /* Mobile & Tablet */
+    /* #sidebar transform for open/close is already defined */
+    /* #hamburger-menu display is handled by JS based on login state */
+
     .logo-title {
-        margin: 0 auto 0 10px; /* Give space for hamburger, then center remaining */
-        flex-grow: 1; /* Allow it to take space to center */
+        flex-grow: 1;
         justify-content: center;
+        padding-right: 40px; /* Balance hamburger space for visual centering */
     }
-     .header-actions-placeholder { /* Make sure this side is same width as hamburger */
-         visibility: hidden; /* Still takes up space */
+    .header-actions-placeholder {
+         display: none; /* Not used with this centering method */
      }
 
-
     header {
-        padding: 0 15px;
+        /* padding: 0 15px; */ /* Handled by hamburger and placeholder */
         min-height: 56px;
     }
 
@@ -589,14 +586,12 @@ main {
 
     #chat-history-wrapper { padding: 15px 10px 5px; }
     #chat-history { max-width: 100%; }
-    .message { max-width: 80%; font-size: 0.95em; }
+    .message { max-width: 85%; font-size: 0.95em; }
 
     .input-area-wrapper { padding: 10px 15px; }
     #message-input { font-size: 0.95em; }
-    #send-button { width: 32px; height: 32px; min-width: 32px; }
-    #send-button svg { width: 14px; height: 14px; }
-
-    .chat-header-info { display: none; }
+    #send-button, .input-action-button { width: 32px; height: 32px; min-width: 32px; }
+    #send-button svg, .input-action-button svg { width: 14px; height: 14px; }
 }
 
 @media (max-width: 480px) {
