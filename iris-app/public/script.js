@@ -23,13 +23,13 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY", // AIzaSyCFviEOu-Y1_-Pf3WeLjgXU5lZI42N-EQg
-    authDomain: "YOUR_AUTH_DOMAIN", // iris-neuropass.firebaseapp.com
-    projectId: "YOUR_PROJECT_ID", // iris-neuropass
-    storageBucket: "YOUR_STORAGE_BUCKET", // iris-neuropass.firebasestorage.app
-    messagingSenderId: "YOUR_MESSAGING_SENDER_ID", // 470784656826
-    appId: "YOUR_APP_ID", // 1:470784656826:web:49bceaf81642ec54ad8983
-    measurementId: "YOUR_MEASUREMENT_ID" // G-6E9618FLL4
+    apiKey: "AIzaSyCFviEOu-Y1_-Pf3WeLjgXU5lZI42N-EQg",
+    authDomain: "iris-neuropass.firebaseapp.com",
+    projectId: "iris-neuropass",
+    storageBucket: "iris-neuropass.firebasestorage.app",
+    messagingSenderId: "470784656826",
+    appId: "1:470784656826:web:49bceaf81642ec54ad8983",
+    measurementId: "G-6E9618FLL4"
   };
 
 const app = initializeApp(firebaseConfig);
