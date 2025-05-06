@@ -73,7 +73,7 @@ body {
     width: 280px;
     background-color: var(--sidebar-bg);
     color: var(--text-color);
-    display: none; /* Default to hidden. JS controls visibility. */
+    display: none;
     flex-direction: column;
     padding: 15px 0;
     border-right: 0.5px solid var(--border-thin-color);
@@ -151,7 +151,7 @@ button:disabled {
     list-style: none;
 }
 #chat-list li {
-    padding: 9px 20px;
+    padding: 9px 15px 9px 20px;
     cursor: pointer;
     font-size: 0.9em;
     font-weight: 400;
@@ -162,22 +162,68 @@ button:disabled {
     margin: 2px 10px;
     color: var(--text-light-color);
     transition: background-color 0.1s ease-out, color 0.1s ease-out;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
-#chat-list li:hover {
-    background-color: rgba(0,0,0,0.04);
-    color: var(--text-color);
+
+.chat-item-title {
+    flex-grow: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-right: 8px;
 }
+
+.delete-chat-button {
+    background: none;
+    border: none;
+    color: var(--text-light-color);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.6;
+    transition: opacity 0.15s ease-out, color 0.15s ease-out, background-color 0.15s ease-out;
+    flex-shrink: 0;
+}
+#chat-list li:hover .delete-chat-button {
+    opacity: 1;
+}
+.delete-chat-button:hover {
+    color: var(--error-color);
+    background-color: rgba(255, 59, 48, 0.1);
+}
+.delete-chat-button svg {
+    width: 16px;
+    height: 16px;
+    stroke-width: 2;
+}
+
+
 #chat-list li.active-chat {
     background-color: var(--primary-color);
     color: white;
     font-weight: 500;
 }
+#chat-list li.active-chat .delete-chat-button { /* Ensure delete button color contrasts with active bg */
+    color: rgba(255,255,255,0.7);
+}
+#chat-list li.active-chat .delete-chat-button:hover {
+    color: white;
+    background-color: rgba(255,255,255,0.2);
+}
+
+
 #chat-list li.no-chats {
     color: var(--text-light-color);
     cursor: default;
     text-align: center;
     padding: 20px;
     font-style: italic;
+    display: block; /* Override flex from normal li */
 }
 
 .sidebar-footer {
@@ -357,7 +403,8 @@ main {
 }
 #chat-history {
     width: 100%;
-    max-width: 600px;
+    /* MODIFIED: Adjust max-width for PC. Mobile will be handled by media query. */
+    max-width: 550px; /* Example: Make it narrower on desktop */
     margin: 0 auto;
 }
 .empty-chat-placeholder {
@@ -386,7 +433,8 @@ main {
 .message {
     padding: 9px 14px;
     border-radius: var(--border-radius-large);
-    max-width: 70%;
+    /* MODIFIED: Increase max-width of bubbles relative to the (now narrower) chat-history */
+    max-width: 80%; /* Example: Bubbles can take up more of the chat history width */
     word-wrap: break-word;
     line-height: 1.45;
     box-shadow: none;
@@ -435,19 +483,20 @@ main {
     background-color: var(--input-area-wrapper-bg);
     margin-top: auto;
 }
-.input-area {
+.input-area { /* This div now only contains textarea and send button */
     display: flex;
     align-items: center;
     background-color: var(--surface-color);
     border-radius: var(--border-radius-large);
-    padding: 6px 8px;
+    padding: 6px 8px 6px 15px; /* Padding for inside the rounded bar */
     border: 0.5px solid var(--border-color);
+    max-width: 550px; /* MODIFIED: Match the chat history width for consistency */
+    margin: 0 auto; /* Center the input bar */
 }
-/* Removed .input-action-button styles as the button was removed */
 
 #message-input {
     flex-grow: 1;
-    padding: 8px 10px;
+    padding: 8px 10px; /* Internal padding for textarea */
     border: none;
     font-size: 1em;
     background-color: transparent;
@@ -478,62 +527,6 @@ main {
     width: 16px; height: 16px;
     stroke-width: 2.5;
     stroke: var(--button-action-text-color);
-}
-
-/* Add new styles for chat list item and delete button */
-#chat-list li {
-    padding: 9px 15px 9px 20px; /* Adjust padding to make space for delete icon */
-    cursor: pointer;
-    font-size: 0.9em;
-    font-weight: 400;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    border-radius: 7px;
-    margin: 2px 10px;
-    color: var(--text-light-color);
-    transition: background-color 0.1s ease-out, color 0.1s ease-out;
-    display: flex; /* Use flex to align chat title and delete button */
-    justify-content: space-between; /* Push delete button to the right */
-    align-items: center;
-}
-
-.chat-item-title { /* New class for the chat title text */
-    flex-grow: 1; /* Allow title to take available space */
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    margin-right: 8px; /* Space between title and delete button */
-}
-
-.delete-chat-button {
-    background: none;
-    border: none;
-    color: var(--text-light-color);
-    cursor: pointer;
-    padding: 4px; /* Small padding for the button itself */
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0.6;
-    transition: opacity 0.15s ease-out, color 0.15s ease-out, background-color 0.15s ease-out;
-    flex-shrink: 0; /* Prevent button from shrinking */
-}
-
-#chat-list li:hover .delete-chat-button { /* Show more prominently on hover of list item */
-    opacity: 1;
-}
-
-.delete-chat-button:hover {
-    color: var(--error-color); /* Red on hover for delete action */
-    background-color: rgba(255, 59, 48, 0.1); /* Light red background on hover */
-}
-
-.delete-chat-button svg {
-    width: 16px;
-    height: 16px;
-    stroke-width: 2;
 }
 
 
@@ -580,7 +573,6 @@ main {
         position: static;
         transform: translateX(0%);
         height: 100%;
-        /* display: flex !important; JS sets display:flex when logged in */
     }
     #hamburger-menu {
         display: none !important;
@@ -598,7 +590,7 @@ main {
 
 @media (max-width: 768px) { /* Mobile & Tablet */
     /* #hamburger-menu {
-        /* display: block; JS manages display based on login */
+        /* display: block; JS manages */
     /* } */ */
     .logo-title {
         flex-grow: 1;
@@ -617,10 +609,11 @@ main {
     #auth-container { padding: 30px; max-width: calc(100% - 40px); }
 
     #chat-history-wrapper { padding: 15px 10px 5px; }
-    #chat-history { max-width: 100%; }
-    .message { max-width: 85%; font-size: 0.95em; }
+    #chat-history { max-width: 100%; } /* Chat history full width on mobile */
+    .message { max-width: 85%; font-size: 0.95em; } /* Bubbles take more % of this full width */
 
     .input-area-wrapper { padding: 10px 15px; }
+    .input-area { max-width: 100%; } /* Input area full width on mobile */
     #message-input { font-size: 0.95em; }
     #send-button { width: 32px; height: 32px; min-width: 32px; }
     #send-button svg { width: 14px; height: 14px; }
