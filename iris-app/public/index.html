@@ -3,28 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <title>Iris - Your Neuropass Coach</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500&display=swap" rel="stylesheet">
+    <!-- Preconnect to Google Fonts (optional, but good practice if using them) -->
+    <!-- <link rel="preconnect" href="https://fonts.googleapis.com"> -->
+    <!-- <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> -->
+    <!-- <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"> -->
     <link rel="stylesheet" href="style.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
     <div class="app-layout">
-        <aside id="sidebar" style="display: none;">
+        <aside id="sidebar" style="display: none;"> <!-- JS controls display -->
             <div class="sidebar-header">
-                <button id="new-chat-button">
+                <button id="new-chat-button" aria-label="Start a new chat">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                     New Chat
                 </button>
             </div>
             <nav id="chat-list-container">
                 <ul id="chat-list">
-                    <!-- Chat sessions will be listed here -->
+                    <!-- Chat sessions will be listed here by JS -->
                 </ul>
             </nav>
             <div class="sidebar-footer">
-                <span id="user-info-sidebar"></span>
+                <span id="user-info-sidebar" aria-live="polite"></span>
                 <button id="logout-button-sidebar" aria-label="Logout">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
                 </button>
@@ -33,59 +34,72 @@
 
         <div class="main-content">
             <header>
+                <button id="hamburger-menu" aria-label="Toggle menu" aria-expanded="false" style="display: none;"> <!-- Hidden by default, shown for mobile -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
                 <div class="logo-title">
                     <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="iris-logo"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z"/><path d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5z"/><path d="M12 12a1 1 0 1 0-1-1 1 1 0 0 0 1 1z"/></svg>
-                    <h1>Iris</h1>
+                    <h1>Iris Coach</h1>
                 </div>
-                <button id="logout-button-main" style="display:none;">Logout</button> <!-- For smaller screens where sidebar might be hidden -->
+                <!-- Placeholder for potential right-aligned header items if needed -->
+                <div class="header-actions-placeholder"></div>
             </header>
 
             <main>
-                <div id="auth-container">
-                    <h2>Welcome to Iris</h2>
-                    <p class="auth-subtitle">Sign in or create an account to begin your journey.</p>
-                    <input type="text" id="nickname" placeholder="Nickname (for new accounts)" aria-label="Nickname" />
-                    <input type="email" id="email" placeholder="Email" aria-label="Email" />
-                    <input type="password" id="password" placeholder="Password (min. 6 characters)" aria-label="Password" />
-                    <div class="button-group">
-                        <button id="login-button">Login</button>
-                        <button id="signup-button">Sign Up</button>
+                <!-- Auth View: Shown when not logged in -->
+                <div id="auth-view" style="display: flex;"> <!-- Initial state: visible -->
+                    <div id="auth-container">
+                        <h2>Welcome to Iris</h2>
+                        <p class="auth-subtitle">Sign in or create an account to begin.</p>
+                        <input type="text" id="nickname" placeholder="Nickname (for new accounts)" aria-label="Nickname" autocomplete="nickname"/>
+                        <input type="email" id="email" placeholder="Email" aria-label="Email" autocomplete="email" />
+                        <input type="password" id="password" placeholder="Password (min. 6 characters)" aria-label="Password" autocomplete="current-password" />
+                        <div class="button-group">
+                            <button id="login-button">Login</button>
+                            <button id="signup-button">Sign Up</button>
+                        </div>
+                        <p id="auth-error" class="error" aria-live="assertive"></p>
                     </div>
-                    <p id="auth-error" class="error" aria-live="assertive"></p>
                 </div>
 
-                <div id="chat-container" style="display: none;">
-                    <div class="chat-header-info">
-                         <p>Welcome back, <span id="user-display-name"></span>!</p>
+                <!-- Chat View: Shown when logged in -->
+                <div id="chat-view" style="display: none;"> <!-- Initial state: hidden -->
+                     <div class="chat-header-info">
+                         <p>Chatting with Iris as <span id="user-display-name"></span></p>
                      </div>
-                    <div id="chat-history-wrapper">
+                    <div id="chat-history-wrapper" role="log" aria-live="polite">
                         <div id="chat-history">
-                            <!-- Chat messages will appear here -->
-                            <!-- Placeholder for when no chat is active -->
+                            <!-- Placeholder for when no chat is active or messages are loading -->
                             <div id="no-chat-selected" class="empty-chat-placeholder">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="text-[hsl(var(--primary))]"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z"/><path d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5z"/><path d="M12 12a1 1 0 1 0-1-1 1 1 0 0 0 1 1z"/></svg>
-                                <h3>Start a new conversation</h3>
-                                <p>Click "New Chat" in the sidebar or just start typing below if a chat is active.</p>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                                <h3>Ready when you are</h3>
+                                <p>Select a chat or start a new one.</p>
                             </div>
                         </div>
                     </div>
-                    <div id="loading-indicator" style="display: none;">
-                        <div class="neuron-pulse">
-                            <div></div><div></div><div></div>
-                        </div>
+                    <div id="loading-indicator" style="display: none;" aria-label="Iris is processing">
+                        <!-- Placeholder for new neurological animation -->
+                        <div class="loading-animation-placeholder"></div>
                         <i>Iris is processing...</i>
                     </div>
                     <p id="chat-error" class="error" aria-live="assertive"></p>
-                    <div class="input-area">
-                        <textarea id="message-input" placeholder="What's on your mind?" aria-label="Your message to Iris" rows="1"></textarea>
-                        <button id="send-button" aria-label="Send message">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-                        </button>
+                    <div class="input-area-wrapper">
+                        <div class="input-area">
+                            <textarea id="message-input" placeholder="Message Iris..." aria-label="Your message to Iris" rows="1"></textarea>
+                            <button id="send-button" aria-label="Send message">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </main>
         </div>
     </div>
+    <div id="sidebar-overlay" style="display:none;"></div> <!-- For dimming content when mobile sidebar is open -->
 
     <script type="module" src="script.js"></script>
 </body>
