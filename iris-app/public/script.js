@@ -380,6 +380,27 @@ function displayMessage(sender, text, isError = false) {
     }
     // --- End Markdown Parsing Logic ---
 
+    if (sender === 'iris' && !isError) { // Log details for Iris messages
+        console.log(`Displaying Iris message. typeof marked: ${typeof marked}`); // DEBUG LINE
+        console.log("Raw text for marked:", text); // Log text again just before parsing attempt
+    }
+
+    if (sender === 'iris' && !isError && typeof marked === 'function') {
+        console.log("Attempting marked.parse()..."); // DEBUG LINE
+        try {
+            messageDiv.innerHTML = marked.parse(text);
+            console.log("Parsed HTML:", messageDiv.innerHTML); // DEBUG LINE: See the output HTML
+        } catch (e) {
+            console.error("Error parsing Markdown:", e);
+            messageDiv.textContent = text;
+        }
+    } else {
+        if (sender === 'iris') {
+             console.log("Condition for marked.parse() not met."); // DEBUG LINE
+        }
+        messageDiv.textContent = text;
+    }
+
     const timestampSpan = document.createElement('span');
     timestampSpan.classList.add('message-timestamp');
     timestampSpan.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
