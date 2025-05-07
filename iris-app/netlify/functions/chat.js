@@ -165,7 +165,7 @@ exports.handler = async (event) => {
         }
 
         const model = genAI.getGenerativeModel({
-            model: "gemini-1.5-flash-latest", // Or your preferred model
+            model: "gemini-2.5-flash-preview-04-17", 
             systemInstruction: IRIS_SYSTEM_PROMPT,
         });
 
