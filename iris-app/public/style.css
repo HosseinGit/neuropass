@@ -470,6 +470,7 @@ main {
     background-color: var(--user-message-bg);
     color: var(--user-message-text);
     margin-left: auto;
+    max-width: 60%;
 }
 .iris-message {
     background-color: var(--iris-message-bg);
