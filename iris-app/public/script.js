@@ -393,17 +393,17 @@ function updateChatUIForActiveChat() {
     if(sendButton) sendButton.disabled = false;
 }
 
-function displayMessage(sender, text, isError = false) {
-    if(!chatHistoryDiv) return;
-    const messageDiv = document.createElement('div');
-    messageDiv.classList.add('message', sender === 'user' ? 'user-message' : 'iris-message');
-    if (isError && sender === 'iris') { messageDiv.classList.add('error-message'); }
-    const textNode = document.createTextNode(text); messageDiv.appendChild(textNode);
-    const timestampSpan = document.createElement('span'); timestampSpan.classList.add('message-timestamp');
-    timestampSpan.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    messageDiv.appendChild(timestampSpan); chatHistoryDiv.appendChild(messageDiv);
-    requestAnimationFrame(() => { chatHistoryDiv.scrollTo({ top: chatHistoryDiv.scrollHeight, behavior: 'smooth' }); });
-}
+// function displayMessage(sender, text, isError = false) {
+//     if(!chatHistoryDiv) return;
+//     const messageDiv = document.createElement('div');
+//     messageDiv.classList.add('message', sender === 'user' ? 'user-message' : 'iris-message');
+//     if (isError && sender === 'iris') { messageDiv.classList.add('error-message'); }
+//     const textNode = document.createTextNode(text); messageDiv.appendChild(textNode);
+//     const timestampSpan = document.createElement('span'); timestampSpan.classList.add('message-timestamp');
+//     timestampSpan.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+//     messageDiv.appendChild(timestampSpan); chatHistoryDiv.appendChild(messageDiv);
+//     requestAnimationFrame(() => { chatHistoryDiv.scrollTo({ top: chatHistoryDiv.scrollHeight, behavior: 'smooth' }); });
+// }
 
 function displayMessage(sender, text, isError = false) {
     if(!chatHistoryDiv) return;
