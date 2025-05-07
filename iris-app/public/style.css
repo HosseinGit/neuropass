@@ -421,7 +421,7 @@ main {
 }
 #chat-history {
     width: 100%;
-    max-width: 550px; /* Keep overall chat column narrow */
+    max-width: 550px;
 }
 .empty-chat-placeholder {
     display: flex;
@@ -449,8 +449,7 @@ main {
 .message {
     padding: 9px 14px;
     border-radius: var(--border-radius-large);
-    /* MODIFIED: Increased max-width for bubbles */
-    max-width: 85%; /* Allow bubbles to take up more space */
+    max-width: 85%; /* Wider bubbles */
     word-wrap: break-word;
     line-height: 1.45;
     box-shadow: none;
@@ -492,6 +491,53 @@ main {
 .user-message .message-timestamp { text-align: right; color: var(--message-timestamp-user-color); }
 .iris-message .message-timestamp { text-align: left; color: var(--message-timestamp-iris-color); }
 
+/* ADDED: Styling for Markdown elements */
+.message p {
+    margin-bottom: 0.6em; /* Space between paragraphs */
+    margin-top: 0;
+}
+.message p:last-child {
+    margin-bottom: 0; /* No extra space after the last paragraph */
+}
+.message strong, .message b {
+    font-weight: 600;
+}
+.message em, .message i {
+    font-style: italic;
+}
+.message ul, .message ol {
+    margin-left: 1.5em; /* Indent lists */
+    margin-top: 0.5em;
+    margin-bottom: 0.7em;
+}
+.message li {
+    margin-bottom: 0.3em; /* Space between list items */
+}
+.message ul li::marker { /* Style bullet points if needed */
+    color: var(--text-light-color); /* Example: Make bullets match light text color */
+    /* You could also try: */
+    /* color: var(--primary-color); */ /* Make bullets blue */
+}
+.message code { /* Style inline code if used */
+    background-color: rgba(0,0,0,0.05);
+    padding: 0.1em 0.3em;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 0.9em;
+}
+.message pre { /* Style code blocks if used */
+     background-color: rgba(0,0,0,0.05);
+     padding: 0.8em;
+     border-radius: 6px;
+     overflow-x: auto;
+     margin: 0.5em 0 0.7em;
+}
+.message pre code {
+    background-color: transparent;
+    padding: 0;
+    font-size: 0.85em;
+}
+
 /* Input Area Wrapper & Input Area */
 .input-area-wrapper {
     padding: 12px 20px;
@@ -509,7 +555,7 @@ main {
     padding: 6px 8px 6px 15px;
     border: 0.5px solid var(--border-color);
     width: 100%;
-    max-width: 550px; /* Match chat history width */
+    max-width: 550px;
 }
 
 #message-input {
@@ -629,6 +675,7 @@ main {
 }
 
 @media (max-width: 768px) { /* Mobile & Tablet */
+
     .logo-title {
         flex-grow: 1;
         justify-content: center;
@@ -656,9 +703,8 @@ main {
     #chat-history {
         max-width: 100%;
     }
-    /* MODIFIED: Keep bubble width high on mobile */
     .message {
-        max-width: 88%; /* Slightly larger max-width on mobile */
+        max-width: 88%; /* Wider bubbles on mobile */
         font-size: 0.95em;
     }
 
@@ -689,6 +735,6 @@ main {
     header h1 { font-size: 1em; }
     .header-subtitle { font-size: 0.65em; }
     .message {
-        max-width: 90%; /* Even wider on very small screens */
+        max-width: 90%;
     }
 }
