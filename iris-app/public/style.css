@@ -541,7 +541,7 @@ main {
 
 /* Input Area Wrapper & Input Area */
 .input-area-wrapper {
-    padding: 12px 20px;
+    padding: 4px 20px;
     border-top: 0.5px solid var(--border-thin-color);
     background-color: var(--input-area-wrapper-bg);
     margin-top: auto;
@@ -553,7 +553,7 @@ main {
     align-items: center;
     background-color: var(--surface-color);
     border-radius: var(--border-radius-large);
-    padding: 6px 8px 6px 15px;
+    padding: 3px 8px 2px 15px;
     border: 0.5px solid var(--border-color);
     width: 100%;
     max-width: 750px; /* Was 550 */
@@ -598,7 +598,7 @@ main {
 /* ===== Footer Link ===== */
 .footer-link {
     text-align: center;
-    padding: 8px 20px 12px;
+    padding: 1px 20px 2px;
     background-color: var(--input-area-wrapper-bg);
 }
 .footer-link p {
