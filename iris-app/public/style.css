@@ -300,29 +300,28 @@ header {
     color: var(--primary-color);
     margin-right: 10px;
     width: 28px; height: 28px;
-    flex-shrink: 0; /* Prevent logo from shrinking */
+    flex-shrink: 0;
 }
-/* MODIFIED: Header title styles */
 .header-title-group {
     display: flex;
-    flex-direction: column; /* Stack title and subtitle */
-    align-items: flex-start; /* Align text to the start */
-    line-height: 1.2; /* Adjust line height for stacked text */
+    flex-direction: column;
+    align-items: flex-start;
+    line-height: 1.2;
 }
-header h1 { /* Main title "Iris" */
+header h1 {
     font-family: var(--font-headings);
     color: var(--text-color);
-    font-size: 1.1em; /* Keep this size */
+    font-size: 1.1em;
     font-weight: 600;
     letter-spacing: -0.01em;
-    margin: 0; /* Remove default margins */
+    margin: 0;
 }
-.header-subtitle { /* Subtitle text */
-    font-family: var(--font-primary); /* Use primary font */
-    font-size: 0.7em; /* Make significantly smaller */
+.header-subtitle {
+    font-family: var(--font-primary);
+    font-size: 0.7em;
     color: var(--text-light-color);
-    font-weight: 400; /* Normal weight */
-    margin-top: -2px; /* Adjust spacing slightly */
+    font-weight: 400;
+    margin-top: -2px;
 }
 
 .header-actions-placeholder {
@@ -408,8 +407,8 @@ main {
     flex-direction: column;
     height: 100%;
     background-color: var(--surface-color);
-    overflow: hidden; /* Wrapper will scroll */
-    position: relative; /* Needed if footer is absolute inside */
+    overflow: hidden;
+    position: relative;
 }
 
 #chat-history-wrapper {
@@ -422,7 +421,7 @@ main {
 }
 #chat-history {
     width: 100%;
-    max-width: 550px;
+    max-width: 550px; /* Keep overall chat column narrow */
 }
 .empty-chat-placeholder {
     display: flex;
@@ -450,7 +449,8 @@ main {
 .message {
     padding: 9px 14px;
     border-radius: var(--border-radius-large);
-    max-width: 80%;
+    /* MODIFIED: Increased max-width for bubbles */
+    max-width: 85%; /* Allow bubbles to take up more space */
     word-wrap: break-word;
     line-height: 1.45;
     box-shadow: none;
@@ -497,7 +497,7 @@ main {
     padding: 12px 20px;
     border-top: 0.5px solid var(--border-thin-color);
     background-color: var(--input-area-wrapper-bg);
-    margin-top: auto; /* Keep input at bottom */
+    margin-top: auto;
     display: flex;
     justify-content: center;
 }
@@ -509,7 +509,7 @@ main {
     padding: 6px 8px 6px 15px;
     border: 0.5px solid var(--border-color);
     width: 100%;
-    max-width: 550px;
+    max-width: 550px; /* Match chat history width */
 }
 
 #message-input {
@@ -551,22 +551,21 @@ main {
 /* ===== Footer Link ===== */
 .footer-link {
     text-align: center;
-    padding: 8px 20px 12px; /* Padding around the link */
-    background-color: var(--input-area-wrapper-bg); /* Match input area background */
-    border-top: 0.5px solid var(--border-thin-color); /* Optional separator */
+    padding: 8px 20px 12px;
+    background-color: var(--input-area-wrapper-bg);
 }
 .footer-link p {
-    font-size: 0.75em; /* Small font size */
+    font-size: 0.75em;
     color: var(--text-light-color);
     margin: 0;
 }
 .footer-link a {
-    color: var(--text-light-color); /* Subtle link color */
-    text-decoration: none; /* Remove underline */
+    color: var(--text-light-color);
+    text-decoration: none;
     transition: color 0.15s ease-out;
 }
 .footer-link a:hover {
-    color: var(--primary-color); /* Highlight on hover */
+    color: var(--primary-color);
     text-decoration: underline;
 }
 
@@ -633,10 +632,10 @@ main {
     .logo-title {
         flex-grow: 1;
         justify-content: center;
-        padding-right: 40px; /* Balance hamburger space */
+        padding-right: 40px;
     }
-    .header-title-group { /* Adjust title group alignment on mobile */
-        align-items: center; /* Center title+subtitle block */
+    .header-title-group {
+        align-items: center;
         text-align: center;
     }
      .header-actions-placeholder {
@@ -657,8 +656,9 @@ main {
     #chat-history {
         max-width: 100%;
     }
+    /* MODIFIED: Keep bubble width high on mobile */
     .message {
-        max-width: 85%;
+        max-width: 88%; /* Slightly larger max-width on mobile */
         font-size: 0.95em;
     }
 
@@ -673,7 +673,7 @@ main {
     #send-button { width: 32px; height: 32px; min-width: 32px; }
     #send-button svg { width: 14px; height: 14px; }
 
-    .footer-link { /* Slightly larger link text on mobile */
+    .footer-link {
         font-size: 0.8em;
     }
 }
@@ -683,9 +683,12 @@ main {
     .button-group { flex-direction: column; gap: 10px; }
     .button-group button { width: 100%; }
     #message-input { font-size: 0.9em; }
-    .header-title-group { /* Ensure title/subtitle fit well */
-        max-width: calc(100% - 40px); /* Prevent overlap with potential icons */
+    .header-title-group {
+        max-width: calc(100% - 40px);
     }
     header h1 { font-size: 1em; }
     .header-subtitle { font-size: 0.65em; }
+    .message {
+        max-width: 90%; /* Even wider on very small screens */
+    }
 }

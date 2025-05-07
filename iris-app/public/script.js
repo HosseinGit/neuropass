@@ -405,6 +405,29 @@ function displayMessage(sender, text, isError = false) {
     requestAnimationFrame(() => { chatHistoryDiv.scrollTo({ top: chatHistoryDiv.scrollHeight, behavior: 'smooth' }); });
 }
 
+function displayMessage(sender, text, isError = false) {
+    if(!chatHistoryDiv) return;
+    const messageDiv = document.createElement('div');
+    messageDiv.classList.add('message', sender === 'user' ? 'user-message' : 'iris-message');
+    if (isError && sender === 'iris') { messageDiv.classList.add('error-message'); }
+
+    if (sender === 'iris' && !isError && typeof marked === 'function') { 
+        messageDiv.innerHTML = marked.parse(text);
+    } else {
+        const textNode = document.createTextNode(text);
+        messageDiv.appendChild(textNode);
+    }
+
+
+    const timestampSpan = document.createElement('span');
+    timestampSpan.classList.add('message-timestamp');
+    timestampSpan.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    messageDiv.appendChild(timestampSpan);
+
+    chatHistoryDiv.appendChild(messageDiv);
+    requestAnimationFrame(() => { chatHistoryDiv.scrollTo({ top: chatHistoryDiv.scrollHeight, behavior: 'smooth' }); });
+}
+
 async function saveMessageToFirestore(userId, chatId, sender, text) {
     if (!userId || !chatId) { console.warn("Cannot save message: userId or chatId missing."); return; }
     try {
