@@ -421,7 +421,7 @@ main {
 }
 #chat-history {
     width: 100%;
-    max-width: 550px;
+    max-width: 950px; /* Was 550 */
 }
 .empty-chat-placeholder {
     display: flex;
@@ -555,7 +555,7 @@ main {
     padding: 6px 8px 6px 15px;
     border: 0.5px solid var(--border-color);
     width: 100%;
-    max-width: 550px;
+    max-width: 750px; /* Was 550 */
 }
 
 #message-input {
