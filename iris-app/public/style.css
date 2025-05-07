@@ -9,7 +9,7 @@
     --button-action-text-color: #1D1D1F;
 
     --background-color: #F9F9FB;
-    --surface-color: #FFFFFF;
+    --surface-color: #F9F9FB; /* #FFFFFF;*/
     --sidebar-bg: #F2F2F7;
     --header-bg: #F9F9FB;
     --input-area-wrapper-bg: #F9F9FB;
