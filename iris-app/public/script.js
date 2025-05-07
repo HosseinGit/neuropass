@@ -363,52 +363,31 @@ function displayMessage(sender, text, isError = false) {
     if (isError && sender === 'iris') { messageDiv.classList.add('error-message'); }
 
     // --- Markdown Parsing Logic ---
-    if (sender === 'iris' && !isError && typeof marked === 'function') {
+    // Check if 'marked' object exists AND has a 'parse' method which is a function
+    if (sender === 'iris' && !isError && typeof marked === 'object' && typeof marked.parse === 'function') {
         try {
-            // Use Marked.js to convert Markdown to HTML
-            // Note: For production, consider adding a sanitizer like DOMPurify here:
+            // Note: Consider using DOMPurify for enhanced security in production
             // messageDiv.innerHTML = DOMPurify.sanitize(marked.parse(text));
-            messageDiv.innerHTML = marked.parse(text);
+            messageDiv.innerHTML = marked.parse(text); // Use the parse method
         } catch (e) {
             console.error("Error parsing Markdown:", e);
-            // Fallback to plain text if parsing fails
-            messageDiv.textContent = text;
+            messageDiv.textContent = text; // Fallback to plain text
         }
     } else {
-        // For user messages or errors, just display as plain text
+        // For user messages or errors, or if marked isn't available
         messageDiv.textContent = text;
     }
     // --- End Markdown Parsing Logic ---
 
-    if (sender === 'iris' && !isError) { // Log details for Iris messages
-        console.log(`Displaying Iris message. typeof marked: ${typeof marked}`); // DEBUG LINE
-        console.log("Raw text for marked:", text); // Log text again just before parsing attempt
-    }
-
-    if (sender === 'iris' && !isError && typeof marked === 'function') {
-        console.log("Attempting marked.parse()..."); // DEBUG LINE
-        try {
-            messageDiv.innerHTML = marked.parse(text);
-            console.log("Parsed HTML:", messageDiv.innerHTML); // DEBUG LINE: See the output HTML
-        } catch (e) {
-            console.error("Error parsing Markdown:", e);
-            messageDiv.textContent = text;
-        }
-    } else {
-        if (sender === 'iris') {
-             console.log("Condition for marked.parse() not met."); // DEBUG LINE
-        }
-        messageDiv.textContent = text;
-    }
-
     const timestampSpan = document.createElement('span');
     timestampSpan.classList.add('message-timestamp');
     timestampSpan.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    messageDiv.appendChild(timestampSpan); // Append timestamp *after* content
+    messageDiv.appendChild(timestampSpan);
 
     chatHistoryDiv.appendChild(messageDiv);
     requestAnimationFrame(() => { chatHistoryDiv.scrollTo({ top: chatHistoryDiv.scrollHeight, behavior: 'smooth' }); });
 }
+
 
 async function saveMessageToFirestore(userId, chatId, sender, text) {
     if (!userId || !chatId) { console.warn("Cannot save message: userId or chatId missing."); return; }
@@ -450,7 +429,6 @@ function loadChatMessages(userId, chatId) {
         querySnapshot.forEach((doc) => {
             const data = doc.data();
             displayMessage(data.sender, data.text, data.sender === 'iris' && data.text.startsWith("[System Error"));
-            // Keep history plain text for sending back to AI for now
             newFormattedHistory.push({ role: data.sender === 'user' ? 'user' : 'model', parts: [{ text: data.text }] });
         });
         currentChatFormattedHistory = newFormattedHistory;
@@ -465,7 +443,7 @@ if (sendButton && messageInput) {
 
 async function sendMessage() {
     const messageText = messageInput.value.trim();
-    if (!messageText || !currentUserId || !currentChatId || (sendButton && sendButton.disabled) ) return; // Check if sendButton exists before accessing disabled
+    if (!messageText || !currentUserId || !currentChatId || (sendButton && sendButton.disabled) ) return;
 
     const messageToSend = messageText;
     if(messageInput) { messageInput.value = ''; messageInput.style.height = 'auto'; messageInput.dispatchEvent(new Event('input')); }
@@ -532,11 +510,11 @@ function checkScreenSize() {
 
     const logoTitle = document.querySelector('.logo-title');
     const headerActionsPlaceholder = document.querySelector('.header-actions-placeholder');
-    if (logoTitle && hamburgerMenu && headerActionsPlaceholder) { // Check all elements exist
+    if (logoTitle && hamburgerMenu && headerActionsPlaceholder) {
         const hamburgerIsEffectivelyVisible = isLoggedIn && isMobile && window.getComputedStyle(hamburgerMenu).display !== 'none';
         if (hamburgerIsEffectivelyVisible) {
             logoTitle.style.marginLeft = '0'; logoTitle.style.marginRight = 'auto'; logoTitle.style.flexGrow = '0'; logoTitle.style.justifyContent = 'flex-start';
-            headerActionsPlaceholder.style.display = 'block'; // Use placeholder to push title away from right edge
+            headerActionsPlaceholder.style.display = 'block';
         } else {
             logoTitle.style.marginLeft = 'auto'; logoTitle.style.marginRight = 'auto'; logoTitle.style.flexGrow = '0'; logoTitle.style.justifyContent = 'center'; logoTitle.style.paddingRight = '0';
             headerActionsPlaceholder.style.display = 'none';
@@ -546,10 +524,9 @@ function checkScreenSize() {
 
 window.addEventListener('resize', checkScreenSize);
 document.addEventListener('DOMContentLoaded', () => {
-    // Set initial state based on elements existing
     if(authView) authView.style.display = 'flex';
     if(chatView) chatView.style.display = 'none';
     if(sidebar) sidebar.style.display = 'none';
     if(hamburgerMenu) hamburgerMenu.style.display = 'none';
-    checkScreenSize(); // Initial check
+    checkScreenSize();
 });
